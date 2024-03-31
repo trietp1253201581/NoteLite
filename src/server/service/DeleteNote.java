@@ -1,0 +1,54 @@
+package server.service;
+
+import dataaccess.NoteDataAccess;
+import dataaccess.SpecialNoteDataAccess;
+import model.Note;
+
+/**
+ * Xóa một Note đã có
+ * @author Lê Minh Triết
+ * @since 30/03/2024
+ * @version 1.0
+ */
+public class DeleteNote implements ServerService {    
+    private int userId;
+    private String header;
+    private SpecialNoteDataAccess dataAccess;
+    
+    /**
+     * Set data cho các service qua một String
+     * @param data String miêu tả data có dạng {@code "userId;;;header"}
+     */
+    @Override
+    public void setData(String data) {
+        //Chia data thành các phần và gán cho các thuộc tính
+        String[] datas = data.split(";;;");       
+        this.userId = Integer.parseInt(datas[0]);
+        this.header = datas[1];
+    }
+    
+    /**
+     * Thực thi service
+     * @return Kết quả của việc thực thi, (1) {@code "Not exist"} nếu note không tồn tại,
+     * (2) Note vừa được xóa nếu xóa được,
+     * (3) {@code "Can't delete "} nếu không thực hiện lệnh xóa được
+     */
+    @Override
+    public String execute() {    
+        //Tạo đối tượng access dữ liệu
+        dataAccess = new NoteDataAccess(); 
+        //Kiểm tra note có tồn tại khong
+        Note note = dataAccess.get(userId, header);
+        if(note.isDefaultValue()) {
+            return "Not exist";
+        }
+        //Thực hiện lệnh xóa      
+        int rs = dataAccess.delete(note.getId());        
+        if(rs > 0) {
+            //Trả về biểu diễn String của note được xóa
+            return Note.toString(note);
+        } else {
+            return "Can't delete";
+        }      
+    } 
+}

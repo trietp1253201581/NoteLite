@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="80.0" styleClass="filter-box" stylesheets="@noteappfxml.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.FilterFXMLController">
+   <children>
+      <Label fx:id="filterLabel" prefHeight="30.0" prefWidth="80.0" text="Label" textFill="WHITE">
+         <font>
+            <Font name="Corbel" size="12.0" />
+         </font>
+         <padding>
+            <Insets left="3.0" />
+         </padding>
+      </Label>
+   </children>
+</HBox>
