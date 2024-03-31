@@ -141,7 +141,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="openButton" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleOpenNotesButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Open">
+                  <Button fx:id="openButton" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleMyNotesButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Open">
                      <font>
                         <Font size="14.0" />
                      </font>
