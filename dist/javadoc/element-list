@@ -1,0 +1,10 @@
+application
+client.networking
+client.service
+dataaccess
+dataaccess.connectdatabase
+fxgui
+model
+model.datatransfer
+server.networking
+server.service
