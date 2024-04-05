@@ -5,12 +5,12 @@ import dataaccess.UserDataAccess;
 import model.User;
 
 /**
- * Cập nhật Account
+ * Cập nhật User
  * @author Lê Minh Triết
  * @since 30/03/2024
  * @version 1.0
  */
-public class UpdateAccount implements ServerService {    
+public class UpdateUser implements ServerService {    
     private User user;
     private SpecialUserDataAccess dataAccess;
     

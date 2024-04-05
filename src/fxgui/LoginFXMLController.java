@@ -14,9 +14,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.RequestCommand;
 import model.User;
-import client.networking.ClientRequest;
+import client.service.NeedConnectService;
 
 /**
  * FXML Controller class cho Login GUI
@@ -48,7 +47,7 @@ public class LoginFXMLController {
       
         try {
             //Kiểm tra thông tin đăng nhập
-            String result = checkLogin(username, password);
+            String result = NeedConnectService.checkLogin(username, password);
             //Thông báo với user
             if(result.equals("Not found")) {
                 showAlert(AlertType.ERROR, "Not exist account");
@@ -74,22 +73,6 @@ public class LoginFXMLController {
     @FXML
     void registerLabelClicked(MouseEvent event) throws IOException {       
         openRegister();
-    }
-    
-    /**
-     * Kiểm tra thông tin đăng nhập
-     * @param username username được nhập
-     * @param password password được nhập
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
-     */
-    private String checkLogin(String username, String password) throws IOException {
-        //Tạo request
-        String serviceName = "CheckLogin";
-        String data = username + ";;;" + password;
-        RequestCommand requestCommand = new RequestCommand(serviceName, data);
-        //Gửi và nhận về phản hồi từ server
-        return ClientRequest.request(requestCommand);
     }
     
     /**

@@ -29,6 +29,7 @@ import model.Note;
 import model.RequestCommand;
 import model.User;
 import client.networking.ClientRequest;
+import client.service.NeedConnectService;
 import client.service.PdfService;
 import java.io.File;
 import java.util.Optional;
@@ -39,7 +40,7 @@ import javafx.stage.FileChooser;
  * FXML Controller class cho Dashboard GUI
  * 
  * @author Lê Minh Triết
- * @since 31/03/2024
+ * @since 05/04/2024
  * @version 1.0
  */
 public class DashboardFXMLController {
@@ -199,7 +200,7 @@ public class DashboardFXMLController {
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
-        saveNote(myNote);
+        replyFromServer = NeedConnectService.saveNote(myNote);
         //Nhận reply và thông báo
         if(replyFromServer.equals("Can't save")) {
             showAlert(Alert.AlertType.ERROR, replyFromServer);
@@ -351,7 +352,7 @@ public class DashboardFXMLController {
         //Chuyển sang scene My Notes
         changeScene(myNotesButton);
         //Lấy tất cả các Note của user
-        getAllNotes(user.getId());
+        replyFromServer = NeedConnectService.getAllNotes(user.getId());
         //Dựa vào reply từ server để xử lý
         if(!replyFromServer.equals("Not found")) {
             //Thêm các note vào list các note của user
@@ -410,7 +411,7 @@ public class DashboardFXMLController {
             newNote.setFilters(filters);
             //Tạo Note mới
             try {
-                createNote(newNote);
+                replyFromServer = NeedConnectService.createNote(newNote);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -437,8 +438,8 @@ public class DashboardFXMLController {
     void handleOpenNoteButton(ActionEvent event) {
         //Lấy list các header note
         List<String> myNotesHeader = new ArrayList<>();  
-        for(Note myNote: myNotes){
-            myNotesHeader.add(myNote.getHeader());
+        for(Note note: myNotes){
+            myNotesHeader.add(note.getHeader());
         }
         //Hiện dialog để chọn note cần mở
         ChoiceDialog<String> dialog = new ChoiceDialog<>(myNotesHeader.get(0), myNotesHeader);
@@ -450,7 +451,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Mở Note được chọn
             try {
-                openNote(user.getId(), selectedHeader);
+                replyFromServer = NeedConnectService.openNote(user.getId(), selectedHeader);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -476,8 +477,8 @@ public class DashboardFXMLController {
     void handleDeleteNoteButton(ActionEvent event) {
         //Lấy list các header note
         List<String> myNotesHeader = new ArrayList<>();
-        for(Note myNote: myNotes){
-            myNotesHeader.add(myNote.getHeader());
+        for(Note note: myNotes){
+            myNotesHeader.add(note.getHeader());
         }
         //Hiện dialog để chọn note cần xóa
         ChoiceDialog<String> dialog = new ChoiceDialog<>(myNotesHeader.get(0), myNotesHeader);
@@ -489,7 +490,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Xóa Note được chọn
             try {
-                deleteNote(user.getId(), selectedHeader);
+                replyFromServer = NeedConnectService.deleteNote(user.getId(), selectedHeader);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -540,13 +541,13 @@ public class DashboardFXMLController {
         user.setName(nameField.getText());
         user.setBirthday(Date.valueOf(birthdayField.getText()));
         user.setSchool(schoolField.getText());
-        //Cập nhật Account
-        updateAccount(user);
+        //Cập nhật User
+        replyFromServer = NeedConnectService.updateUser(user);
         //Nhận reply từ server và thông báo
         if(replyFromServer.equals("Can't update")) {
             showAlert(Alert.AlertType.ERROR, replyFromServer);
         } else {
-            showAlert(Alert.AlertType.INFORMATION, "Successfully save for " + user.getUsername());
+            showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + user.getUsername());
         }
     }
     
@@ -581,7 +582,7 @@ public class DashboardFXMLController {
         //Chuyển sang Import/Export Scene
         changeScene(importExportButton);
         //Lấy tất cả các note của user
-        getAllNotes(user.getId());
+        replyFromServer = NeedConnectService.getAllNotes(user.getId());
         //Nhận reply từ server
         if(!replyFromServer.equals("Not found")) {
             //Thêm các note vào list
@@ -605,7 +606,7 @@ public class DashboardFXMLController {
         //Lấy header được chọn từ ComboBox
         String selectedNoteHeader = exportNoteComboBox.getSelectionModel().getSelectedItem();
         //Lấy dữ liệu từ note được chọn
-        openNote(user.getId(), selectedNoteHeader);
+        replyFromServer = NeedConnectService.openNote(user.getId(), selectedNoteHeader);
         Note selectedNote = Note.valueOf(replyFromServer);
         //Lấy format để export từ ComboBox
         String selectedFormat = exportFormatComboBox.getSelectionModel().getSelectedItem();
@@ -659,7 +660,7 @@ public class DashboardFXMLController {
         noteHeaderField.setVisible(false);     
         changeScene(editNoteButton);
         //Mở Note thao tác gần nhất
-        openLastNote(user.getId());
+        replyFromServer = NeedConnectService.openLastNote(user.getId());
         //Nhận reply từ server và xử lý
         if(replyFromServer.equals("Not exist")) {
             //Nếu user chưa có note nào thì tạo một note mới tạm thời
@@ -844,105 +845,5 @@ public class DashboardFXMLController {
         alert.setTitle(String.valueOf(alertType));
         alert.setHeaderText(text);
         alert.showAndWait();
-    }
-    
-    /**
-     * Lưu Note
-     * @param note note cần lưu
-     * @throws IOException 
-     */
-    private void saveNote(Note note) throws IOException {
-        //Tạo Request
-        String serviceName = "SaveNote";
-        String data = Note.toString(note);
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Lấy tất cả các note của user
-     * @param userId id của user
-     * @throws IOException 
-     */
-    private void getAllNotes(int userId) throws IOException {
-        //Tạo Request
-        String serviceName = "GetAllNotes";
-        String data = String.valueOf(userId);
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Tạo một Note mới
-     * @param newNote Note mới
-     * @throws IOException 
-     */
-    private void createNote(Note newNote) throws IOException {
-        //Tạo Request
-        String serviceName = "CreateNote";
-        String data = Note.toString(newNote);
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Mở một note
-     * @param userId id của user
-     * @param header header của note cần mở
-     * @throws IOException 
-     */
-    private void openNote(int userId, String header) throws IOException {
-        //Tạo Request
-        String serviceName = "OpenNote";
-        String data = userId + ";;;" + header;
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Xóa một note
-     * @param userId id của user
-     * @param header header của note cần xóa
-     * @throws IOException 
-     */
-    private void deleteNote(int userId, String header) throws IOException {
-        //Tạo Request
-        String serviceName = "DeleteNote";
-        String data = userId + ";;;" + header;
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Mở Note được chỉnh sửa gần nhất
-     * @param userId id của user
-     * @throws IOException 
-     */
-    private void openLastNote(int userId) throws IOException {
-        //Tạo Request
-        String serviceName = "OpenLastNote";
-        String data = String.valueOf(userId);
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
-    }
-    
-    /**
-     * Cập nhật Account
-     * @param user user cần cập nhật
-     * @throws IOException 
-     */
-    private void updateAccount(User user) throws IOException {
-        //Tạo Request
-        String serviceName = "UpdateAccount";
-        String data = User.toString(user);
-        requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply từ server
-        replyFromServer = ClientRequest.request(requestCommand);
     }
 }

@@ -5,12 +5,12 @@ import dataaccess.UserDataAccess;
 import model.User;
 
 /**
- * Tạo một Account mới
+ * Tạo một User mới
  * @author Lê Minh Triết
  * @since 30/03/2024
  * @version 1.0
  */
-public class CreateAccount implements ServerService {    
+public class CreateUser implements ServerService {    
     private User user;
     private SpecialUserDataAccess dataAccess;
     

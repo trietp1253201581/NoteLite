@@ -17,10 +17,10 @@ public class ServerServiceInvoker {
         switch (serviceName) {
             case "CheckLogin":
                 return new CheckLogin();
-            case "CreateAccount":
-                return new CreateAccount();
-            case "UpdateAccount":
-                return new UpdateAccount();
+            case "CreateUser":
+                return new CreateUser();
+            case "UpdateUser":
+                return new UpdateUser();
             case "CreateNote":
                 return new CreateNote();
             case "DeleteNote":

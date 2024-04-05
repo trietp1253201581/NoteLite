@@ -15,12 +15,12 @@ public class ClientRequest {
    
     /**
      * Gửi yêu cầu tới server và nhận lại phản hồi
-     * @param requestCommand một {@code RequestCommand} miêu tả request từ user 
+     * @param requestCommand một {@code RequestCommand} miêu tả requestAndGetReply từ user 
      * @return phản hồi từ server
      * @throws UnknownHostException
      * @throws IOException
      */
-    public static String request(RequestCommand requestCommand) throws UnknownHostException, IOException { 
+    public static String requestAndGetReply(RequestCommand requestCommand) throws UnknownHostException, IOException { 
         //Tạo 1 client để truyền dữ liệu
         Client client = new Client(InetAddress.getByName("localhost"), 2222);
         //Truyền message vào client và chạy client

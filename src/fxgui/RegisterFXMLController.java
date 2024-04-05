@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import model.RequestCommand;
 import model.User;
 import client.networking.ClientRequest;
+import client.service.NeedConnectService;
 
 /**
  * FXML Controller class cho Register GUI
@@ -58,7 +59,7 @@ public class RegisterFXMLController {
         
         try {
             //Thực hiện tạo Account
-            String result = createAccount(newUser);           
+            String result = NeedConnectService.createUser(newUser);           
             //Thông báo          
             if(result.equals("Can't create")) {               
                 showAlert(Alert.AlertType.ERROR, "Can't create");
@@ -85,21 +86,6 @@ public class RegisterFXMLController {
         //Quay trở lại trang Login
         openLogin();
     }   
-    
-    /**
-     * Tạo một user mới
-     * @param newUser user mới
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
-     */
-    private String createAccount(User newUser) throws IOException {
-        //Tạo request
-        String serviceName = "CreateAccount";
-        String data = User.toString(newUser);      
-        RequestCommand requestCommand = new RequestCommand(serviceName, data);
-        //Gửi request và nhận reply
-        return ClientRequest.request(requestCommand);
-    }
     
     /**
      * Mở trang Login
