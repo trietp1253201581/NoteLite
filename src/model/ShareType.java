@@ -16,9 +16,9 @@ public enum ShareType {
      */
     public static String toString(ShareType shareType) {
         if(shareType == ShareType.READ_ONLY) {
-            return "ReadOnly";
+            return "READ_ONLY";
         } else {
-            return "CanEdit";
+            return "CAN_EDIT";
         }
     }
     
@@ -28,7 +28,7 @@ public enum ShareType {
      * @return 
      */
     public static ShareType toShareType(String str) {
-        if(str.equals("ReadOnly")) {
+        if(str.equals("READ_ONLY")) {
             return ShareType.READ_ONLY;
         } else {
             return ShareType.CAN_EDIT;
