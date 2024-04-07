@@ -12,16 +12,16 @@ import model.Note;
  * @version 1.0
  */
 public class GetAllNotes implements ServerService {   
-    private int userId;
+    private String author;
     private SpecialNoteDataAccess dataAccess;
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data gồm một userId
+     * @param data String miêu tả data gồm một author
      */
     @Override
     public void setData(String data) {
-        this.userId = Integer.parseInt(data);
+        this.author = data;
     }
     
     /**
@@ -29,14 +29,13 @@ public class GetAllNotes implements ServerService {
      * @return Kết quả của việc thực thi, (1) String gồm các biểu diễn string của từng note, 
      * được ngăn cách bởi {@code ":::"}, 
      * (2) {@code "Not found"} nếu user này chưa có note nào
-     * 
      */
     @Override
     public String execute() {       
         //Tạo một đối tượng access dữ liệu
         dataAccess = new NoteDataAccess();
-        //Lấy các note của userId
-        List<Note> notes = dataAccess.getAll(userId);  
+        //Lấy các note của author
+        List<Note> notes = dataAccess.getAll(author);  
         //Tạo và trả về kết quả
         String result = "";       
         if(!notes.isEmpty()) {
@@ -46,6 +45,7 @@ public class GetAllNotes implements ServerService {
         } else {
             result = "Not found";
         }     
+        
         return result;      
     }   
 }

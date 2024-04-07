@@ -2,8 +2,8 @@ package dataaccess;
 
 import dataaccess.connectdatabase.ConnectDatabase;
 import dataaccess.connectdatabase.ConnectMySQLDatabase;
-import model.datatransfer.ConvertContent;
-import model.datatransfer.ConvertFilter;
+import model.dataconvert.ConvertContent;
+import model.dataconvert.ConvertFilter;
 import model.Note;
 import java.sql.Connection;
 import java.sql.Date;
@@ -32,19 +32,21 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
     /**
      * Lấy tất cả các note của một user
-     * @param userId id của user cần lấy note
+     * @param author user cần lấy note
      * @return một list chứa các note của user
      */
     @Override
-    public List<Note> getAll(int userId) {
+    public List<Note> getAll(String author) {
         List<Note> notes = new ArrayList<>();
         //Câu truy vấn SQL
-        String query = "SELECT * FROM NOTES WHERE USERID = ?";
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+                + "FROM notes nt, users us "
+                + "WHERE nt.USERID = us.ID AND USERNAME = ?";
 
         try {
             //Set các tham số, thực thi truy vấn và lấy kết quả
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(1, author);
             
             ResultSet resultSet = preparedStatement.executeQuery();
             //Duyệt các hàng kết quả
@@ -52,7 +54,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 Note note = new Note();
                 //Set dữ liệu từ hàng vào note
                 note.setId(resultSet.getInt("ID"));
-                note.setUserId(resultSet.getInt("USERID"));
+                note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
                 note.setContent(ConvertContent.convertToObjectText(resultSet.getString("CONTENT")));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
@@ -70,20 +72,22 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
     /**
      * Lấy note của user với header cho trước
-     * @param userId id của user sở hữu note
+     * @param author user sở hữu note
      * @param header header của note
      * @return (1) note lấy được nếu user này có note mang header đã cho, 
      * (2) giá trị default của note nếu user không có note mang header này  
      */
     @Override
-    public Note get(int userId, String header) {
+    public Note get(String author, String header) {
         //Câu truy vấn SQL
-        String query = "SELECT * FROM NOTES WHERE USERID = ? AND HEADER = ?";
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+                + "FROM notes nt, users us "
+                + "WHERE nt.USERID = us.ID AND USERNAME = ? AND HEADER = ?";
 
         try {
             //Set các tham số, thực thi truy vấn và lấy kết quả
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(1, author);
             preparedStatement.setString(2, header);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -92,7 +96,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 Note note = new Note();
                 //Set dữ liệu từ kết quả vào note
                 note.setId(resultSet.getInt("ID"));
-                note.setUserId(resultSet.getInt("USERID"));
+                note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
                 note.setContent(ConvertContent.convertToObjectText(resultSet.getString("CONTENT")));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
@@ -110,18 +114,20 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
     /**
      * Lấy note được chỉnh sửa mới nhật của user
-     * @param userId id của user
+     * @param author user sở hữu note
      * @return (1) note được chỉnh sửa mói nhất, (2) default note nếu user chưa có note nào
      */
     @Override
-    public Note getLast(int userId) {
+    public Note getLast(String author) {
         //Câu truy vấn SQL
-        String query = "SELECT * FROM NOTES WHERE USERID = ? AND LASTMODIFIED = 1";
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+                + "FROM notes nt, users us "
+                + "WHERE nt.USERID = us.ID AND USERNAME = ? AND LASTMODIFIED = 1";
 
         try {
             //Set tham số và thực thi lệnh SQL
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(1, author);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -129,7 +135,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 Note note = new Note();
                 //Set dữ liệu nhận được vào note
                 note.setId(resultSet.getInt("ID"));
-                note.setUserId(resultSet.getInt("USERID"));
+                note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
                 note.setContent(ConvertContent.convertToObjectText(resultSet.getString("CONTENT")));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
@@ -153,7 +159,9 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
     @Override
     public Note get(int id) {
         //Câu truy vấn SQL
-        String query = "SELECT * FROM NOTES WHERE ID = ?";
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+                + "FROM notes nt, users us "
+                + "WHERE nt.USERID = us.ID AND nt.ID = ?";
 
         try {
             //Set tham số và thực thi truy vấn
@@ -166,7 +174,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 Note note = new Note();
                 //Set dữ liệu cho note
                 note.setId(resultSet.getInt("ID"));
-                note.setUserId(resultSet.getInt("USERID"));
+                note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
                 note.setContent(ConvertContent.convertToObjectText(resultSet.getString("CONTENT")));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
@@ -195,9 +203,12 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             "LASTMODIFIEDDATE, FILTERS) VALUES(?,?,?,?,?,?)";
 
         try {
+            //Lấy dữ liệu từ bảng khác
+            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            int userId = userDataAccess.get(note.getAuthor()).getId();
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);            
-            preparedStatement.setInt(1, note.getUserId());
+            preparedStatement.setInt(1, userId);
             preparedStatement.setString(2, note.getHeader());
             preparedStatement.setString(3, ConvertContent.convertToDBText(note.getContent()));
             preparedStatement.setInt(4, note.getLastModified());
@@ -225,9 +236,12 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             "LASTMODIFIEDDATE = ?, FILTERS = ? WHERE ID = ?";
 
         try {
+            //Lấy dữ liệu từ bảng khác
+            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            int userId = userDataAccess.get(note.getAuthor()).getId();
             //Set tham số và thực thi truy vấn
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, note.getUserId());
+            PreparedStatement preparedStatement = connection.prepareStatement(query);            
+            preparedStatement.setInt(1, userId);
             preparedStatement.setString(2, note.getHeader());
             preparedStatement.setString(3, ConvertContent.convertToDBText(note.getContent()));
             preparedStatement.setInt(4, note.getLastModified());

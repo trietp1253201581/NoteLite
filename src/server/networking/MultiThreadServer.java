@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  * @since 30/03/2024
  * @version 1.0
  */
-public class MultiThreadServer implements Server {   
+public class MultiThreadServer implements Server {    
     private ServerSocket serverSocket;
     private int port;
     private ServerStatus status;

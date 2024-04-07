@@ -11,16 +11,16 @@ import model.Note;
  * @version 1.0
  */
 public class OpenLastNote implements ServerService {   
-    private int userId;
+    private String author;
     private SpecialNoteDataAccess dataAccess;
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data gồm một userId
+     * @param data String miêu tả data gồm một author
      */
     @Override
     public void setData(String data) {
-        this.userId = Integer.parseInt(data);
+        this.author = data;
     }
     
     /**
@@ -33,7 +33,7 @@ public class OpenLastNote implements ServerService {
         //Tạo đối tượng access dữ liệu
         dataAccess = new NoteDataAccess();
         //Lấy Note được chỉnh sửa gần nhất
-        Note note = dataAccess.getLast(userId);
+        Note note = dataAccess.getLast(author);
         //Kiểm tra điều kiện và trả về
         if(!note.isDefaultValue()) {
             return Note.toString(note);

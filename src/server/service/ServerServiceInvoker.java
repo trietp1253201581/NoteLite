@@ -33,6 +33,10 @@ public class ServerServiceInvoker {
                 return new GetAllNotes();
             case "SaveNote":
                 return new SaveNote();
+            case "SendNote":
+                return new SendNote();
+            case "GetAllReceivedNotes":
+                return new GetAllReceivedNotes();
             default:
                 //Thông báo service không tồn tại
                 throw new IllegalArgumentException("This service is unsupported");

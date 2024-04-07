@@ -28,19 +28,26 @@ import javafx.stage.Stage;
 import model.Note;
 import model.RequestCommand;
 import model.User;
-import client.networking.ClientRequest;
 import client.service.NeedConnectService;
 import client.service.PdfService;
 import java.io.File;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import model.ShareNote;
+import model.ShareType;
 
 /**
  * FXML Controller class cho Dashboard GUI
  * 
  * @author Lê Minh Triết
- * @since 05/04/2024
+ * @since 07/04/2024
  * @version 1.0
  */
 public class DashboardFXMLController {
@@ -133,6 +140,30 @@ public class DashboardFXMLController {
     private Button importFileButton;
     @FXML
     private Label importFileName;
+    @FXML
+    private Button shareNoteButton;
+    @FXML
+    private AnchorPane shareNoteScene;
+    @FXML
+    private ComboBox<String> chooseShareNoteComboBox;
+    @FXML
+    private TextField chooseUserShareField;
+    @FXML
+    private RadioButton shareTypeReadOnly;
+    @FXML
+    private RadioButton shareTypeCanEdit;
+    @FXML
+    private Button sendNoteButton;
+    @FXML
+    private TableView<ShareNote> sharedByOtherTable;
+    @FXML
+    private TableColumn<ShareNote, String> senderUsernameColumn;
+    @FXML
+    private TableColumn<ShareNote, String> headerColumn;
+    @FXML
+    private TableColumn<ShareNote, String> shareTypeColumn;
+    @FXML
+    private Button openShareNoteButton;
     
     private UndoRedoService undoRedoService;
     private User user;   
@@ -140,6 +171,7 @@ public class DashboardFXMLController {
     private List<Note> myNotes;   
     private RequestCommand requestCommand;
     private String replyFromServer;
+    private ObservableList<ShareNote> mySharedNotes;
 
     public void setUser(User user) {
         this.user = user;
@@ -148,11 +180,7 @@ public class DashboardFXMLController {
     public void setMyNote(Note myNote) {
         this.myNote = myNote;
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Logout Button
-     * @param event 
-     */
+
     @FXML
     void handleLogoutButton(ActionEvent event) {       
         //Set lại style của button
@@ -174,22 +202,13 @@ public class DashboardFXMLController {
             ex.printStackTrace();
         }
     }
-    
-    /**
-     * Xử lý sự kiện ấn vào Edit Note Button
-     * @param event 
-     */
+
     @FXML
     void handleEditNoteButton(ActionEvent event) {  
         //Chuyển sang scene edit
         changeScene(editNoteButton);
     }
     
-    /**
-     * Xử lý sự kiện khi ấn vào Save Button
-     * @param event
-     * @throws IOException 
-     */
     @FXML
     void handleSaveButton(ActionEvent event) throws IOException {  
         //Thiết lập lại undoRedoService
@@ -209,10 +228,6 @@ public class DashboardFXMLController {
         }
     }
 
-    /**
-     * Xử lý sự kiện khi ấn vào Rename Button
-     * @param event 
-     */
     @FXML
     void handleRenameButton(ActionEvent event) {        
         //Thiết lập note name hiện tại cho noteHeaderField
@@ -221,11 +236,7 @@ public class DashboardFXMLController {
         noteHeaderLabel.setVisible(false);
         noteHeaderField.setVisible(true);
     }
-    
-    /**
-     * Xử lý sự kiện khi nhấn Enter ở noteHeaderLabel
-     * @param event 
-     */
+
     @FXML
     void handleNoteHeaderField(ActionEvent event) {        
         //Thiết lập note name vừa nhập cho Label
@@ -234,11 +245,7 @@ public class DashboardFXMLController {
         noteHeaderField.setVisible(false);
         noteHeaderLabel.setVisible(true);
     }
-    
-    /**
-     * Xử lý sự kiện khi gõ trong text area
-     * @param event 
-     */
+
     @FXML
     void changeTextArea(KeyEvent event) {  
         //Lấy các thông số
@@ -251,11 +258,7 @@ public class DashboardFXMLController {
             undoRedoService.saveText(contentArea.getText());
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn nút Undo
-     * @param event 
-     */
+
     @FXML
     void handleUndoButton(ActionEvent event) {      
         //Lấy text thu được khi undo
@@ -270,11 +273,7 @@ public class DashboardFXMLController {
             numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn nút redo
-     * @param event 
-     */
+
     @FXML
     void handleRedoButton(ActionEvent event) {    
         //Lấy text thu được khi undo
@@ -289,11 +288,7 @@ public class DashboardFXMLController {
             numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi nhấn nút Add Filter
-     * @param event 
-     */
+
     @FXML
     void handleAddFilterButton(ActionEvent event) {        
         //Hiện Dialog để nhập filter mới
@@ -341,18 +336,13 @@ public class DashboardFXMLController {
             loadFilter(filters, 6);     
         });  
     }    
-    
-    /**
-     * Xử lý sự kiện khi ấn vào My Notes Button
-     * @param event
-     * @throws IOException 
-     */
+
     @FXML
     void handleMyNotesButton(ActionEvent event) throws IOException {        
         //Chuyển sang scene My Notes
         changeScene(myNotesButton);
         //Lấy tất cả các Note của user
-        replyFromServer = NeedConnectService.getAllNotes(user.getId());
+        replyFromServer = NeedConnectService.getAllNotes(user.getUsername());
         //Dựa vào reply từ server để xử lý
         if(!replyFromServer.equals("Not found")) {
             //Thêm các note vào list các note của user
@@ -366,10 +356,6 @@ public class DashboardFXMLController {
         }
     }
     
-    /**
-     * Xử lý sự kiện khi ấn Enter ở Search Note Field
-     * @param event 
-     */
     @FXML
     void handleSearchNoteField(ActionEvent event) {
         //Lấy thông tin cần search
@@ -386,10 +372,6 @@ public class DashboardFXMLController {
         initMyNotesScene(notes);
     }
     
-    /**
-     * Xử lý sự kiện khi ấn vào Create Note Button
-     * @param event 
-     */
     @FXML
     void handleCreateNoteButton(ActionEvent event) {
         //Hiện dialog để nhập header cho Note mới
@@ -402,7 +384,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Set dữ liệu cho note mới
             Note newNote = new Note();
-            newNote.setUserId(user.getId());
+            newNote.setAuthor(user.getUsername());
             newNote.setHeader(selectedHeader);
             newNote.setContent("Edit here");
             newNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
@@ -429,11 +411,7 @@ public class DashboardFXMLController {
             }
         });
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Open Note Button
-     * @param event 
-     */
+
     @FXML
     void handleOpenNoteButton(ActionEvent event) {
         //Lấy list các header note
@@ -451,7 +429,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Mở Note được chọn
             try {
-                replyFromServer = NeedConnectService.openNote(user.getId(), selectedHeader);
+                replyFromServer = NeedConnectService.openNote(user.getUsername(), selectedHeader);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -468,11 +446,6 @@ public class DashboardFXMLController {
         });
     }
     
-    /**
-     * Xử lý sự kiện khi ấn vào Delete Note Button
-     * @param event
-     * @throws IOException 
-     */
     @FXML
     void handleDeleteNoteButton(ActionEvent event) {
         //Lấy list các header note
@@ -490,7 +463,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Xóa Note được chọn
             try {
-                replyFromServer = NeedConnectService.deleteNote(user.getId(), selectedHeader);
+                replyFromServer = NeedConnectService.deleteNote(user.getUsername(), selectedHeader);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -516,11 +489,7 @@ public class DashboardFXMLController {
             }
         });
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào My Account Button
-     * @param event 
-     */
+
     @FXML
     void handleMyAccountButton(ActionEvent event) {
         //Chuyển scene sang My Account Scene
@@ -528,12 +497,7 @@ public class DashboardFXMLController {
         //Load My Account Scene
         initMyAccountScene();
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Save Account Button
-     * @param event
-     * @throws IOException 
-     */
+
     @FXML
     void handleSaveAccountButton(ActionEvent event) throws IOException {
         //Lấy dữ liệu của user vừa được chỉnh sửa
@@ -550,11 +514,7 @@ public class DashboardFXMLController {
             showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + user.getUsername());
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Change Password Button
-     * @param event 
-     */
+
     @FXML
     void handleChangePasswordButton(ActionEvent event) {
         //Hiện dialog để nhập mật khẩu cũ
@@ -571,18 +531,13 @@ public class DashboardFXMLController {
             }
         });      
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Import/Export Button
-     * @param event
-     * @throws IOException 
-     */
+
     @FXML
     void handleImportExportButton(ActionEvent event) throws IOException {
         //Chuyển sang Import/Export Scene
         changeScene(importExportButton);
         //Lấy tất cả các note của user
-        replyFromServer = NeedConnectService.getAllNotes(user.getId());
+        replyFromServer = NeedConnectService.getAllNotes(user.getUsername());
         //Nhận reply từ server
         if(!replyFromServer.equals("Not found")) {
             //Thêm các note vào list
@@ -595,18 +550,13 @@ public class DashboardFXMLController {
             initImportExportScene(myNotes);
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Export File Button
-     * @param event
-     * @throws IOException 
-     */
+
     @FXML
     void handleExportFileButton(ActionEvent event) throws IOException {
         //Lấy header được chọn từ ComboBox
         String selectedNoteHeader = exportNoteComboBox.getSelectionModel().getSelectedItem();
         //Lấy dữ liệu từ note được chọn
-        replyFromServer = NeedConnectService.openNote(user.getId(), selectedNoteHeader);
+        replyFromServer = NeedConnectService.openNote(user.getUsername(), selectedNoteHeader);
         Note selectedNote = Note.valueOf(replyFromServer);
         //Lấy format để export từ ComboBox
         String selectedFormat = exportFormatComboBox.getSelectionModel().getSelectedItem();
@@ -615,11 +565,7 @@ public class DashboardFXMLController {
         //Thông báo
         showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Import File Button
-     * @param event 
-     */
+
     @FXML
     void handleImportFileButton(ActionEvent event) {
         //Lấy dữ liệu từ PDF và chuyển vào content
@@ -629,11 +575,7 @@ public class DashboardFXMLController {
         //Thông báo
         showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
     }
-    
-    /**
-     * Xử lý sự kiện khi ấn vào Choose Input File Button
-     * @param event 
-     */
+
     @FXML
     void handleChooseInputFileButton(ActionEvent event) {
         //Tạo FileChooser
@@ -650,6 +592,85 @@ public class DashboardFXMLController {
         }
     }
     
+    @FXML
+    void handleShareNoteButton(ActionEvent event) throws IOException {
+        //Chuyển sang Scene ShareNote
+        changeScene(shareNoteButton);
+        //Lấy tất cả các note của user
+        replyFromServer = NeedConnectService.getAllNotes(user.getUsername());
+        //Nhận reply từ server
+        if(!replyFromServer.equals("Not found")) {
+            //Thêm các note vào list
+            String[] datas = replyFromServer.split(":::");      
+            myNotes = new ArrayList<>();
+            for(String element: datas) {
+                myNotes.add(Note.valueOf(element));
+            }
+        }
+        //Lấy tất cả các note được share tới user này
+        replyFromServer = NeedConnectService.getAllReceivedNotes(user.getUsername());
+        if(!replyFromServer.equals("Not found")) {
+            //Thêm các note vào list
+            String[] datas = replyFromServer.split(":::");      
+            mySharedNotes = FXCollections.observableArrayList();
+            for(String element: datas) {
+                mySharedNotes.add(ShareNote.valueOf(element));
+            }
+        }
+        initShareNoteScene(myNotes, mySharedNotes);
+    }
+    
+    @FXML
+    void handleSendNoteButton(ActionEvent event) throws IOException {
+        //Lấy header được chọn từ ComboBox
+        String selectedNoteHeader = chooseShareNoteComboBox.getSelectionModel().getSelectedItem();
+        //Lấy receiver Id
+        String receiverUsename = chooseUserShareField.getText();
+        //Share Note
+        ShareNote newShareNote = new ShareNote();
+        newShareNote.setSender(user.getUsername());
+        newShareNote.setReceiver(receiverUsename);
+        newShareNote.setHeader(selectedNoteHeader);
+        if(shareTypeReadOnly.isSelected()) {
+            newShareNote.setShareType(ShareType.READ_ONLY);
+        } else {
+            newShareNote.setShareType(ShareType.CAN_EDIT);
+        }
+        replyFromServer = NeedConnectService.sendNote(newShareNote);
+        //Xử lý và thông báo
+        if(replyFromServer.equals("Exist")) {
+            showAlert(Alert.AlertType.INFORMATION, "You have shared this note to user " + receiverUsename);
+        } else if (replyFromServer.equals("Can't send")) {
+            showAlert(Alert.AlertType.ERROR, replyFromServer);
+        } else if (replyFromServer.equals("Receiver not exist")) {
+            showAlert(Alert.AlertType.ERROR, replyFromServer);
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Successfully share");
+        }
+    }
+    
+    @FXML
+    void handleOpenShareNoteButton(ActionEvent event) throws IOException {
+        int num = sharedByOtherTable.getSelectionModel().getSelectedIndex();
+        if(num < 0) {
+            showAlert(Alert.AlertType.ERROR, "Choose the note you want open");
+        } else {
+            //Lấy ShareNote được chọn
+            ShareNote shareNote = sharedByOtherTable.getSelectionModel().getSelectedItem();
+            //Lấy note được chọn
+            replyFromServer = NeedConnectService.openNote(shareNote.getSender(), shareNote.getHeader());
+            //Lấy thông tin note được mở
+            myNote = Note.valueOf(replyFromServer);
+            //Load lại Edit Scene và mở Edit Scene
+            initEditScene();
+            //Nếu là ReadOnly thì không được edit
+            if(shareNote.getShareType() == ShareType.READ_ONLY) {
+                contentArea.setEditable(false);
+            }
+            changeScene(editNoteButton);      
+        }
+    }
+    
     /**
      * Chạy Dashboard và thiết lập các thuộc tính ban đầu
      * @throws IOException 
@@ -660,12 +681,12 @@ public class DashboardFXMLController {
         noteHeaderField.setVisible(false);     
         changeScene(editNoteButton);
         //Mở Note thao tác gần nhất
-        replyFromServer = NeedConnectService.openLastNote(user.getId());
+        replyFromServer = NeedConnectService.openLastNote(user.getUsername());
         //Nhận reply từ server và xử lý
         if(replyFromServer.equals("Not exist")) {
             //Nếu user chưa có note nào thì tạo một note mới tạm thời
             myNote = new Note();
-            myNote.setUserId(user.getId());
+            myNote.setAuthor(user.getUsername());
             myNote.setHeader("New Note");
             myNote.setContent("Edit here");
             List<String> filters = new ArrayList<>();
@@ -685,6 +706,7 @@ public class DashboardFXMLController {
     private void initEditScene() { 
         //Thiết lập content, header
         contentArea.setText(myNote.getContent());
+        contentArea.setEditable(true);
         noteHeaderLabel.setText(myNote.getHeader());
         numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
         //Thiết lập undoRedoService và lưu vào văn bản đầu tiên
@@ -752,6 +774,25 @@ public class DashboardFXMLController {
     }
 
     /**
+     * Load Share Note Scene
+     */
+    private void initShareNoteScene(List<Note> notes, ObservableList<ShareNote> shareNotes) {
+        //Clear ComboBox và thêm vào các header note trong list
+        chooseShareNoteComboBox.getItems().clear();
+        for(Note note: notes) {
+            chooseShareNoteComboBox.getItems().add(note.getHeader());
+        }
+        //Set Type mặc định là Read Only
+        shareTypeReadOnly.setSelected(true);
+        //Clear table và thêm các note được share
+        sharedByOtherTable.getItems().clear();
+        senderUsernameColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("sender"));
+        headerColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("header"));
+        shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
+        sharedByOtherTable.setItems(shareNotes);
+    }
+    
+    /**
      * Thiết lập thể hiện của filter tới người dùng
      * @param filters List chứa các filter
      * @param maxColumn số lượng filter lớn nhất trên một hàng
@@ -794,44 +835,79 @@ public class DashboardFXMLController {
     private void changeScene(Button button) {
         if(button == editNoteButton) {
             editNoteButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            importExportButton.setStyle("-fx-background-color: transparent");
-            
             editNoteScene.setVisible(true);
+            
+            myNotesButton.setStyle("-fx-background-color: transparent");
             myNotesScene.setVisible(false);
+            
+            myAccountButton.setStyle("-fx-background-color: transparent");
             myAccountScene.setVisible(false);
+            
+            importExportButton.setStyle("-fx-background-color: transparent");
             importExportScene.setVisible(false);
+            
+            shareNoteButton.setStyle("-fx-background-color: transparent");
+            shareNoteScene.setVisible(false);
         } else if (button == myNotesButton) {
             editNoteButton.setStyle("-fx-background-color: transparent");
-            myNotesButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            importExportButton.setStyle("-fx-background-color: transparent");
-            
             editNoteScene.setVisible(false);
+            
+            myNotesButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
             myNotesScene.setVisible(true);
+            
+            myAccountButton.setStyle("-fx-background-color: transparent");
             myAccountScene.setVisible(false);
+            
+            importExportButton.setStyle("-fx-background-color: transparent");
             importExportScene.setVisible(false);
+            
+            shareNoteButton.setStyle("-fx-background-color: transparent");
+            shareNoteScene.setVisible(false);
         } else if (button == myAccountButton) {
             editNoteButton.setStyle("-fx-background-color: transparent");
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myAccountButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
-            importExportButton.setStyle("-fx-background-color: transparent");
-            
             editNoteScene.setVisible(false);
+            
+            myNotesButton.setStyle("-fx-background-color: transparent");
             myNotesScene.setVisible(false);
+            
+            myAccountButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
             myAccountScene.setVisible(true);
+            
+            importExportButton.setStyle("-fx-background-color: transparent");
             importExportScene.setVisible(false);
+            
+            shareNoteButton.setStyle("-fx-background-color: transparent");
+            shareNoteScene.setVisible(false);
         } else if (button == importExportButton) {
             editNoteButton.setStyle("-fx-background-color: transparent");
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            importExportButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
-            
             editNoteScene.setVisible(false);
+            
+            myNotesButton.setStyle("-fx-background-color: transparent");
             myNotesScene.setVisible(false);
+            
+            myAccountButton.setStyle("-fx-background-color: transparent");
             myAccountScene.setVisible(false);
+            
+            importExportButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
             importExportScene.setVisible(true);
+            
+            shareNoteButton.setStyle("-fx-background-color: transparent");
+            shareNoteScene.setVisible(false);
+        } else if (button == shareNoteButton) {
+            editNoteButton.setStyle("-fx-background-color: transparent");
+            editNoteScene.setVisible(false);
+            
+            myNotesButton.setStyle("-fx-background-color: transparent");
+            myNotesScene.setVisible(false);
+            
+            myAccountButton.setStyle("-fx-background-color: transparent");
+            myAccountScene.setVisible(false);
+            
+            importExportButton.setStyle("-fx-background-color: transparent");
+            importExportScene.setVisible(false);
+            
+            shareNoteButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+            shareNoteScene.setVisible(true);
         }
     }
     

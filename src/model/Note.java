@@ -3,9 +3,8 @@ package model;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import model.datatransfer.ConvertFilter;
+import model.dataconvert.ConvertFilter;
 
 /**
  * Một transfer cho dữ liệu của các note
@@ -15,7 +14,7 @@ import model.datatransfer.ConvertFilter;
  */
 public class Note {
     private int id;
-    private int userId;
+    private String author;
     private String header;
     private String content;
     private int lastModified;
@@ -27,7 +26,7 @@ public class Note {
      */
     public Note() {
         this.id = -1;
-        this.userId = -1;
+        this.author = "";
         this.header = "";
         this.content = "";
         this.lastModified = 0;
@@ -39,8 +38,8 @@ public class Note {
         return id;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getAuthor() {
+        return author;
     }
 
     public String getHeader() {
@@ -67,8 +66,8 @@ public class Note {
         this.id = id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public void setHeader(String header) {
@@ -109,7 +108,7 @@ public class Note {
         String result = "";
         //Tạo ra một String biểu diễn cho note
         result += note.getId() + ";;;";
-        result += note.getUserId() + ";;;";
+        result += note.getAuthor() + ";;;";
         result += note.getHeader() + ";;;";
         result += note.getContent() + ";;;";
         result += note.getLastModified() + ";;;";
@@ -132,7 +131,7 @@ public class Note {
         String[] strarr = str.split(";;;");
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
         note.setId(Integer.parseInt(strarr[0]));
-        note.setUserId(Integer.parseInt(strarr[1]));
+        note.setAuthor(strarr[1]);
         note.setHeader(strarr[2]);
         note.setContent(strarr[3]);
         note.setLastModified(Integer.parseInt(strarr[4]));

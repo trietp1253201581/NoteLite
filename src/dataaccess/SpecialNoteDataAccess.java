@@ -13,24 +13,24 @@ public interface SpecialNoteDataAccess extends BasicDataAccess<Note> {
     
     /**
      * Lấy note của user với header cho trước
-     * @param userId id của user sở hữu note
+     * @param author user sở hữu note
      * @param header header của note
      * @return (1) note lấy được nếu user này có note mang header đã cho, 
      * (2) giá trị default của note nếu user không có note mang header này  
      */
-    Note get(int userId, String header);
+    Note get(String author, String header);
     
     /**
      * Lấy note được chỉnh sửa mới nhật của user
-     * @param userId id của user
+     * @param author user sở hữu note
      * @return (1) note được chỉnh sửa mói nhất, (2) default note nếu user chưa có note nào
      */
-    Note getLast(int userId);
+    Note getLast(String author);
     
     /**
      * Lấy tất cả các note của một user
-     * @param userId id của user cần lấy note
+     * @param author user cần lấy note
      * @return một list chứa các note của user
      */
-    List<Note> getAll(int userId);
+    List<Note> getAll(String author);
 }

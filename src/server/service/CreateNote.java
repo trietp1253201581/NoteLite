@@ -34,7 +34,7 @@ public class CreateNote implements ServerService {
         //Tạo đối tượng access
         dataAccess = new NoteDataAccess();  
         //Kiểm tra note đã tồn tại hay chưa
-        Note check = dataAccess.get(note.getUserId(), note.getHeader());       
+        Note check = dataAccess.get(note.getAuthor(), note.getHeader());       
         if(!check.isDefaultValue()) {
             return "Exist";
         }
@@ -42,7 +42,7 @@ public class CreateNote implements ServerService {
         int rs = dataAccess.add(note);        
         if(rs > 0) {
             //Lấy Note vừa mới tạo
-            Note newNote = dataAccess.get(note.getUserId(), note.getHeader());
+            Note newNote = dataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về biểu diễn String của Note mới
             return Note.toString(newNote);
         } else {

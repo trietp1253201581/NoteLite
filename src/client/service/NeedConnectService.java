@@ -4,6 +4,7 @@ import client.networking.ClientRequest;
 import java.io.IOException;
 import model.Note;
 import model.RequestCommand;
+import model.ShareNote;
 import model.User;
 
 /**
@@ -15,7 +16,6 @@ import model.User;
 public class NeedConnectService {
     private static String serviceName;
     private static String data;
-    private static String replyFromServer;
     
     /**
      * Kiểm tra thông tin đăng nhập
@@ -29,9 +29,7 @@ public class NeedConnectService {
         serviceName = "CheckLogin";
         data = username + ";;;" + password;
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
@@ -45,9 +43,7 @@ public class NeedConnectService {
         serviceName = "CreateUser";
         data = User.toString(newUser);
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
@@ -61,25 +57,21 @@ public class NeedConnectService {
         serviceName = "UpdateUser";
         data = User.toString(user);
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
      * Mở Note chỉnh sửa gần nhất
-     * @param userId id của user
+     * @param author user sở hữu note
      * @return Kết quả thực thi service này từ server
      * @throws IOException 
      */
-    public static String openLastNote(int userId) throws IOException {
+    public static String openLastNote(String author) throws IOException {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "OpenLastNote";
-        data = String.valueOf(userId);
+        data = author;
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
@@ -93,43 +85,37 @@ public class NeedConnectService {
         serviceName = "CreateNote";
         data = Note.toString(newNote);
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
 
     /**
      * Mở Note
-     * @param userId id của user
+     * @param author user sở hữu note
      * @param header header của note cần mở
      * @return Kết quả thực thi service này từ server
      * @throws IOException 
      */
-    public static String openNote(int userId, String header) throws IOException {
+    public static String openNote(String author, String header) throws IOException {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "OpenNote";
-        data = userId + ";;;" + header;
+        data = author + ";;;" + header;
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
      * Xóa một Note
-     * @param userId id của user
+     * @param author user sở hữu note
      * @param header header của note cần xóa
      * @return Kết quả thực thi service này từ server
      * @throws IOException 
      */
-    public static String deleteNote(int userId, String header) throws IOException {
+    public static String deleteNote(String author, String header) throws IOException {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "DeleteNote";
-        data = userId + ";;;" + header;
+        data = author + ";;;" + header;
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
@@ -140,38 +126,62 @@ public class NeedConnectService {
      */
     public static String saveNote(Note note) throws IOException {
         //Tạo thông tin cho requestAndGetReply
-        serviceName = "CreateNote";
+        serviceName = "SaveNote";
         data = Note.toString(note);
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
     }
     
     /**
      * Lấy tất cả các note của user
-     * @param userId id của user
+     * @param author user sở hữu note
      * @return Kết quả thực thi service này từ server
      * @throws IOException 
      */
-    public static String getAllNotes(int userId) throws IOException {
+    public static String getAllNotes(String author) throws IOException {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "GetAllNotes";
-        data = String.valueOf(userId);
+        data = author;
         //Gửi yêu cầu và nhận phản hồi
-        requestAndGetReply();
-        //Trả về phản hồi
-        return replyFromServer;
+        return requestAndGetReply();
+    }
+    
+    /**
+     * Send Note
+     * @param shareNote ShareNote biểu diễn việc share note
+     * @return Kết quả thực thi service này từ server
+     * @throws IOException 
+     */
+    public static String sendNote(ShareNote shareNote) throws IOException {
+        //Tạo thông tin
+        serviceName = "SendNote";
+        data = ShareNote.toString(shareNote);
+        //Gửi yêu cầu và nhận phản hồi
+        return requestAndGetReply();
+    }
+    
+    /**
+     * Lấy tất cả các note được share
+     * @param receiver người nhận
+     * @return Kết quả thực thi service này từ server
+     * @throws IOException 
+     */
+    public static String getAllReceivedNotes(String receiver) throws IOException {
+        //Tạo thông tin
+        serviceName = "GetAllReceivedNotes";
+        data = receiver;
+        //Gửi yêu cầu và nhận phản hồi
+        return requestAndGetReply();
     }
     
     /**
      * Gửi yêu cầu và nhận phản hồi
      * @throws IOException 
      */
-    private static void requestAndGetReply() throws IOException{
+    private static String requestAndGetReply() throws IOException{
         //Tạo request
         RequestCommand requestCommand = new RequestCommand(serviceName, data);
-        //Gửi và nhận về phản hồi từ server
-        replyFromServer = ClientRequest.requestAndGetReply(requestCommand);
+        //Gửi yêu cầu, nhận phản hồi
+        return ClientRequest.requestAndGetReply(requestCommand);
     }
 }

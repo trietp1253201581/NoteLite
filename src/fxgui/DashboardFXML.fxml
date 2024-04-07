@@ -4,10 +4,14 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -106,6 +110,18 @@
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../image/file-export.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="shareNoteButton" layoutX="8.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleShareNoteButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Share">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/share.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -379,7 +395,7 @@
                   </Button>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="importExportScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css">
+            <AnchorPane fx:id="importExportScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
                <children>
                   <ComboBox fx:id="exportNoteComboBox" layoutX="216.0" layoutY="77.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" />
                   <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="159.0" text="Export Note" textAlignment="CENTER">
@@ -435,6 +451,61 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="shareNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0">
+               <children>
+                  <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="191.0" text="Share your Note" textAlignment="CENTER">
+                     <font>
+                        <Font name="Corbel Bold" size="26.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="chooseShareNoteComboBox" layoutX="203.0" layoutY="77.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" />
+                  <Label layoutX="30.0" layoutY="80.0" text="Choose Note to share">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="30.0" layoutY="120.0" text="Choose user to share">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="chooseUserShareField" layoutX="203.0" layoutY="115.0" prefHeight="29.0" prefWidth="320.0" text="Enter the username" />
+                  <Label layoutX="30.0" layoutY="160.0" text="Choose share type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <RadioButton fx:id="shareTypeReadOnly" layoutX="203.0" layoutY="162.0" mnemonicParsing="false" text="Read Only">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="ShareType" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="shareTypeCanEdit" layoutX="320.0" layoutY="162.0" mnemonicParsing="false" text="Can Edit" toggleGroup="$ShareType" />
+                  <Button fx:id="sendNoteButton" layoutX="260.0" layoutY="200.0" mnemonicParsing="false" onAction="#handleSendNoteButton" text="Send">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Separator layoutX="30.0" layoutY="241.0" prefHeight="3.0" prefWidth="510.0" />
+                  <Label layoutX="30.0" layoutY="260.0" prefHeight="32.0" prefWidth="191.0" text="Shared by other" textAlignment="CENTER">
+                     <font>
+                        <Font name="Corbel Bold" size="26.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="sharedByOtherTable" layoutX="30.0" layoutY="300.0" prefHeight="200.0" prefWidth="510.0">
+                    <columns>
+                      <TableColumn fx:id="senderUsernameColumn" prefWidth="146.6666259765625" text="Sender" />
+                      <TableColumn fx:id="headerColumn" prefWidth="279.3333435058594" text="Header" />
+                        <TableColumn fx:id="shareTypeColumn" prefWidth="83.33331298828125" text="Share Type" />
+                    </columns>
+                  </TableView>
+                  <Button fx:id="openShareNoteButton" layoutX="258.0" layoutY="522.0" mnemonicParsing="false" onAction="#handleOpenShareNoteButton" text="Open">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
          </children>

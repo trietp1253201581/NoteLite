@@ -33,7 +33,7 @@ public class SaveNote implements ServerService {
         //Tạo đối tượng access dữ liệu
         dataAccess = new NoteDataAccess(); 
         //Nếu chưa có note thì tạo note mới và trả về
-        if(dataAccess.get(note.getUserId(), note.getHeader()).isDefaultValue()) {
+        if(dataAccess.get(note.getAuthor(), note.getHeader()).isDefaultValue()) {
             //Tạo Note mới
             int rs = dataAccess.add(note);    
             //Trả về
@@ -44,7 +44,7 @@ public class SaveNote implements ServerService {
             }
         }
         //Thiết lập note cần lưu là note được chỉnh sửa gần nhất
-        Note lastNote = dataAccess.getLast(note.getUserId());
+        Note lastNote = dataAccess.getLast(note.getAuthor());
         lastNote.setLastModified(0);
         dataAccess.update(lastNote);
         //Update note mới
@@ -52,7 +52,7 @@ public class SaveNote implements ServerService {
         //Kiểm tra điều kiện thực hiện lệnh
         if(rs > 0) {
             //Lấy Note vừa được lưu
-            Note updatedNote = dataAccess.get(note.getUserId(), note.getHeader());
+            Note updatedNote = dataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về dưới dạng string
             return Note.toString(updatedNote);
         } else {
