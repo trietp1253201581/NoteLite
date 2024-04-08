@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.RequestCommand;
 import model.User;
-import client.networking.ClientRequest;
+import client.networking.ClientRequestProcessor;
 import client.service.NeedConnectService;
 
 /**

@@ -1,4 +1,4 @@
-package dataaccess.connectdatabase;
+package dataaccess.connection;
 
 import java.sql.Connection;
 
@@ -8,7 +8,7 @@ import java.sql.Connection;
  * @since 30/03/2024
  * @version 1.0
  */
-public interface ConnectDatabase {
+public interface DatabaseConnection {
 
     /**
      * Lấy kết nối JDBC

@@ -10,7 +10,7 @@ import model.Note;
  * @since 30/03/2024
  * @version 1.0
  */
-public class CreateNote implements ServerService {   
+public class CreateNoteService implements ServerService {   
     private Note note;
     private SpecialNoteDataAccess dataAccess;
     

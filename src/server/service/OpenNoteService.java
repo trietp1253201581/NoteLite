@@ -5,12 +5,12 @@ import dataaccess.SpecialNoteDataAccess;
 import model.Note;
 
 /**
- * Xóa một Note đã có
+ * Mở note với header và author cho trước
  * @author Lê Minh Triết
  * @since 30/03/2024
  * @version 1.0
  */
-public class DeleteNote implements ServerService {    
+public class OpenNoteService implements ServerService {    
     private String author;
     private String header;
     private SpecialNoteDataAccess dataAccess;
@@ -22,33 +22,27 @@ public class DeleteNote implements ServerService {
     @Override
     public void setData(String data) {
         //Chia data thành các phần và gán cho các thuộc tính
-        String[] datas = data.split(";;;");       
+        String[] datas = data.split(";;;");
         this.author = datas[0];
         this.header = datas[1];
     }
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) {@code "Not exist"} nếu note không tồn tại,
-     * (2) Note vừa được xóa nếu xóa được,
-     * (3) {@code "Can't delete "} nếu không thực hiện lệnh xóa được
+     * @return Kết quả của việc thực thi, (1) Note được mở nếu tìm được,
+     * (2) {@code "Not found"} nếu user không có note với header này
      */
     @Override
-    public String execute() {    
+    public String execute() {        
         //Tạo đối tượng access dữ liệu
-        dataAccess = new NoteDataAccess(); 
-        //Kiểm tra note có tồn tại khong
+        dataAccess = new NoteDataAccess();
+        //Mở note
         Note note = dataAccess.get(author, header);
-        if(note.isDefaultValue()) {
-            return "Not exist";
-        }
-        //Thực hiện lệnh xóa      
-        int rs = dataAccess.delete(note.getId());        
-        if(rs > 0) {
-            //Trả về biểu diễn String của note được xóa
+        //Kiểm tra điều kiện và trả về
+        if(!note.isDefaultValue()) {
             return Note.toString(note);
         } else {
-            return "Can't delete";
-        }      
-    } 
+            return "Not exist";
+        }        
+    }    
 }

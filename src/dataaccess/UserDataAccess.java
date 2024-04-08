@@ -1,7 +1,6 @@
 package dataaccess;
 
-import dataaccess.connectdatabase.ConnectDatabase;
-import dataaccess.connectdatabase.ConnectMySQLDatabase;
+import dataaccess.connection.MySQLDatabaseConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -10,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.User;
+import dataaccess.connection.DatabaseConnection;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với User
@@ -24,7 +24,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
      * Khởi tạo và lấy connection tới Database
      */
     public UserDataAccess() {
-        ConnectDatabase connectSQLDatabase = new ConnectMySQLDatabase();
+        DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
     }
 

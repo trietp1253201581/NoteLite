@@ -10,7 +10,7 @@ import model.User;
  * @since 30/03/2024
  * @version 1.0
  */
-public class CheckLogin implements ServerService {  
+public class CheckLoginService implements ServerService {  
     private String username;
     private String password;
     private SpecialUserDataAccess dataAccess;

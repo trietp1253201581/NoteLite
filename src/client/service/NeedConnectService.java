@@ -1,6 +1,6 @@
 package client.service;
 
-import client.networking.ClientRequest;
+import client.networking.ClientRequestProcessor;
 import java.io.IOException;
 import model.Note;
 import model.RequestCommand;
@@ -182,6 +182,6 @@ public class NeedConnectService {
         //Tạo request
         RequestCommand requestCommand = new RequestCommand(serviceName, data);
         //Gửi yêu cầu, nhận phản hồi
-        return ClientRequest.requestAndGetReply(requestCommand);
+        return ClientRequestProcessor.requestAndGetReply(requestCommand);
     }
 }

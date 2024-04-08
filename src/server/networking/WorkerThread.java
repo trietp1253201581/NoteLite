@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import model.RequestCommand;
-import server.service.RequestProcess;
+import server.service.ServerRequestProcessor;
 
 /**
  * Cung cấp các phương thức để xử lý luồng truy cập
@@ -47,7 +47,7 @@ public class WorkerThread extends Thread {
                 //Thông báo thông điệp
                 System.out.println(socket + " say " + str);
                 //Chuyển thành RequestCommand và xử lý
-                String rs = RequestProcess.process(RequestCommand.valueOf(str));  
+                String rs = ServerRequestProcessor.process(RequestCommand.valueOf(str));  
                 //Trả về kết quả
                 dataOutputStream.writeUTF(rs);
                 dataOutputStream.flush();

@@ -12,7 +12,7 @@ import model.ShareNote;
  * @since 07/04/2024
  * @version 1.0
  */
-public class SendNote implements ServerService {
+public class SendNoteService implements ServerService {
     private ShareNote shareNote;
     private SpecialShareNoteDataAccess dataAccess;
     

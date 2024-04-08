@@ -10,7 +10,7 @@ import model.User;
  * @since 30/03/2024
  * @version 1.0
  */
-public class CreateUser implements ServerService {    
+public class CreateUserService implements ServerService {    
     private User user;
     private SpecialUserDataAccess dataAccess;
     

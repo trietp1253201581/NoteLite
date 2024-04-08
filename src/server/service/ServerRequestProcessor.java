@@ -8,7 +8,7 @@ import model.RequestCommand;
  * @since 30/03/2024
  * @version 1.0
  */
-public class RequestProcess {
+public class ServerRequestProcessor {
 
     /**
      * Xử lý request

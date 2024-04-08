@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.dataconvert.ConvertFilter;
+import model.dataconverter.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note
@@ -113,7 +113,7 @@ public class Note {
         result += note.getContent() + ";;;";
         result += note.getLastModified() + ";;;";
         result += note.getLastModifiedDate() + ";;;";
-        result += ConvertFilter.convertToString(note.getFilters()) + ";;;";
+        result += NoteFilterConverter.convertToString(note.getFilters()) + ";;;";
         result += "///";
         
         return result;    
@@ -136,7 +136,7 @@ public class Note {
         note.setContent(strarr[3]);
         note.setLastModified(Integer.parseInt(strarr[4]));
         note.setLastModifiedDate(Date.valueOf(strarr[5]));
-        note.setFilters(ConvertFilter.convertToList(strarr[6]));
+        note.setFilters(NoteFilterConverter.convertToList(strarr[6]));
         
         return note;      
     }

@@ -1,4 +1,4 @@
-package model.dataconvert;
+package model.dataconverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.List;
  * @since 30/03/2024
  * @version 1.0
  */
-public class ConvertFilter {
+public class NoteFilterConverter {
 
     /**
      * Chuyển list các filter thành String

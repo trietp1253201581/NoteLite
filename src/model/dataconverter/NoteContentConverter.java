@@ -1,4 +1,4 @@
-package model.dataconvert;
+package model.dataconverter;
 
 /**
  * Chuyển một text hiển thị trên GUI sang một text lưu trong CSDL và ngược lại
@@ -6,7 +6,7 @@ package model.dataconvert;
  * @since 30/03/2024
  * @version 1.0
  */
-public class ConvertContent {
+public class NoteContentConverter {
     
     /**
      * Chuyển một text ở GUI sang text lưu trong CSDL

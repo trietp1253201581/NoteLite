@@ -11,7 +11,7 @@ import model.Note;
  * @since 30/03/2024
  * @version 1.0
  */
-public class GetAllNotes implements ServerService {   
+public class GetAllNotesService implements ServerService {   
     private String author;
     private SpecialNoteDataAccess dataAccess;
     

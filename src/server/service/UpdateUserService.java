@@ -10,7 +10,7 @@ import model.User;
  * @since 30/03/2024
  * @version 1.0
  */
-public class UpdateUser implements ServerService {    
+public class UpdateUserService implements ServerService {    
     private User user;
     private SpecialUserDataAccess dataAccess;
     

@@ -1,4 +1,4 @@
-package dataaccess.connectdatabase;
+package dataaccess.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * @since 30/03/2024
  * @version 1.0
  */
-public class ConnectMySQLDatabase implements ConnectDatabase {
+public class MySQLDatabaseConnection implements DatabaseConnection {
     
     /**
      * Lấy kết nối JDBC

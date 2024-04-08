@@ -11,7 +11,7 @@ import model.ShareNote;
  * @since 07/04/2024
  * @version 1.0
  */
-public class GetAllReceivedNotes implements ServerService {
+public class GetAllReceivedNotesService implements ServerService {
     private String receiver;
     private SpecialShareNoteDataAccess dataAccess;
     

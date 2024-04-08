@@ -1,7 +1,6 @@
 package dataaccess;
 
-import dataaccess.connectdatabase.ConnectDatabase;
-import dataaccess.connectdatabase.ConnectMySQLDatabase;
+import dataaccess.connection.MySQLDatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.ShareNote;
 import model.ShareType;
-import model.User;
+import dataaccess.connection.DatabaseConnection;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với ShareNote
@@ -25,7 +24,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      * Khởi tạo và lấy connection tới Database
      */
     public ShareNoteDataAccess() {
-        ConnectDatabase connectSQLDatabase = new ConnectMySQLDatabase();
+        DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
     }
     
