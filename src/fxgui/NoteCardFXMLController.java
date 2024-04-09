@@ -1,12 +1,9 @@
 package fxgui;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -28,6 +25,15 @@ public class NoteCardFXMLController {
     @FXML
     private Label lastModified;
     
+    public String getHeader() {
+        return header.getText();
+    }
+    
+    public void setLabelStyle(String style) {
+        header.setStyle(style);
+        lastModified.setStyle(style);
+    }
+    
     /**
      * Thiết lập dữ liệu cho Note Card
      * @param note note chứa dữ liệu cần chuyển vào Note Card
@@ -35,7 +41,7 @@ public class NoteCardFXMLController {
     public void setData(Note note) {
         header.setText(note.getHeader());
         lastModified.setText(String.valueOf(note.getLastModifiedDate()));
-        loadFilter(note.getFilters(), 3);
+        loadFilter(note.getFilters(), 5);
     }
     
     /**

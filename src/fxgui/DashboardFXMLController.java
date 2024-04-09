@@ -34,11 +34,14 @@ import java.io.File;
 import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import model.ShareNote;
 import model.ShareType;
@@ -68,8 +71,6 @@ public class DashboardFXMLController {
     private AnchorPane myNotesScene;
     @FXML
     private VBox noteCardLayout;   
-    @FXML
-    private Button openButton;
     @FXML
     private Button myNotesButton;
     @FXML
@@ -101,9 +102,7 @@ public class DashboardFXMLController {
     @FXML
     private Button createNoteButton;   
     @FXML
-    private Button deleteNoteButton;   
-    @FXML
-    private Button openNoteButton;   
+    private Button deleteNoteButton;    
     @FXML
     private AnchorPane myAccountScene;
     @FXML
@@ -411,40 +410,6 @@ public class DashboardFXMLController {
             }
         });
     }
-
-    @FXML
-    void handleOpenNoteButton(ActionEvent event) {
-        //Lấy list các header note
-        List<String> myNotesHeader = new ArrayList<>();  
-        for(Note note: myNotes){
-            myNotesHeader.add(note.getHeader());
-        }
-        //Hiện dialog để chọn note cần mở
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(myNotesHeader.get(0), myNotesHeader);
-        dialog.setTitle("Open your note");
-        dialog.setHeaderText("Choose note");
-        //Lấy kết quả
-        Optional<String> confirm = dialog.showAndWait();
-        //Xử lý kết quả khi nhấn OK
-        confirm.ifPresent(selectedHeader -> {
-            //Mở Note được chọn
-            try {
-                replyFromServer = NeedConnectService.openNote(user.getUsername(), selectedHeader);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            //Nhận reply từ server và thông báo
-            if(replyFromServer.equals("Not exist")) {
-                showAlert(Alert.AlertType.ERROR, replyFromServer);
-            } else {
-                //Lấy thông tin note được mở
-                myNote = Note.valueOf(replyFromServer);
-                //Load lại Edit Scene và mở Edit Scene
-                initEditScene();
-                changeScene(editNoteButton);
-            }
-        });
-    }
     
     @FXML
     void handleDeleteNoteButton(ActionEvent event) {
@@ -721,22 +686,53 @@ public class DashboardFXMLController {
      * @param notes list các note muốn hiện
      */
     private void initMyNotesScene(List<Note> notes) {        
-        //Làm sạch layout và thêm vào hàng tiêu đề
-        Node first = noteCardLayout.getChildren().getFirst();
+        //Làm sạch layout
         noteCardLayout.getChildren().clear();
-        noteCardLayout.getChildren().add(first);
+        noteCardLayout.setSpacing(3);
         //Load các Note Card
         for(int i=0; i < notes.size(); i++) {
             //Load Note Card Layout
             FXMLLoader fXMLLoader = new FXMLLoader();
             fXMLLoader.setLocation(getClass().getResource("NoteCardFXML.fxml"));
             try {
-                HBox hbox = fXMLLoader.load();
+                VBox box = fXMLLoader.load();
                 //Thiết lập dữ liệu cho Note Card
                 NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
                 noteCardFXMLController.setData(notes.get(i));
+                //Xử lý khi nhấn vào note card
+                box.setOnMouseClicked(new EventHandler<MouseEvent>(){
+                    @Override
+                    public void handle(MouseEvent event) {
+                        noteCardFXMLController.setLabelStyle("-fx-background-color: #3a737a");
+                        //Tạo thông báo và mở note nếu chọn OK
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Open Note");
+                        alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
+                        Optional<ButtonType> optional = alert.showAndWait();
+                        if(optional.get() == ButtonType.OK) {
+                            try {
+                                replyFromServer = NeedConnectService.openNote(user.getUsername(), 
+                                        noteCardFXMLController.getHeader());
+                                //Nhận reply từ server và thông báo
+                                if(replyFromServer.equals("Not exist")) {
+                                    showAlert(Alert.AlertType.ERROR, replyFromServer);
+                                } else {
+                                    //Lấy thông tin note được mở
+                                    myNote = Note.valueOf(replyFromServer);
+                                    //Load lại Edit Scene và mở Edit Scene
+                                    initEditScene();
+                                    changeScene(editNoteButton);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        noteCardFXMLController.setLabelStyle("-fx-background-color: transparent");
+                    }
+                });
+
                 //Thêm Note Card vào layout
-                noteCardLayout.getChildren().add(hbox);
+                noteCardLayout.getChildren().add(box);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

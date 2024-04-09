@@ -37,4 +37,8 @@
     -fx-background-color: linear-gradient(to bottom right, #ab74c7, #ce7292);
     -fx-background-radius: 10px;
 }
+.vbox_form{
+    -fx-border-color: #000;
+    -fx-border-width: 1.5px 0px 1.5px 0px;
+}
 

@@ -5,26 +5,37 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="50.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.NoteCardFXMLController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="520.0" styleClass="vbox_form" stylesheets="@noteappfxml.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.NoteCardFXMLController">
    <children>
-      <Label fx:id="header" alignment="CENTER" prefHeight="50.0" prefWidth="185.0" styleClass="hbox-element" stylesheets="@noteappfxml.css" text="Header">
-         <font>
-            <Font name="Corbel Bold" size="14.0" />
-         </font></Label>
-      <Label fx:id="lastModified" alignment="CENTER" prefHeight="50.0" prefWidth="85.0" styleClass="hbox-element" stylesheets="@noteappfxml.css" text="Last Modified">
-         <font>
-            <Font name="Corbel Bold" size="14.0" />
-         </font></Label>
-      <ScrollPane prefHeight="50.0" prefWidth="280.0" style="-fx-background-color: #fff;">
-         <content>
-            <GridPane fx:id="filterGridLayout">
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-         </content>
-      </ScrollPane>
+      <HBox prefHeight="30.0" prefWidth="540.0" styleClass="register-top-form" stylesheets="@noteappfxml.css">
+         <children>
+            <Label fx:id="header" prefHeight="30.0" prefWidth="420.0" text="Header">
+               <font>
+                  <Font name="Corbel Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="lastModified" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="100.0" text="Date">
+               <font>
+                  <Font name="Corbel Italic" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox prefHeight="45.0" prefWidth="550.0" styleClass="register-top-form" stylesheets="@noteappfxml.css">
+         <children>
+            <ScrollPane prefHeight="45.0" prefWidth="520.0">
+               <content>
+                  <GridPane fx:id="filterGridLayout">
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                  </GridPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </HBox>
    </children>
-</HBox>
+</VBox>

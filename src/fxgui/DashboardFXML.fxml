@@ -130,7 +130,7 @@
                   </AnchorPane>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="editNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+            <AnchorPane fx:id="editNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css">
                <children>
                   <TextField fx:id="noteHeaderField" layoutX="24.0" layoutY="11.0" onAction="#handleNoteHeaderField">
                      <font>
@@ -152,12 +152,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="saveButton" layoutX="457.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Save">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="openButton" layoutX="300.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleMyNotesButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Open">
+                  <Button fx:id="saveButton" layoutX="462.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Save">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -240,34 +235,12 @@
                      <content>
                         <HBox prefHeight="350.0" prefWidth="550.0">
                            <children>
-                              <VBox fx:id="noteCardLayout" prefHeight="350.0" prefWidth="550.0">
-                                 <children>
-                                    <HBox prefHeight="50.0" prefWidth="550.0">
-                                       <children>
-                                          <Label fx:id="header1" alignment="CENTER" prefHeight="50.0" prefWidth="185.0" styleClass="hbox-element" stylesheets="@noteappfxml.css" text="Header">
-                                             <font>
-                                                <Font name="Corbel Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="lastModified" alignment="CENTER" prefHeight="50.0" prefWidth="85.0" styleClass="hbox-element" stylesheets="@noteappfxml.css" text="Last Modified">
-                                             <font>
-                                                <Font name="Corbel Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="lastModified1" alignment="CENTER" prefHeight="50.0" prefWidth="280.0" styleClass="hbox-element" stylesheets="@noteappfxml.css" text="Filters">
-                                             <font>
-                                                <Font name="Corbel Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
+                              <VBox fx:id="noteCardLayout" prefHeight="350.0" prefWidth="550.0" />
                            </children>
                         </HBox>
                      </content>
                   </ScrollPane>
-                  <Button fx:id="createNoteButton" layoutX="116.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleCreateNoteButton" prefHeight="30.0" prefWidth="88.0" text="Create">
+                  <Button fx:id="createNoteButton" layoutX="149.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleCreateNoteButton" prefHeight="30.0" prefWidth="88.0" text="Create">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -276,20 +249,11 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteNoteButton" layoutX="225.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleDeleteNoteButton" prefHeight="30.0" prefWidth="88.0" text="Delete">
+                  <Button fx:id="deleteNoteButton" layoutX="337.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleDeleteNoteButton" prefHeight="30.0" prefWidth="88.0" text="Delete">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/trash.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="openNoteButton" layoutX="337.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleOpenNoteButton" prefHeight="30.0" prefWidth="88.0" text="Open">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/folder-open.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -453,7 +417,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="shareNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0">
+            <AnchorPane fx:id="shareNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" visible="false">
                <children>
                   <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="191.0" text="Share your Note" textAlignment="CENTER">
                      <font>
