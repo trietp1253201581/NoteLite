@@ -28,8 +28,10 @@ public class SendNoteService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) ShareNote send được,
-     * (3) {@code "Can't send"} nếu không thực hiện lệnh tạo được
-     * (4) {@code "Receiver not exist"} nếu receiver không tồn tại
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * nếu receiver không tồn tại
+     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * nếu không thực hiện lệnh tạo được
      */
     @Override
     public String execute() {
@@ -38,7 +40,7 @@ public class SendNoteService implements ServerService {
         //Kiểm tra receiver có tồn tại hay không
         SpecialUserDataAccess userDataAccess = new UserDataAccess();
         if(userDataAccess.get(shareNote.getReceiver()).isDefaultValue()) {
-            return "Receiver not exist";
+            return ServerServiceErrorType.NOT_EXISTS.toString();
         }
         //Kiểm tra ShareNote đã tồn tại hay chưa
         ShareNote check = dataAccess.get(shareNote.getSender(), 
@@ -54,7 +56,7 @@ public class SendNoteService implements ServerService {
                 //Trả về String biểu diễn ShareNote vừa tạo
                 return ShareNote.toString(shareNote);
             } else {
-                return "Can't send";
+                return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
             }
         }
         //Thực hiện thêm ShareNote
@@ -66,7 +68,7 @@ public class SendNoteService implements ServerService {
             //Trả về String biểu diễn ShareNote vừa tạo
             return ShareNote.toString(shareNote);
         } else {
-            return "Can't send";
+            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }
     }
 }

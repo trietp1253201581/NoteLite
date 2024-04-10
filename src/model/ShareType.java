@@ -8,30 +8,4 @@ package model;
  */
 public enum ShareType {
     CAN_EDIT, READ_ONLY;
-    
-    /**
-     * Chuyển một ShareType thành String
-     * @param shareType ShareType cần chuyển
-     * @return String thu được
-     */
-    public static String toString(ShareType shareType) {
-        if(shareType == ShareType.READ_ONLY) {
-            return "READ_ONLY";
-        } else {
-            return "CAN_EDIT";
-        }
-    }
-    
-    /**
-     * Chuyển một String thành ShareType
-     * @param str Share
-     * @return 
-     */
-    public static ShareType toShareType(String str) {
-        if(str.equals("READ_ONLY")) {
-            return ShareType.READ_ONLY;
-        } else {
-            return ShareType.CAN_EDIT;
-        }
-    }
 }

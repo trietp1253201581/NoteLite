@@ -30,8 +30,10 @@ public class CheckLoginService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) Một {@link User} nếu tài khoản tồn tại và mật khẩu đúng,
-     * (2) String {@code "False"} nếu tài khoản tồn tại nhưng mật khẩu sai,
-     * (3) String {@code "Not found"} nếu tài khoản không tồn tại
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code FALSE_INFORMATION} 
+     * nếu tài khoản tồn tại nhưng mật khẩu sai,
+     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS} 
+     * nếu tài khoản không tồn tại
      */
     @Override
     public String execute() { 
@@ -41,11 +43,11 @@ public class CheckLoginService implements ServerService {
         User user = dataAccess.get(username);
         //Kiểm tra các điều kiện và trả về
         if(user.isDefaultValue()) {
-            return "Not found";
+            return ServerServiceErrorType.NOT_EXISTS.toString();
         } else if(user.getPassword().equals(password)) {
             return User.toString(user);
         } else {
-            return "False";
+            return ServerServiceErrorType.FALSE_INFORMATION.toString();
         }
     }    
 }

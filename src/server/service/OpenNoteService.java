@@ -30,7 +30,8 @@ public class OpenNoteService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) Note được mở nếu tìm được,
-     * (2) {@code "Not found"} nếu user không có note với header này
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * nếu user không có note với header này
      */
     @Override
     public String execute() {        
@@ -42,7 +43,7 @@ public class OpenNoteService implements ServerService {
         if(!note.isDefaultValue()) {
             return Note.toString(note);
         } else {
-            return "Not exist";
+            return ServerServiceErrorType.NOT_EXISTS.toString();
         }        
     }    
 }

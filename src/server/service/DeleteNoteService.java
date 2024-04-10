@@ -29,9 +29,12 @@ public class DeleteNoteService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) {@code "Not exist"} nếu note không tồn tại,
+     * @return Kết quả của việc thực thi, 
+     * (1) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * nếu note không tồn tại,
      * (2) Note vừa được xóa nếu xóa được,
-     * (3) {@code "Can't delete "} nếu không thực hiện lệnh xóa được
+     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE} 
+     * nếu không thực hiện lệnh xóa được
      */
     @Override
     public String execute() {    
@@ -40,7 +43,7 @@ public class DeleteNoteService implements ServerService {
         //Kiểm tra note có tồn tại khong
         Note note = dataAccess.get(author, header);
         if(note.isDefaultValue()) {
-            return "Not exist";
+            return ServerServiceErrorType.NOT_EXISTS.toString();
         }
         //Thực hiện lệnh xóa      
         int rs = dataAccess.delete(note.getId());        
@@ -48,7 +51,7 @@ public class DeleteNoteService implements ServerService {
             //Trả về biểu diễn String của note được xóa
             return Note.toString(note);
         } else {
-            return "Can't delete";
+            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }      
     } 
 }

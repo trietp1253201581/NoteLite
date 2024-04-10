@@ -86,7 +86,7 @@ public class ShareNote {
         result += shareNote.getSender() + ";;;";
         result += shareNote.getReceiver() + ";;;";
         result += shareNote.getHeader() + ";;;";
-        result += ShareType.toString(shareNote.getShareType()) + ";;;";
+        result += shareNote.getShareType() + ";;;";
         result += "///";
         
         return result;
@@ -107,7 +107,7 @@ public class ShareNote {
         shareNote.setSender(strarr[1]);
         shareNote.setReceiver(strarr[2]);
         shareNote.setHeader(strarr[3]);
-        shareNote.setShareType(ShareType.toShareType(strarr[4]));
+        shareNote.setShareType(ShareType.valueOf(strarr[4]));
         
         return shareNote;
     }

@@ -28,7 +28,8 @@ public class GetAllNotesService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) String gồm các biểu diễn string của từng note, 
      * được ngăn cách bởi {@code ":::"}, 
-     * (2) {@code "Not found"} nếu user này chưa có note nào
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * nếu user này chưa có note nào
      */
     @Override
     public String execute() {       
@@ -43,7 +44,7 @@ public class GetAllNotesService implements ServerService {
                 result += Note.toString(note) + ":::";
             }
         } else {
-            result = "Not found";
+            result = ServerServiceErrorType.NOT_EXISTS.toString();
         }     
         
         return result;      

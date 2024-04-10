@@ -16,6 +16,7 @@ public class NoteLiteServer {
     
     /**
      * @param args the command line arguments
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         //Tạo và chạy server

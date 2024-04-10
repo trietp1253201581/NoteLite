@@ -18,7 +18,7 @@ import dataaccess.connection.DatabaseConnection;
  * @version 1.0
  */
 public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
-    private Connection connection;
+    private final Connection connection;
      
     /**
      * Khởi tạo và lấy connection tới Database
@@ -36,6 +36,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     @Override
     public List<ShareNote> getAllReceived(String receiver) {
         List<ShareNote> shareNotes = new ArrayList<>();
+        //Kiểm tra null
+        if(connection == null) {
+            return shareNotes;
+        }
         //Câu truy vấn SQL
         String query = "SELECT shr.ID, user1.USERNAME as SENDER, user2.USERNAME as RECEIVER, HEADER, SHARETYPE "
                 + "FROM sharenote shr, notes nt, users user1, users user2 "
@@ -56,12 +60,12 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setSender(resultSet.getString("SENDER"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setShareType(ShareType.toShareType(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 //Thêm shareNote vào list
                 shareNotes.add(shareNote);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return shareNotes;
@@ -76,6 +80,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      */
     @Override
     public ShareNote get(String sender, String receiver, String header) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new ShareNote();
+        }
         //Câu truy vấn SQL
         String query = "SELECT shr.ID, user1.USERNAME as SENDER, user2.USERNAME as RECEIVER, HEADER, SHARETYPE "
                 + "FROM sharenote shr, notes nt, users user1, users user2 "
@@ -99,12 +107,12 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setSender(resultSet.getString("SENDER"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setShareType(ShareType.toShareType(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 
                 return shareNote;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về default shareNote nếu không tìm được
         return new ShareNote();
@@ -117,6 +125,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      */
     @Override
     public ShareNote get(int id) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new ShareNote();
+        }
         //Câu truy vấn SQL
         String query = "SELECT shr.ID, user1.USERNAME as SENDER, user2.USERNAME as RECEIVER, HEADER, SHARETYPE "
                 + "FROM sharenote shr, notes nt, users user1, users user2 "
@@ -137,12 +149,12 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setSender(resultSet.getString("SENDER"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setShareType(ShareType.toShareType(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 
                 return shareNote;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về default shareNote nếu không tìm được
         return new ShareNote();
@@ -156,6 +168,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      */
     @Override
     public int add(ShareNote shareNote) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "INSERT INTO SHARENOTE(SENDERID, RECEIVERID, NOTEID, SHARETYPE)"
                 + "VALUES(?, ?, ?, ?)";
@@ -172,11 +188,11 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             preparedStatement.setInt(1, senderId);
             preparedStatement.setInt(2, receiverId);
             preparedStatement.setInt(3, noteId);
-            preparedStatement.setString(4, ShareType.toString(shareNote.getShareType()));
+            preparedStatement.setString(4, shareNote.getShareType().toString());
             
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -190,6 +206,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      */
     @Override
     public int update(ShareNote shareNote) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "UPDATE SHARENOTE SET SENDERID = ?, RECEIVERID = ?, "
                 + "NOTEID = ?, SHARETYPE = ? WHERE ID = ?";
@@ -206,12 +226,12 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             preparedStatement.setInt(1, senderId);
             preparedStatement.setInt(2, receiverId);
             preparedStatement.setInt(3, noteId);
-            preparedStatement.setString(4, ShareType.toString(shareNote.getShareType()));
+            preparedStatement.setString(4, shareNote.getShareType().toString());
             preparedStatement.setInt(5, shareNote.getId());
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -225,6 +245,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
      */
     @Override
     public int delete(int id) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "DELETE FROM SHARENOTE WHERE ID = ?";
 
@@ -235,7 +259,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;

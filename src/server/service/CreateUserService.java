@@ -25,9 +25,12 @@ public class CreateUserService implements ServerService {
 
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) {@code "Exist"} nếu tài khoản đã tồn tại,
+     * @return Kết quả của việc thực thi, 
+     * (1) String biểu diễn {@link ServerServiceErrorType}.{@code ALREADY_EXISTS}
+     * nếu tài khoản đã tồn tại,
      * (2) User mới nếu tạo được,
-     * (3) {@code "Can't create"} nếu không thực hiện lệnh tạo được
+     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * nếu không thực hiện lệnh tạo được
      */
     @Override
     public String execute() {       
@@ -36,7 +39,7 @@ public class CreateUserService implements ServerService {
         //Kiểm tra xem tài khoản đã tồn tại chưa
         User check = dataAccess.get(user.getUsername());
         if(!check.isDefaultValue()) {
-            return "Exist";
+            return ServerServiceErrorType.ALREADY_EXISTS.toString();
         }
         //Thực hiện lệnh thêm user
         int rs = dataAccess.add(user);
@@ -46,7 +49,7 @@ public class CreateUserService implements ServerService {
             //Trả về biểu diễn String của user
             return User.toString(newUser);
         } else {
-            return "Can't creat";
+            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }        
     }    
 }

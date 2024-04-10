@@ -15,7 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.User;
-import client.service.NeedConnectService;
+import client.service.ClientServerService;
+import client.service.ClientServerServiceErrorType;
 
 /**
  * FXML Controller class cho Login GUI
@@ -45,33 +46,30 @@ public class LoginFXMLController {
         String username = usernameField.getText();
         String password = passwordField.getText();
       
-        try {
-            //Kiểm tra thông tin đăng nhập
-            String result = NeedConnectService.checkLogin(username, password);
-            //Thông báo với user
-            if(result.equals("Not found")) {
-                showAlert(AlertType.ERROR, "Not exist account");
-            } else if(result.equals("False")) {
-                showAlert(AlertType.ERROR, "False password");
-            } else {
-                showAlert(AlertType.INFORMATION, "Successfully Login");
-                //Thiết lập user nhận được
-                User user = User.valueOf(result);
-                //Mở Dashboard của user này
-                openDashBoard(user);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        //Kiểm tra thông tin đăng nhập
+        String result = ClientServerService.checkLogin(username, password);
+        //Thông báo với user
+        if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(result)) {
+            showAlert(AlertType.ERROR, "Not exist account");
+        } else if(ClientServerServiceErrorType.FALSE_INFORMATION.toString().equals(result)) {
+            showAlert(AlertType.ERROR, "False password");
+        } else if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(result)) {
+            showAlert(AlertType.ERROR, "Can't connect to server");
+        } else {
+            showAlert(AlertType.INFORMATION, "Successfully Login");
+            //Thiết lập user nhận được
+            User user = User.valueOf(result);
+            //Mở Dashboard của user này
+            openDashBoard(user);
         }
     }
     
     /**
      * Xử lý sự kiện khi click chuột vào Register Label
      * @param event
-     * @throws IOException 
      */
     @FXML
-    void registerLabelClicked(MouseEvent event) throws IOException {       
+    void registerLabelClicked(MouseEvent event) {       
         openRegister();
     }
     
@@ -80,42 +78,50 @@ public class LoginFXMLController {
      * @param user user được mở Dashboard
      * @throws IOException 
      */
-    private void openDashBoard(User user) throws IOException {
-        //Ẩn Login GUI
-        loginButton.getScene().getWindow().hide();
-        //Load GUI Dashboard
-        FXMLLoader fXMLLoader = new FXMLLoader();
-        fXMLLoader.setLocation(getClass().getResource("DashboardFXML.fxml"));
-        //Chuyển sang GUI Dashboard
-        Stage stage = (Stage)loginButton.getScene().getWindow();
-        Scene scene = new Scene(fXMLLoader.load());
-        //Thiết lập dữ liệu user cho Dashboard
-        DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
-        dashboardFXMLController.setUser(user);
-        //Hiển thị Dashboard
-        dashboardFXMLController.run();
-        
-        stage.setTitle("NoteLite");
-        stage.setScene(scene);
-        stage.show();
+    private void openDashBoard(User user) {
+        try {
+            //Ẩn Login GUI
+            loginButton.getScene().getWindow().hide();
+            //Load GUI Dashboard
+            FXMLLoader fXMLLoader = new FXMLLoader();
+            fXMLLoader.setLocation(getClass().getResource("DashboardFXML.fxml"));
+            //Chuyển sang GUI Dashboard
+            Stage stage = (Stage)loginButton.getScene().getWindow();
+            Scene scene = new Scene(fXMLLoader.load());
+            //Thiết lập dữ liệu user cho Dashboard
+            DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
+            dashboardFXMLController.setUser(user);
+            //Hiển thị Dashboard
+            dashboardFXMLController.run();
+            
+            stage.setTitle("NoteLite");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }
     
     /**
      * Mở Register GUI
      * @throws IOException 
      */
-    private void openRegister() throws IOException {
-        //Ẩn Login GUI
-        registerLabel.getScene().getWindow().hide();
-        //Load Register GUI
-        Parent root = FXMLLoader.load(getClass().getResource("RegisterFXML.fxml"));
-        //Mở Register GUI
-        Stage stage = new Stage();
-        Scene scene = new Scene(root);
-
-        stage.setTitle("NoteLite");
-        stage.setScene(scene);
-        stage.show();  
+    private void openRegister() {
+        try {
+            //Ẩn Login GUI
+            registerLabel.getScene().getWindow().hide();
+            //Load Register GUI
+            Parent root = FXMLLoader.load(getClass().getResource("RegisterFXML.fxml"));
+            //Mở Register GUI
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            
+            stage.setTitle("NoteLite");
+            stage.setScene(scene);  
+            stage.show();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }
     
     /**

@@ -14,10 +14,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.RequestCommand;
 import model.User;
-import client.networking.ClientRequestProcessor;
-import client.service.NeedConnectService;
+import client.service.ClientServerService;
+import client.service.ClientServerServiceErrorType;
 
 /**
  * FXML Controller class cho Register GUI
@@ -57,52 +56,52 @@ public class RegisterFXMLController {
         newUser.setBirthday(Date.valueOf(birthdayField.getText()));
         newUser.setSchool(schoolField.getText());
         
-        try {
-            //Thực hiện tạo Account
-            String result = NeedConnectService.createUser(newUser);           
-            //Thông báo          
-            if(result.equals("Can't create")) {               
-                showAlert(Alert.AlertType.ERROR, "Can't create");
-            } else if(result.equals("Exist")) {                
-                showAlert(Alert.AlertType.ERROR, "Exist account");
-            } else {                
-                showAlert(Alert.AlertType.INFORMATION, "Successfully create");
-                showAlert(Alert.AlertType.CONFIRMATION, "Back to Login");
-                //Quay về trang đăng nhập
-                openLogin();
-            }           
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        //Thực hiện tạo Account
+        String result = ClientServerService.createUser(newUser);
+        //Thông báo
+        if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(result)) {
+            showAlert(Alert.AlertType.ERROR, "Can't create user");
+        } else if(ClientServerServiceErrorType.ALREADY_EXISTS.toString().equals(result)) {
+            showAlert(Alert.AlertType.ERROR, "Exist user");
+        } else if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(result)) {
+            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Successfully create");
+            showAlert(Alert.AlertType.CONFIRMATION, "Back to Login");
+            //Quay về trang đăng nhập
+            openLogin();
         }
     }
     
     /**
      * Xử lý sự kiện khi click vào Login Label
      * @param event
-     * @throws IOException 
      */
     @FXML
-    void backLoginLabelClicked(MouseEvent event) throws IOException {
+    void backLoginLabelClicked(MouseEvent event) {
         //Quay trở lại trang Login
         openLogin();
     }   
     
     /**
      * Mở trang Login
-     * @throws IOException 
      */
-    private void openLogin() throws IOException{
-        //Ẩn Register GUI
-        registerButton.getScene().getWindow().hide();
-        //Load Login GUI
-        Parent root = FXMLLoader.load(getClass().getResource("LoginFXML.fxml"));
-        //Mở Login GUI
-        Stage stage = new Stage();
-        Scene scene = new Scene(root);
-
-        stage.setTitle("NoteLite");
-        stage.setScene(scene);
-        stage.show();  
+    private void openLogin() {
+        try {
+            //Ẩn Register GUI
+            registerButton.getScene().getWindow().hide();
+            //Load Login GUI
+            Parent root = FXMLLoader.load(getClass().getResource("LoginFXML.fxml"));
+            //Mở Login GUI
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            
+            stage.setTitle("NoteLite");
+            stage.setScene(scene);  
+            stage.show();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }
     
     /**

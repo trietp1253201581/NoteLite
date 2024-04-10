@@ -26,7 +26,8 @@ public class UpdateUserService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) User được cập nhật nếu cập nhật được,
-     * (2) {@code "Can't save"} nếu không thực hiện lệnh cập nhật được
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * nếu không thực hiện lệnh cập nhật được
      */
     @Override
     public String execute() {        
@@ -41,7 +42,7 @@ public class UpdateUserService implements ServerService {
             //Trả về dưới dạng string
             return User.toString(updatedUser);
         } else {
-            return "Can't update";
+            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }        
     }    
 }

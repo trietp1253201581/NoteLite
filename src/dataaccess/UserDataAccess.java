@@ -18,7 +18,7 @@ import dataaccess.connection.DatabaseConnection;
  * @version 1.0
  */
 public class UserDataAccess implements SpecialUserDataAccess {
-    private Connection connection;
+    private final Connection connection;
 
     /**
      * Khởi tạo và lấy connection tới Database
@@ -35,6 +35,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
+        //Kiểm tra connection có phải null không
+        if(connection == null) {
+            return users;
+        }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS";
 
@@ -56,7 +60,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 users.add(user);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return users;
@@ -69,6 +73,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
      */
     @Override
     public User get(int id) {
+        //Kiểm tra null 
+        if(connection == null) {
+            return new User();
+        }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS WHERE ID = ?";
 
@@ -91,7 +99,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 return user;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về giá trị default nếu không tìm được id
         return new User();
@@ -104,6 +112,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
      */
     @Override
     public User get(String username) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new User();
+        }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS WHERE USERNAME = ?";
 
@@ -126,7 +138,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 return user;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về default User nếu không tìm được
         return new User();
@@ -140,6 +152,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
      */
     @Override
     public int add(User user) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "INSERT INTO USERS(NAME, USERNAME, PASSWORD, BIRTHDAY, SCHOOL) VALUES(?,?,?,?,?)";
 
@@ -154,7 +170,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -168,6 +184,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
      */
     @Override
     public int update(User user) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "UPDATE USERS SET NAME = ?, USERNAME = ?, PASSWORD = ?, BIRTHDAY = ?, SCHOOL = ? WHERE ID = ?";
 
@@ -183,7 +203,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -197,6 +217,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
      */
     @Override
     public int delete(int id) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "DELETE FROM USERS WHERE ID = ?";
 
@@ -207,7 +231,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;

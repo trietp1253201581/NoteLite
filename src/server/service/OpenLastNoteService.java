@@ -26,7 +26,8 @@ public class OpenLastNoteService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) Note được chỉnh sửa gần nhất,
-     * (2) {@code "Not found"} nếu user không có note nào
+     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * nếu user không có note nào
      */
     @Override
     public String execute() { 
@@ -38,7 +39,7 @@ public class OpenLastNoteService implements ServerService {
         if(!note.isDefaultValue()) {
             return Note.toString(note);
         } else {
-            return "Not exist";
+            return ServerServiceErrorType.NOT_EXISTS.toString();
         }        
     }    
 }

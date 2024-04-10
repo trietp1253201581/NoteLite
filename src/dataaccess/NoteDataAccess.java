@@ -20,7 +20,7 @@ import dataaccess.connection.DatabaseConnection;
  * @version 1.0
  */
 public class NoteDataAccess implements SpecialNoteDataAccess {
-    private Connection connection;
+    private final Connection connection;
 
     /**
      * Khởi tạo và lấy connection tới Database
@@ -38,6 +38,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
     @Override
     public List<Note> getAll(String author) {
         List<Note> notes = new ArrayList<>();
+        //Kiểm tra null
+        if(connection == null) {
+            return notes;
+        }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
                 + "FROM notes nt, users us "
@@ -64,7 +68,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 notes.add(note);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return notes;
@@ -79,6 +83,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public Note get(String author, String header) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new Note();
+        }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
                 + "FROM notes nt, users us "
@@ -106,7 +114,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 return note;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về giá trị default nếu không lấy được
         return new Note();
@@ -119,6 +127,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public Note getLast(String author) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new Note();
+        }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
                 + "FROM notes nt, users us "
@@ -145,7 +157,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 return note;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về default note nếu không tìm được
         return new Note();
@@ -158,6 +170,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public Note get(int id) {
+        //Kiểm tra null
+        if(connection == null) {
+            return new Note();
+        }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
                 + "FROM notes nt, users us "
@@ -184,7 +200,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 return note;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //Trả về default note nếu không tìm được
         return new Note();
@@ -198,6 +214,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public int add(Note note) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "INSERT INTO NOTES(USERID, HEADER, CONTENT, LASTMODIFIED, " +
             "LASTMODIFIEDDATE, FILTERS) VALUES(?,?,?,?,?,?)";
@@ -217,7 +237,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -231,6 +251,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public int update(Note note) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "UPDATE NOTES SET USERID = ?, HEADER = ?, CONTENT = ?, LASTMODIFIED = ?, " +
             "LASTMODIFIEDDATE = ?, FILTERS = ? WHERE ID = ?";
@@ -251,7 +275,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;
@@ -265,6 +289,10 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      */
     @Override
     public int delete(int id) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
         //Câu truy vấn SQL
         String query = "DELETE FROM NOTES WHERE ID = ?";
 
@@ -275,7 +303,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
 
         return -1;

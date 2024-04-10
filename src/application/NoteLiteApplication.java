@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 public class NoteLiteApplication extends Application {
     /**
      * @param primaryStage Stage khởi tạo
-     * @throws java.io.IOException
+     * @throws IOException
      */
     @Override
     public void start(Stage primaryStage) throws IOException {

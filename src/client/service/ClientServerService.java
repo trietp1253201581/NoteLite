@@ -13,7 +13,7 @@ import model.User;
  * @since 05/04/2024
  * @version 1.0
  */
-public class NeedConnectService {
+public class ClientServerService {
     private static String serviceName;
     private static String data;
     
@@ -21,10 +21,9 @@ public class NeedConnectService {
      * Kiểm tra thông tin đăng nhập
      * @param username username được nhập
      * @param password password được nhập
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server     
      */
-    public static String checkLogin(String username, String password) throws IOException {
+    public static String checkLogin(String username, String password)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "CheckLogin";
         data = username + ";;;" + password;
@@ -35,10 +34,9 @@ public class NeedConnectService {
     /**
      * Tạo một user mới
      * @param newUser user mới
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server     
      */
-    public static String createUser(User newUser) throws IOException {
+    public static String createUser(User newUser)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "CreateUser";
         data = User.toString(newUser);
@@ -49,10 +47,9 @@ public class NeedConnectService {
     /**
      * Cập nhật User
      * @param user user cần cập nhật
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server    
      */
-    public static String updateUser(User user) throws IOException {
+    public static String updateUser(User user)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "UpdateUser";
         data = User.toString(user);
@@ -63,10 +60,9 @@ public class NeedConnectService {
     /**
      * Mở Note chỉnh sửa gần nhất
      * @param author user sở hữu note
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server    
      */
-    public static String openLastNote(String author) throws IOException {
+    public static String openLastNote(String author)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "OpenLastNote";
         data = author;
@@ -77,10 +73,9 @@ public class NeedConnectService {
     /**
      * Tạo một Note mới
      * @param newNote Note mới
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server     
      */
-    public static String createNote(Note newNote) throws IOException {
+    public static String createNote(Note newNote)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "CreateNote";
         data = Note.toString(newNote);
@@ -92,10 +87,9 @@ public class NeedConnectService {
      * Mở Note
      * @param author user sở hữu note
      * @param header header của note cần mở
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server     
      */
-    public static String openNote(String author, String header) throws IOException {
+    public static String openNote(String author, String header)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "OpenNote";
         data = author + ";;;" + header;
@@ -107,10 +101,9 @@ public class NeedConnectService {
      * Xóa một Note
      * @param author user sở hữu note
      * @param header header của note cần xóa
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server     
      */
-    public static String deleteNote(String author, String header) throws IOException {
+    public static String deleteNote(String author, String header)  {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "DeleteNote";
         data = author + ";;;" + header;
@@ -122,9 +115,8 @@ public class NeedConnectService {
      * Lưu Note
      * @param note note cần lưu
      * @return Kết quả thực thi service này từ server
-     * @throws IOException 
      */
-    public static String saveNote(Note note) throws IOException {
+    public static String saveNote(Note note) {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "SaveNote";
         data = Note.toString(note);
@@ -136,9 +128,8 @@ public class NeedConnectService {
      * Lấy tất cả các note của user
      * @param author user sở hữu note
      * @return Kết quả thực thi service này từ server
-     * @throws IOException 
      */
-    public static String getAllNotes(String author) throws IOException {
+    public static String getAllNotes(String author) {
         //Tạo thông tin cho requestAndGetReply
         serviceName = "GetAllNotes";
         data = author;
@@ -149,10 +140,9 @@ public class NeedConnectService {
     /**
      * Send Note
      * @param shareNote ShareNote biểu diễn việc share note
-     * @return Kết quả thực thi service này từ server
-     * @throws IOException 
+     * @return Kết quả thực thi service này từ server 
      */
-    public static String sendNote(ShareNote shareNote) throws IOException {
+    public static String sendNote(ShareNote shareNote) {
         //Tạo thông tin
         serviceName = "SendNote";
         data = ShareNote.toString(shareNote);
@@ -164,9 +154,8 @@ public class NeedConnectService {
      * Lấy tất cả các note được share
      * @param receiver người nhận
      * @return Kết quả thực thi service này từ server
-     * @throws IOException 
      */
-    public static String getAllReceivedNotes(String receiver) throws IOException {
+    public static String getAllReceivedNotes(String receiver) {
         //Tạo thông tin
         serviceName = "GetAllReceivedNotes";
         data = receiver;
@@ -176,9 +165,8 @@ public class NeedConnectService {
     
     /**
      * Gửi yêu cầu và nhận phản hồi
-     * @throws IOException 
      */
-    private static String requestAndGetReply() throws IOException{
+    private static String requestAndGetReply() {
         //Tạo request
         RequestCommand requestCommand = new RequestCommand(serviceName, data);
         //Gửi yêu cầu, nhận phản hồi
