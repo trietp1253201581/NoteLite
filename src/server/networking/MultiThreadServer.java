@@ -40,7 +40,7 @@ public class MultiThreadServer implements Server {
         try {
             serverSocket.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }       
     }
     
@@ -62,7 +62,7 @@ public class MultiThreadServer implements Server {
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
         //Thực hiện khi trạng thái server không phải CLOSE
         while(status != ServerStatus.CLOSE) {
-            //Tạo một socker để connect
+            //Tạo một socket để connect
             Socket connectSocket;
             try {
                 //Đồng ý truy cập
@@ -71,7 +71,7 @@ public class MultiThreadServer implements Server {
                 WorkerThread handler = new WorkerThread(connectSocket);
                 executorService.execute(handler);           
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println(ex);
             }         
         }       
     }    

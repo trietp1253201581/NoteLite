@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.dataconverter.NoteFilterConverter;
+import model.attributeconvert.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note

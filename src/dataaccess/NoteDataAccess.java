@@ -1,8 +1,8 @@
 package dataaccess;
 
 import dataaccess.connection.MySQLDatabaseConnection;
-import model.dataconverter.NoteContentConverter;
-import model.dataconverter.NoteFilterConverter;
+import model.attributeconvert.NoteContentConverter;
+import model.attributeconvert.NoteFilterConverter;
 import model.Note;
 import java.sql.Connection;
 import java.sql.Date;

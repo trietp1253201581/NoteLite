@@ -7,8 +7,8 @@ package model;
  * @version 1.0
  */
 public class RequestCommand {
-    private String serviceName;
-    private String data;
+    private final String serviceName;
+    private final String data;
     
     /**
      * Khởi tạo một RequestCommand với tên service và data dưới dạng String

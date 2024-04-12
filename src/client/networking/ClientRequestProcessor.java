@@ -19,16 +19,17 @@ public class ClientRequestProcessor {
    
     /**
      * Gửi yêu cầu tới server và nhận lại phản hồi
-     * @param requestCommand một {@code RequestCommand} miêu tả requestAndGetReply từ user 
+     * @param requestCommand một {@code RequestCommand} miêu tả process từ user 
      * @return phản hồi từ server
      */
-    public static String requestAndGetReply(RequestCommand requestCommand) { 
+    public static String process(RequestCommand requestCommand) { 
         try {
             //Tạo 1 client để truyền dữ liệu
             Client client = new Client(InetAddress.getByName(HOST), PORT_NUMBER);
             //Truyền message vào client và chạy client
             client.setMessage(RequestCommand.toString(requestCommand));
             client.runClient();
+            client.closeClient();
             //Lấy reply từ server
             return client.getResult();
         } catch (UnknownHostException ex) {

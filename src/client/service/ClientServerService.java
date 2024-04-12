@@ -24,7 +24,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server     
      */
     public static String checkLogin(String username, String password)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "CheckLogin";
         data = username + ";;;" + password;
         //Gửi yêu cầu và nhận phản hồi
@@ -37,7 +37,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server     
      */
     public static String createUser(User newUser)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "CreateUser";
         data = User.toString(newUser);
         //Gửi yêu cầu và nhận phản hồi
@@ -50,7 +50,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server    
      */
     public static String updateUser(User user)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "UpdateUser";
         data = User.toString(user);
         //Gửi yêu cầu và nhận phản hồi
@@ -63,7 +63,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server    
      */
     public static String openLastNote(String author)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "OpenLastNote";
         data = author;
         //Gửi yêu cầu và nhận phản hồi
@@ -76,7 +76,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server     
      */
     public static String createNote(Note newNote)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "CreateNote";
         data = Note.toString(newNote);
         //Gửi yêu cầu và nhận phản hồi
@@ -90,7 +90,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server     
      */
     public static String openNote(String author, String header)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "OpenNote";
         data = author + ";;;" + header;
         //Gửi yêu cầu và nhận phản hồi
@@ -104,7 +104,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server     
      */
     public static String deleteNote(String author, String header)  {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "DeleteNote";
         data = author + ";;;" + header;
         //Gửi yêu cầu và nhận phản hồi
@@ -117,7 +117,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server
      */
     public static String saveNote(Note note) {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "SaveNote";
         data = Note.toString(note);
         //Gửi yêu cầu và nhận phản hồi
@@ -130,7 +130,7 @@ public class ClientServerService {
      * @return Kết quả thực thi service này từ server
      */
     public static String getAllNotes(String author) {
-        //Tạo thông tin cho requestAndGetReply
+        //Tạo thông tin cho process
         serviceName = "GetAllNotes";
         data = author;
         //Gửi yêu cầu và nhận phản hồi
@@ -170,6 +170,6 @@ public class ClientServerService {
         //Tạo request
         RequestCommand requestCommand = new RequestCommand(serviceName, data);
         //Gửi yêu cầu, nhận phản hồi
-        return ClientRequestProcessor.requestAndGetReply(requestCommand);
+        return ClientRequestProcessor.process(requestCommand);
     }
 }

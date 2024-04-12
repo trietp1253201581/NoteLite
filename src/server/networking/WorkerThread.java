@@ -55,10 +55,11 @@ public class WorkerThread extends Thread {
             //Đóng các stream
             dataInputStream.close();
             dataOutputStream.close();
+            //Thông báo hoàn thành việc xử lý socket này
+            System.out.println("Complete: " + socket); 
+            socket.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
-        }       
-        //Thông báo hoàn thành việc xử lý socket này
-        System.out.println("Complete: " + socket);       
+            System.err.println(ex);
+        }                    
     }  
 }

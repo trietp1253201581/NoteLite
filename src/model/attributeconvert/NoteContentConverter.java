@@ -1,4 +1,4 @@
-package model.dataconverter;
+package model.attributeconvert;
 
 /**
  * Chuyển một text hiển thị trên GUI sang một text lưu trong CSDL và ngược lại
