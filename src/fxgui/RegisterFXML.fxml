@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -45,27 +46,22 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="nameField" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="291.0">
+            <TextField fx:id="nameField" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="291.0" promptText="Your Name">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="usernameField" layoutX="94.0" layoutY="75.0" prefHeight="25.0" prefWidth="291.0">
+            <TextField fx:id="usernameField" layoutX="94.0" layoutY="75.0" prefHeight="25.0" prefWidth="291.0" promptText="Username">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="birthdayField" layoutX="94.0" layoutY="175.0" prefHeight="25.0" prefWidth="291.0" text="2024-01-01">
+            <TextField fx:id="schoolField" layoutX="94.0" layoutY="225.0" prefHeight="25.0" prefWidth="291.0" promptText="School">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="schoolField" layoutX="94.0" layoutY="225.0" prefHeight="25.0" prefWidth="291.0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <PasswordField fx:id="passwordField" layoutX="94.0" layoutY="125.0" prefHeight="25.0" prefWidth="291.0">
+            <PasswordField fx:id="passwordField" layoutX="94.0" layoutY="125.0" prefHeight="25.0" prefWidth="291.0" promptText="Password">
                <font>
                   <Font size="14.0" />
                </font>
@@ -80,6 +76,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
+            <DatePicker fx:id="birthdayField" editable="false" layoutX="94.0" layoutY="177.0" prefHeight="25.0" prefWidth="291.0" promptText="yyyy-MM-dd" />
          </children>
       </AnchorPane>
    </children>

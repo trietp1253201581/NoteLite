@@ -17,6 +17,10 @@ import javafx.stage.Stage;
 import model.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javafx.scene.control.DatePicker;
+import javafx.util.StringConverter;
 
 /**
  * FXML Controller class cho Register GUI
@@ -28,7 +32,7 @@ import client.service.ClientServerServiceErrorType;
 public class RegisterFXMLController {
     //Các thuộc tính FXML    
     @FXML
-    private TextField birthdayField;
+    private DatePicker birthdayField;
     @FXML
     private TextField nameField;
     @FXML
@@ -53,7 +57,7 @@ public class RegisterFXMLController {
         newUser.setName(nameField.getText());
         newUser.setUsername(usernameField.getText());
         newUser.setPassword(passwordField.getText());
-        newUser.setBirthday(Date.valueOf(birthdayField.getText()));
+        newUser.setBirthday(Date.valueOf(birthdayField.getValue()));
         newUser.setSchool(schoolField.getText());
         
         //Thực hiện tạo Account
@@ -82,6 +86,38 @@ public class RegisterFXMLController {
         //Quay trở lại trang Login
         openLogin();
     }   
+    
+    /**
+     * Khởi tạo
+     */
+    public void run() {
+        //Tạo converter từ ngày tháng sang yyyy-MM-dd
+        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+            @Override
+            public String toString(LocalDate date) {
+                if(date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if(string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return LocalDate.now();
+                }
+            }
+        };
+        
+        birthdayField.setConverter(converter);
+        birthdayField.setPromptText("yyyy-MM-dd");
+        birthdayField.setEditable(false);
+    }
     
     /**
      * Mở trang Login

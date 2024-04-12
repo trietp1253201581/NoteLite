@@ -25,7 +25,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Note;
-import model.RequestCommand;
 import model.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;

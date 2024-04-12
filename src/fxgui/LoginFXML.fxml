@@ -46,12 +46,12 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="usernameField" layoutX="101.0" layoutY="134.0" prefHeight="25.0" prefWidth="233.0" text="Username">
+                  <TextField fx:id="usernameField" layoutX="101.0" layoutY="134.0" prefHeight="25.0" prefWidth="233.0" promptText="Username">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <PasswordField fx:id="passwordField" layoutX="101.0" layoutY="185.0" prefHeight="25.0" prefWidth="233.0" text="Password">
+                  <PasswordField fx:id="passwordField" layoutX="101.0" layoutY="185.0" prefHeight="25.0" prefWidth="233.0" promptText="Password">
                      <font>
                         <Font size="14.0" />
                      </font>

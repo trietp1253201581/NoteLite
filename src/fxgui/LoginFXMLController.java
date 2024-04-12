@@ -4,7 +4,6 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -111,10 +110,14 @@ public class LoginFXMLController {
             //Ẩn Login GUI
             registerLabel.getScene().getWindow().hide();
             //Load Register GUI
-            Parent root = FXMLLoader.load(getClass().getResource("RegisterFXML.fxml"));
+            FXMLLoader fXMLLoader = new FXMLLoader();
+            fXMLLoader.setLocation(getClass().getResource("RegisterFXML.fxml"));
             //Mở Register GUI
             Stage stage = new Stage();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(fXMLLoader.load());
+            //Khởi tạo và chạy
+            RegisterFXMLController registerFXMLController = fXMLLoader.getController();
+            registerFXMLController.run();
             
             stage.setTitle("NoteLite");
             stage.setScene(scene);  
