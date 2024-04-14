@@ -209,7 +209,8 @@ public class DashboardFXMLController {
     @FXML
     void handleSaveButton(ActionEvent event) {  
         //Thiết lập lại undoRedoService
-        undoRedoService = new UndoRedoService();     
+        undoRedoService = new UndoRedoService();    
+        undoRedoService.saveText(contentArea.getText());
         //Set dữ liệu gần nhất cho myNote
         myNote.setHeader(noteHeaderLabel.getText());
         myNote.setContent(contentArea.getText());
@@ -621,30 +622,38 @@ public class DashboardFXMLController {
     
     @FXML
     void handleSendNoteButton(ActionEvent event) {
-        //Lấy header được chọn từ ComboBox
+        //Lấy header được chọn từ ComboBox và lấy note tương ứng
         String selectedNoteHeader = chooseShareNoteComboBox.getSelectionModel().getSelectedItem();
-        //Lấy receiver Id
-        String receiverUsename = chooseUserShareField.getText();
-        //Share Note
-        ShareNote newShareNote = new ShareNote();
-        newShareNote.setSender(user.getUsername());
-        newShareNote.setReceiver(receiverUsename);
-        newShareNote.setHeader(selectedNoteHeader);
-        if(shareTypeReadOnly.isSelected()) {
-            newShareNote.setShareType(ShareType.READ_ONLY);
-        } else {
-            newShareNote.setShareType(ShareType.CAN_EDIT);
-        }
-        replyFromServer = ClientServerService.sendNote(newShareNote);
-        //Xử lý và thông báo
+        replyFromServer = ClientServerService.openNote(user.getUsername(), selectedNoteHeader);
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't send this notes");
+            showAlert(Alert.AlertType.ERROR, "Can't open this note");
         } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.INFORMATION, "You have shared this note to user " + receiverUsename);
+            showAlert(Alert.AlertType.ERROR, "This note not exists");
         } else {
-            showAlert(Alert.AlertType.INFORMATION, "Successfully share");
+            //Lấy receiver Id
+            String receiverUsename = chooseUserShareField.getText();
+            //Share Note
+            ShareNote newShareNote = new ShareNote();
+            newShareNote.setNote(Note.valueOf(replyFromServer));
+            newShareNote.setReceiver(receiverUsename);
+            if(shareTypeReadOnly.isSelected()) {
+                newShareNote.setShareType(ShareType.READ_ONLY);
+            } else {
+                newShareNote.setShareType(ShareType.CAN_EDIT);
+            }
+            replyFromServer = ClientServerService.sendNote(newShareNote);
+            //Xử lý và thông báo
+            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
+                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
+                showAlert(Alert.AlertType.ERROR, "Can't send this notes");
+            } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
+                showAlert(Alert.AlertType.INFORMATION, "You have shared this note to user " + receiverUsename);
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Successfully share");
+            }
         }
     }
     
@@ -657,7 +666,7 @@ public class DashboardFXMLController {
             //Lấy ShareNote được chọn
             ShareNote shareNote = sharedByOtherTable.getSelectionModel().getSelectedItem();
             //Lấy note được chọn
-            replyFromServer = ClientServerService.openNote(shareNote.getSender(), shareNote.getHeader());
+            replyFromServer = ClientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
@@ -680,7 +689,6 @@ public class DashboardFXMLController {
     
     /**
      * Chạy Dashboard và thiết lập các thuộc tính ban đầu
-     * @throws IOException 
      */
     public void run() {  
         //Chuyển sang scene Edit Note và thiết lập các thông tin user
@@ -828,7 +836,7 @@ public class DashboardFXMLController {
         shareTypeReadOnly.setSelected(true);
         //Clear table và thêm các note được share
         sharedByOtherTable.getItems().clear();
-        senderUsernameColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("sender"));
+        senderUsernameColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("author"));
         headerColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("header"));
         shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
         sharedByOtherTable.setItems(shareNotes);

@@ -31,7 +31,7 @@ public class UndoRedoService {
      * @return text được lưu gần nhất
      */
     public String getLastText() {       
-        if(!undoStack.isEmpty()) {
+        if(undoStack.size() > 1) {
             return undoStack.peek();
         } else {
             return "Empty!!!";

@@ -4,6 +4,7 @@ import dataaccess.ShareNoteDataAccess;
 import dataaccess.SpecialShareNoteDataAccess;
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
+import model.Note;
 import model.ShareNote;
 
 /**
@@ -43,16 +44,14 @@ public class SendNoteService implements ServerService {
             return ServerServiceErrorType.NOT_EXISTS.toString();
         }
         //Kiểm tra ShareNote đã tồn tại hay chưa
-        ShareNote check = dataAccess.get(shareNote.getSender(), 
-                    shareNote.getReceiver(), shareNote.getHeader());
+        ShareNote check = dataAccess.get((Note) shareNote, shareNote.getReceiver());
         //Nếu tồn tại thì chỉ cân update
         if(!check.isDefaultValue()) {
             shareNote.setId(check.getId());
             int updateRs = dataAccess.update(shareNote);
             if(updateRs > 0) {
                 //Lấy ShareNote vừa update
-                shareNote = dataAccess.get(shareNote.getSender(), 
-                        shareNote.getReceiver(), shareNote.getHeader());
+                shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
                 //Trả về String biểu diễn ShareNote vừa tạo
                 return ShareNote.toString(shareNote);
             } else {
@@ -63,8 +62,7 @@ public class SendNoteService implements ServerService {
         int addRs = dataAccess.add(shareNote);
         if(addRs > 0) {
             //Lấy ShareNote vừa tạo
-            shareNote = dataAccess.get(shareNote.getSender(), 
-                    shareNote.getReceiver(), shareNote.getHeader());
+            shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
             //Trả về String biểu diễn ShareNote vừa tạo
             return ShareNote.toString(shareNote);
         } else {
