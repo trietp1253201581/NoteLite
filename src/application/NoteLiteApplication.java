@@ -1,5 +1,6 @@
 package application;
 
+import fxgui.LoginFXMLController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,9 +22,13 @@ public class NoteLiteApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         //Mở GUI Login trước
-        Parent root = FXMLLoader.load(getClass().getResource("../fxgui/LoginFXML.fxml"));
-        Scene scene = new Scene(root);
-       
+        FXMLLoader fXMLLoader = new FXMLLoader();
+        fXMLLoader.setLocation(getClass().getResource("../fxgui/LoginFXML.fxml"));
+        //Chuyển sang GUI Login
+        Scene scene = new Scene(fXMLLoader.load());
+        LoginFXMLController loginFXMLController = fXMLLoader.getController();
+        loginFXMLController.init();
+        
         primaryStage.setTitle("NoteLite");
         primaryStage.setScene(scene);
         primaryStage.show();

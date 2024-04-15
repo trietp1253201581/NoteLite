@@ -35,6 +35,8 @@ public class LoginFXMLController {
     @FXML 
     private Label registerLabel;
 
+    private ClientServerService clientServerService;   
+            
     /**
      * Xử lý sự kiện khi ấn vào Login Button
      * @param event 
@@ -46,7 +48,7 @@ public class LoginFXMLController {
         String password = passwordField.getText();
       
         //Kiểm tra thông tin đăng nhập
-        String result = ClientServerService.checkLogin(username, password);
+        String result = clientServerService.checkLogin(username, password);
         //Thông báo với user
         if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(result)) {
             showAlert(AlertType.ERROR, "Not exist account");
@@ -72,6 +74,10 @@ public class LoginFXMLController {
         openRegister();
     }
     
+    public void init() {
+        clientServerService = new ClientServerService();
+    }
+    
     /**
      * Mở Dashboard GUI
      * @param user user được mở Dashboard
@@ -91,7 +97,7 @@ public class LoginFXMLController {
             DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
             dashboardFXMLController.setUser(user);
             //Hiển thị Dashboard
-            dashboardFXMLController.run();
+            dashboardFXMLController.init();
             
             stage.setTitle("NoteLite");
             stage.setScene(scene);
@@ -117,7 +123,7 @@ public class LoginFXMLController {
             Scene scene = new Scene(fXMLLoader.load());
             //Khởi tạo và chạy
             RegisterFXMLController registerFXMLController = fXMLLoader.getController();
-            registerFXMLController.run();
+            registerFXMLController.init();
             
             stage.setTitle("NoteLite");
             stage.setScene(scene);  

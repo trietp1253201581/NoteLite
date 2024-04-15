@@ -14,7 +14,8 @@ import server.service.ServerRequestProcessor;
  * @version 1.0
  */
 public class WorkerThread extends Thread {    
-    private Socket socket;
+    private final Socket socket;
+    private ServerRequestProcessor serverRequestProcessor;
     
     /**
      * Khởi tạo một đối tượng để xử lý luồng tạo bởi một socket
@@ -22,6 +23,10 @@ public class WorkerThread extends Thread {
      */
     public WorkerThread(Socket socket) {
         this.socket = socket;
+    }
+    
+    public void setServerRequestProcessor(ServerRequestProcessor serverRequestProcessor) {
+        this.serverRequestProcessor = serverRequestProcessor;
     }
     
     /**
@@ -47,7 +52,7 @@ public class WorkerThread extends Thread {
                 //Thông báo thông điệp
                 System.out.println(socket + " say " + str);
                 //Chuyển thành RequestCommand và xử lý
-                String rs = ServerRequestProcessor.process(RequestCommand.valueOf(str));  
+                String rs = serverRequestProcessor.process(RequestCommand.valueOf(str));  
                 //Trả về kết quả
                 dataOutputStream.writeUTF(rs);
                 dataOutputStream.flush();

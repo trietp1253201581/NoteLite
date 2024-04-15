@@ -46,6 +46,8 @@ public class RegisterFXMLController {
     @FXML
     private Label backLoginLabel;
     
+    private ClientServerService clientServerService;
+    
     /**
      * Xử lý sự kiện ấn vào Register Button
      * @param event 
@@ -61,7 +63,7 @@ public class RegisterFXMLController {
         newUser.setSchool(schoolField.getText());
         
         //Thực hiện tạo Account
-        String result = ClientServerService.createUser(newUser);
+        String result = clientServerService.createUser(newUser);
         //Thông báo
         if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(result)) {
             showAlert(Alert.AlertType.ERROR, "Can't create user");
@@ -90,7 +92,11 @@ public class RegisterFXMLController {
     /**
      * Khởi tạo
      */
-    public void run() {
+    public void init() {
+        //Chạy ClientServerService
+        clientServerService = new ClientServerService();
+        //Khởi tạo birthdayField
+        birthdayField.setValue(LocalDate.now());
         //Tạo converter từ ngày tháng sang yyyy-MM-dd
         StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

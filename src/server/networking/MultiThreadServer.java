@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import server.service.ServerRequestProcessor;
 
 /**
  * Một server có thể hoạt động đa luồng, phục vụ nhiều client cùng lúc
@@ -69,6 +70,8 @@ public class MultiThreadServer implements Server {
                 connectSocket = serverSocket.accept();
                 //Xử lý các luồng truy cập
                 WorkerThread handler = new WorkerThread(connectSocket);
+                //Set bộ xử lý và chạy luồng
+                handler.setServerRequestProcessor(new ServerRequestProcessor());
                 executorService.execute(handler);           
             } catch (IOException ex) {
                 System.out.println(ex);

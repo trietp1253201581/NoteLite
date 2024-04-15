@@ -164,6 +164,7 @@ public class DashboardFXMLController {
     private Button openShareNoteButton;
     
     private UndoRedoService undoRedoService;
+    private ClientServerService clientServerService;
     private User user;   
     private Note myNote;    
     private List<Note> myNotes;   
@@ -217,7 +218,7 @@ public class DashboardFXMLController {
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
-        replyFromServer = ClientServerService.saveNote(myNote);
+        replyFromServer = clientServerService.saveNote(myNote);
         //Nhận reply và thông báo
         if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't save this note");
@@ -342,7 +343,7 @@ public class DashboardFXMLController {
         //Chuyển sang scene My Notes
         changeScene(myNotesButton);
         //Lấy tất cả các Note của user
-        replyFromServer = ClientServerService.getAllNotes(user.getUsername());
+        replyFromServer = clientServerService.getAllNotes(user.getUsername());
         //Dựa vào reply từ server để xử lý
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -398,7 +399,7 @@ public class DashboardFXMLController {
             filters.add("text");
             newNote.setFilters(filters);
             //Tạo Note mới
-            replyFromServer = ClientServerService.createNote(newNote);
+            replyFromServer = clientServerService.createNote(newNote);
             //Nhận reply từ server và thông báo
             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -434,7 +435,7 @@ public class DashboardFXMLController {
         //Xử lý kết quả khi nhấn OK
         confirm.ifPresent(selectedHeader -> {
             //Xóa Note được chọn
-            replyFromServer = ClientServerService.deleteNote(user.getUsername(), selectedHeader);
+            replyFromServer = clientServerService.deleteNote(user.getUsername(), selectedHeader);
             //Nhận reply từ server và thông báo
             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -478,7 +479,7 @@ public class DashboardFXMLController {
         user.setBirthday(Date.valueOf(birthdayField.getText()));
         user.setSchool(schoolField.getText());
         //Cập nhật User
-        replyFromServer = ClientServerService.updateUser(user);
+        replyFromServer = clientServerService.updateUser(user);
         //Nhận reply từ server và thông báo
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -513,7 +514,7 @@ public class DashboardFXMLController {
         //Chuyển sang Import/Export Scene
         changeScene(importExportButton);
         //Lấy tất cả các note của user
-        replyFromServer = ClientServerService.getAllNotes(user.getUsername());
+        replyFromServer = clientServerService.getAllNotes(user.getUsername());
         //Nhận reply từ server
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -538,7 +539,7 @@ public class DashboardFXMLController {
         //Lấy header được chọn từ ComboBox
         String selectedNoteHeader = exportNoteComboBox.getSelectionModel().getSelectedItem();
         //Lấy dữ liệu từ note được chọn
-        replyFromServer = ClientServerService.openNote(user.getUsername(), selectedNoteHeader);
+        replyFromServer = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
@@ -587,7 +588,7 @@ public class DashboardFXMLController {
         //Chuyển sang Scene ShareNote
         changeScene(shareNoteButton);
         //Lấy tất cả các note của user
-        replyFromServer = ClientServerService.getAllNotes(user.getUsername());
+        replyFromServer = clientServerService.getAllNotes(user.getUsername());
         //Nhận reply từ server
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -602,7 +603,7 @@ public class DashboardFXMLController {
             }
         }
         //Lấy tất cả các note được share tới user này
-        replyFromServer = ClientServerService.getAllReceivedNotes(user.getUsername());
+        replyFromServer = clientServerService.getAllReceivedNotes(user.getUsername());
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
@@ -624,7 +625,7 @@ public class DashboardFXMLController {
     void handleSendNoteButton(ActionEvent event) {
         //Lấy header được chọn từ ComboBox và lấy note tương ứng
         String selectedNoteHeader = chooseShareNoteComboBox.getSelectionModel().getSelectedItem();
-        replyFromServer = ClientServerService.openNote(user.getUsername(), selectedNoteHeader);
+        replyFromServer = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
@@ -643,7 +644,7 @@ public class DashboardFXMLController {
             } else {
                 newShareNote.setShareType(ShareType.CAN_EDIT);
             }
-            replyFromServer = ClientServerService.sendNote(newShareNote);
+            replyFromServer = clientServerService.sendNote(newShareNote);
             //Xử lý và thông báo
             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -666,7 +667,7 @@ public class DashboardFXMLController {
             //Lấy ShareNote được chọn
             ShareNote shareNote = sharedByOtherTable.getSelectionModel().getSelectedItem();
             //Lấy note được chọn
-            replyFromServer = ClientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
+            replyFromServer = clientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
@@ -690,13 +691,15 @@ public class DashboardFXMLController {
     /**
      * Chạy Dashboard và thiết lập các thuộc tính ban đầu
      */
-    public void run() {  
+    public void init() {  
+        //Mở Client Server Service
+        clientServerService = new ClientServerService();
         //Chuyển sang scene Edit Note và thiết lập các thông tin user
         userLabel.setText(user.getName());
         noteHeaderField.setVisible(false);     
         changeScene(editNoteButton);
         //Mở Note thao tác gần nhất
-        replyFromServer = ClientServerService.openLastNote(user.getUsername());
+        replyFromServer = clientServerService.openLastNote(user.getUsername());
         //Nhận reply từ server và xử lý
         if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -764,7 +767,7 @@ public class DashboardFXMLController {
                         alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
                         Optional<ButtonType> optional = alert.showAndWait();
                         if(optional.get() == ButtonType.OK) {
-                            replyFromServer = ClientServerService.openNote(user.getUsername(),
+                            replyFromServer = clientServerService.openNote(user.getUsername(),
                                     noteCardFXMLController.getHeader());
                             //Nhận reply từ server và thông báo
                             if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {

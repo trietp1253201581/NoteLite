@@ -9,13 +9,13 @@ import model.RequestCommand;
  * @version 1.0
  */
 public class ServerRequestProcessor {
-
+    
     /**
      * Xử lý request
      * @param requestCommand Một RequestCommand miêu tả request
      * @return Kết quả của việc xử lý request của service được gọi
      */
-    public static String process(RequestCommand requestCommand) {
+    public String process(RequestCommand requestCommand) {
         //Lấy serviceName và data
         String serviceName = requestCommand.getServiceName();
         String data = requestCommand.getData();
