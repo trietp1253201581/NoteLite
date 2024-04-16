@@ -1,5 +1,7 @@
 package server.service;
 
+import java.util.Map;
+
 /**
  * Định nghĩa các phương thức xử lý service bên server
  * @author Lê Minh Triết
@@ -10,9 +12,9 @@ public interface ServerService {
 
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data phụ thuộc vào từng service
+     * @param paramMap Một Map miêu tả các param và giá trị của chúng
      */
-    void setData(String data);
+    void setData(Map<String, String> paramMap);
 
     /**
      * Thực thi service

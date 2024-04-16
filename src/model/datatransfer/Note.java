@@ -1,10 +1,10 @@
-package model;
+package model.datatransfer;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.attributeconvert.NoteFilterConverter;
+import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note
@@ -100,20 +100,20 @@ public class Note {
 
     /**
      * Chuyển một Note thành String
-     * @param note note cần chuyển
-     * @return String thu được, có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      */
-    public static String toString(Note note) {
+    @Override
+    public String toString() {
         String result = "";
         //Tạo ra một String biểu diễn cho note
-        result += note.getId() + ";;;";
-        result += note.getAuthor() + ";;;";
-        result += note.getHeader() + ";;;";
-        result += note.getContent() + ";;;";
-        result += note.getLastModified() + ";;;";
-        result += note.getLastModifiedDate() + ";;;";
-        result += NoteFilterConverter.convertToString(note.getFilters()) + ";;;";
+        result += id + "<;>";
+        result += author + "<;>";
+        result += header + "<;>";
+        result += content + "<;>";
+        result += lastModified + "<;>";
+        result += lastModifiedDate + "<;>";
+        result += NoteFilterConverter.convertToString(filters) + "<;>";
         result += "///";
         
         return result;    
@@ -121,14 +121,14 @@ public class Note {
     
     /**
      * Chuyển một String sang một Note
-     * @param str String cần chuyển có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @param str String cần chuyển có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      * @return Note thu được
      */
     public static Note valueOf(String str) {       
         Note note = new Note();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(";;;");
+        String[] strarr = str.split("<;>");
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
         note.setId(Integer.parseInt(strarr[0]));
         note.setAuthor(strarr[1]);

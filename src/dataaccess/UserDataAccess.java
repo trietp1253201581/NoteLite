@@ -8,7 +8,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import model.User;
+import model.datatransfer.User;
 import dataaccess.connection.DatabaseConnection;
 
 /**

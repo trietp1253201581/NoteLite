@@ -1,6 +1,7 @@
 package server.service;
 
-import model.RequestCommand;
+import java.util.Map;
+import model.command.Command;
 
 /**
  * Xử lý request được nhận
@@ -12,17 +13,17 @@ public class ServerRequestProcessor {
     
     /**
      * Xử lý request
-     * @param requestCommand Một RequestCommand miêu tả request
+     * @param command Một String miêu tả request
      * @return Kết quả của việc xử lý request của service được gọi
      */
-    public String process(RequestCommand requestCommand) {
+    public String process(String command) {
         //Lấy serviceName và data
-        String serviceName = requestCommand.getServiceName();
-        String data = requestCommand.getData();
+        Map<String, String> dataMap = Command.decode(command);
+        String serviceName = dataMap.get("serviceName");
         //Gọi service
         ServerService serverService = ServerServiceInvoker.invoke(serviceName);
         //Thiết lập data cho service
-        serverService.setData(data);
+        serverService.setData(dataMap);
         //Thực thi service và lấy kết quả
         return serverService.execute();     
     }

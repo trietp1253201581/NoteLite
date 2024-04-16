@@ -1,7 +1,7 @@
 package dataaccess;
 
 import java.util.List;
-import model.Note;
+import model.datatransfer.Note;
 
 /**
  * Định nghĩa các phương thức thao tác đặc biệt với dữ liệu Note

@@ -1,4 +1,4 @@
-package model.attributeconvert;
+package model.datatransfer.attributeconverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

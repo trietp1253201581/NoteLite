@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
-import model.Note;
+import java.util.Map;
+import model.datatransfer.Note;
 
 /**
  * Lưu một note
@@ -16,11 +17,11 @@ public class SaveNoteService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data là một String biểu diễn Note cần lưu
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code note}
      */
     @Override
-    public void setData(String data) {
-        note = Note.valueOf(data);
+    public void setData(Map<String, String> paramMap) {
+        note = Note.valueOf(paramMap.get("note"));
     }
     
     /**
@@ -39,7 +40,7 @@ public class SaveNoteService implements ServerService {
             int rs = dataAccess.add(note);    
             //Trả về
             if(rs > 0) {
-                return Note.toString(note);
+                return note.toString();
             } else {
                 return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
             }
@@ -55,7 +56,7 @@ public class SaveNoteService implements ServerService {
             //Lấy Note vừa được lưu
             Note updatedNote = dataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về dưới dạng string
-            return Note.toString(updatedNote);
+            return updatedNote.toString();
         } else {
             return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }        

@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
-import model.Note;
+import java.util.Map;
+import model.datatransfer.Note;
 
 /**
  * Mở note được chỉnh sửa gần nhất bởi user
@@ -16,11 +17,11 @@ public class OpenLastNoteService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data gồm một author
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code author}
      */
     @Override
-    public void setData(String data) {
-        this.author = data;
+    public void setData(Map<String, String> paramMap) {
+        author = paramMap.get("author");
     }
     
     /**
@@ -37,7 +38,7 @@ public class OpenLastNoteService implements ServerService {
         Note note = dataAccess.getLast(author);
         //Kiểm tra điều kiện và trả về
         if(!note.isDefaultValue()) {
-            return Note.toString(note);
+            return note.toString();
         } else {
             return ServerServiceErrorType.NOT_EXISTS.toString();
         }        

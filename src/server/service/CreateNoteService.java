@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
-import model.Note;
+import java.util.Map;
+import model.datatransfer.Note;
 
 /**
  * Tạo một Note mới
@@ -16,11 +17,11 @@ public class CreateNoteService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data là một String biểu diễn Note mới
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code note}
      */
     @Override
-    public void setData(String data) {
-        note = Note.valueOf(data);
+    public void setData(Map<String, String> paramMap) {
+        note = Note.valueOf(paramMap.get("note"));
     }
     
     /**
@@ -47,7 +48,7 @@ public class CreateNoteService implements ServerService {
             //Lấy Note vừa mới tạo
             Note newNote = dataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về biểu diễn String của Note mới
-            return Note.toString(newNote);
+            return newNote.toString();
         } else {
             return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }       

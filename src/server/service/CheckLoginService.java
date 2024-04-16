@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
-import model.User;
+import java.util.Map;
+import model.datatransfer.User;
 
 /**
  * Kiểm tra thông tin đăng nhập
@@ -17,14 +18,12 @@ public class CheckLoginService implements ServerService {
 
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data có dạng {@code "username;;;password"}
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code username, passworđ}
      */
     @Override
-    public void setData(String data) {
-        //Chia data thành các phần và gán cho các thuộc tính
-        String[] datas = data.split(";;;");
-        this.username = datas[0];
-        this.password = datas[1];
+    public void setData(Map<String, String> paramMap) {
+        username = paramMap.get("username");
+        password = paramMap.get("password");
     }
     
     /**
@@ -45,7 +44,7 @@ public class CheckLoginService implements ServerService {
         if(user.isDefaultValue()) {
             return ServerServiceErrorType.NOT_EXISTS.toString();
         } else if(user.getPassword().equals(password)) {
-            return User.toString(user);
+            return user.toString();
         } else {
             return ServerServiceErrorType.FALSE_INFORMATION.toString();
         }

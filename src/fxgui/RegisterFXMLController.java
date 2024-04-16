@@ -14,7 +14,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.User;
+import model.datatransfer.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
 import java.time.LocalDate;

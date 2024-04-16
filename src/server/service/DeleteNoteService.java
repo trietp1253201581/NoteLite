@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
-import model.Note;
+import java.util.Map;
+import model.datatransfer.Note;
 
 /**
  * Xóa một Note đã có
@@ -17,14 +18,12 @@ public class DeleteNoteService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data có dạng {@code "author;;;header"}
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code author, header}
      */
     @Override
-    public void setData(String data) {
-        //Chia data thành các phần và gán cho các thuộc tính
-        String[] datas = data.split(";;;");       
-        this.author = datas[0];
-        this.header = datas[1];
+    public void setData(Map<String, String> paramMap) {
+        author = paramMap.get("author");
+        header = paramMap.get("header");
     }
     
     /**
@@ -49,7 +48,7 @@ public class DeleteNoteService implements ServerService {
         int rs = dataAccess.delete(note.getId());        
         if(rs > 0) {
             //Trả về biểu diễn String của note được xóa
-            return Note.toString(note);
+            return note.toString();
         } else {
             return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }      

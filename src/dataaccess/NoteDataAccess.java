@@ -1,9 +1,8 @@
 package dataaccess;
 
 import dataaccess.connection.MySQLDatabaseConnection;
-import model.attributeconvert.NoteContentConverter;
-import model.attributeconvert.NoteFilterConverter;
-import model.Note;
+import model.datatransfer.attributeconverter.NoteFilterConverter;
+import model.datatransfer.Note;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -60,7 +59,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
-                note.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -106,7 +105,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
-                note.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -149,7 +148,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
-                note.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -192,7 +191,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
                 note.setHeader(resultSet.getString("HEADER"));
-                note.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -230,7 +229,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);            
             preparedStatement.setInt(1, userId);
             preparedStatement.setString(2, note.getHeader());
-            preparedStatement.setString(3, NoteContentConverter.convertToDBText(note.getContent()));
+            preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
             preparedStatement.setString(6, NoteFilterConverter.convertToString(note.getFilters()));
@@ -267,7 +266,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);            
             preparedStatement.setInt(1, userId);
             preparedStatement.setString(2, note.getHeader());
-            preparedStatement.setString(3, NoteContentConverter.convertToDBText(note.getContent()));
+            preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
             preparedStatement.setString(6, NoteFilterConverter.convertToString(note.getFilters()));

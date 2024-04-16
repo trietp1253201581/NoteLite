@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import model.RequestCommand;
 import server.service.ServerRequestProcessor;
 
 /**
@@ -52,7 +51,7 @@ public class WorkerThread extends Thread {
                 //Thông báo thông điệp
                 System.out.println(socket + " say " + str);
                 //Chuyển thành RequestCommand và xử lý
-                String rs = serverRequestProcessor.process(RequestCommand.valueOf(str));  
+                String rs = serverRequestProcessor.process(str);  
                 //Trả về kết quả
                 dataOutputStream.writeUTF(rs);
                 dataOutputStream.flush();

@@ -1,7 +1,7 @@
-package model;
+package model.datatransfer;
 
 import java.sql.Date;
-import model.attributeconvert.NoteFilterConverter;
+import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note để chia sẻ giữa các user
@@ -65,23 +65,23 @@ public class ShareNote extends Note {
     
     /**
      * Chuyển một ShareNote thành một String
-     * @param shareNote ShareNote cần chuyển
-     * @return String thu được, có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      */
-    public static String toString(ShareNote shareNote) {
+    @Override
+    public String toString() {
         String result = "";
         //Tạo ra một String biểu diễn cho note
-        result += shareNote.getId() + ";;;";
-        result += shareNote.getAuthor() + ";;;";
-        result += shareNote.getHeader() + ";;;";
-        result += shareNote.getContent() + ";;;";
-        result += shareNote.getLastModified() + ";;;";
-        result += shareNote.getLastModifiedDate() + ";;;";
-        result += NoteFilterConverter.convertToString(shareNote.getFilters()) + ";;;";
-        result += shareNote.getShareId()+";;;";
-        result += shareNote.getReceiver() + ";;;";
-        result += shareNote.getShareType() + ";;;";
+        result += super.getId() + "<;>";
+        result += super.getAuthor() + "<;>";
+        result += super.getHeader() + "<;>";
+        result += super.getContent() + "<;>";
+        result += super.getLastModified() + "<;>";
+        result += super.getLastModifiedDate() + "<;>";
+        result += NoteFilterConverter.convertToString(super.getFilters()) + "<;>";
+        result += shareId + "<;>";
+        result += receiver + "<;>";
+        result += shareType + "<;>";
         result += "///";
         
         return result;
@@ -89,14 +89,14 @@ public class ShareNote extends Note {
     
     /**
      * Chuyển một String sang một ShareNote
-     * @param str String cần chuyển có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @param str String cần chuyển có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      * @return ShareNote thu được
      */
     public static ShareNote valueOf(String str) {
         ShareNote shareNote = new ShareNote();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(";;;");
+        String[] strarr = str.split("<;>");
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
         shareNote.setId(Integer.parseInt(strarr[0]));
         shareNote.setAuthor(strarr[1]);

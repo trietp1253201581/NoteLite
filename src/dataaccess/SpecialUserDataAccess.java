@@ -1,7 +1,7 @@
 package dataaccess;
 
 import java.util.List;
-import model.User;
+import model.datatransfer.User;
 
 /**
  * Cung cấp các phương thức thao tác đặc biệt với dữ liệu User

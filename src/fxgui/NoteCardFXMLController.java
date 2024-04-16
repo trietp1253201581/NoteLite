@@ -7,7 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import model.Note;
+import model.datatransfer.Note;
 
 /**
  * FXML Controller class cho các Note Card

@@ -3,7 +3,8 @@ package server.service;
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
 import java.util.List;
-import model.Note;
+import java.util.Map;
+import model.datatransfer.Note;
 
 /**
  * Lấy tất cả các note của một user
@@ -17,11 +18,11 @@ public class GetAllNotesService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data gồm một author
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code author}
      */
     @Override
-    public void setData(String data) {
-        this.author = data;
+    public void setData(Map<String, String> paramMap) {
+        author = paramMap.get("author");
     }
     
     /**
@@ -41,7 +42,7 @@ public class GetAllNotesService implements ServerService {
         String result = "";       
         if(!notes.isEmpty()) {
             for(Note note: notes) {
-                result += Note.toString(note) + ":::";
+                result += note.toString() + ":::";
             }
         } else {
             result = ServerServiceErrorType.NOT_EXISTS.toString();

@@ -7,13 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.ShareNote;
-import model.ShareType;
+import model.datatransfer.ShareNote;
+import model.datatransfer.ShareType;
 import dataaccess.connection.DatabaseConnection;
 import java.sql.Date;
-import model.Note;
-import model.attributeconvert.NoteContentConverter;
-import model.attributeconvert.NoteFilterConverter;
+import model.datatransfer.Note;
+import model.datatransfer.attributeconverter.NoteContentConverter;
+import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với ShareNote

@@ -24,8 +24,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import model.Note;
-import model.User;
+import model.datatransfer.Note;
+import model.datatransfer.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
 import client.service.PdfService;
@@ -42,8 +42,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import model.ShareNote;
-import model.ShareType;
+import model.datatransfer.ShareNote;
+import model.datatransfer.ShareType;
+import model.datatransfer.attributeconverter.NoteContentConverter;
 
 /**
  * FXML Controller class cho Dashboard GUI
@@ -214,7 +215,7 @@ public class DashboardFXMLController {
         undoRedoService.saveText(contentArea.getText());
         //Set dữ liệu gần nhất cho myNote
         myNote.setHeader(noteHeaderLabel.getText());
-        myNote.setContent(contentArea.getText());
+        myNote.setContent(NoteContentConverter.convertToDBText(contentArea.getText()));
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
@@ -451,7 +452,7 @@ public class DashboardFXMLController {
                 //Lấy index Note được xóa trong list các Note của user
                 int deletedIndex = -1;
                 for(int i = 0; i < myNotes.size(); i++) {
-                    if(Note.toString(myNotes.get(i)).equals(Note.toString(deletedNote))) {
+                    if(myNotes.get(i).toString().equals(deletedNote.toString())) {
                         deletedIndex = i;
                     }
                 }
@@ -651,7 +652,7 @@ public class DashboardFXMLController {
             } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
                 showAlert(Alert.AlertType.ERROR, "Can't send this notes");
             } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.INFORMATION, "You have shared this note to user " + receiverUsename);
+                showAlert(Alert.AlertType.ERROR, "This receiver not exist ");
             } else {
                 showAlert(Alert.AlertType.INFORMATION, "Successfully share");
             }
@@ -727,7 +728,7 @@ public class DashboardFXMLController {
      */
     private void initEditScene() { 
         //Thiết lập content, header
-        contentArea.setText(myNote.getContent());
+        contentArea.setText(NoteContentConverter.convertToObjectText(myNote.getContent()));
         contentArea.setEditable(true);
         noteHeaderLabel.setText(myNote.getHeader());
         numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");

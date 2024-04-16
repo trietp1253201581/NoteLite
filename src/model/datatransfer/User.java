@@ -1,4 +1,4 @@
-package model;
+package model.datatransfer;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -87,19 +87,19 @@ public class User {
 
     /**
      * Chuyển một User thành String
-     * @param user user cần chuyển
-     * @return String thu được, có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      */
-    public static String toString(User user) {        
+    @Override
+    public String toString() {        
         String result = "";
         //Tạo ra một String biểu diễn cho User
-        result += user.getId() + ";;;";
-        result += user.getName() + ";;;";
-        result += user.getUsername() + ";;;";
-        result += user.getPassword() + ";;;";
-        result += user.getBirthday() + ";;;";
-        result += user.getSchool() + ";;;";
+        result += id + "<;>";
+        result += name + "<;>";
+        result += username + "<;>";
+        result += password + "<;>";
+        result += birthday + "<;>";
+        result += school + "<;>";
         result += "///";
         
         return result;        
@@ -107,14 +107,14 @@ public class User {
     
     /**
      * Chuyển một String sang một User
-     * @param str String cần chuyển có dạng {@code "*;;;*;;;*;;;*;;;*;;;*;;;*;;;///"}
+     * @param str String cần chuyển có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
      * trong đó * đại diện cho các thuộc tính
      * @return User thu được
      */
     public static User valueOf(String str) {       
         User user = new User();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(";;;");
+        String[] strarr = str.split("<;>");
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của user
         user.setId(Integer.parseInt(strarr[0]));
         user.setName(strarr[1]);

@@ -1,4 +1,4 @@
-package model;
+package model.datatransfer;
 
 /**
  * Định nghĩa các type cho ShareNote

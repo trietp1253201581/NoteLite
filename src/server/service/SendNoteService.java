@@ -4,8 +4,9 @@ import dataaccess.ShareNoteDataAccess;
 import dataaccess.SpecialShareNoteDataAccess;
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
-import model.Note;
-import model.ShareNote;
+import java.util.Map;
+import model.datatransfer.Note;
+import model.datatransfer.ShareNote;
 
 /**
  * Send một Note tới user khác
@@ -19,11 +20,11 @@ public class SendNoteService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data là một String biểu diễn ShareNote mới
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code shareNote}
      */
     @Override
-    public void setData(String data) {
-        shareNote = ShareNote.valueOf(data);
+    public void setData(Map<String, String> paramMap) {
+        shareNote = ShareNote.valueOf(paramMap.get("shareNote"));
     }
     
     /**
@@ -53,7 +54,7 @@ public class SendNoteService implements ServerService {
                 //Lấy ShareNote vừa update
                 shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
                 //Trả về String biểu diễn ShareNote vừa tạo
-                return ShareNote.toString(shareNote);
+                return shareNote.toString();
             } else {
                 return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
             }
@@ -64,7 +65,7 @@ public class SendNoteService implements ServerService {
             //Lấy ShareNote vừa tạo
             shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
             //Trả về String biểu diễn ShareNote vừa tạo
-            return ShareNote.toString(shareNote);
+            return shareNote.toString();
         } else {
             return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }

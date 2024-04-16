@@ -4,10 +4,12 @@ import client.networking.Client;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import model.Note;
-import model.RequestCommand;
-import model.ShareNote;
-import model.User;
+import java.util.HashMap;
+import java.util.Map;
+import model.datatransfer.Note;
+import model.datatransfer.ShareNote;
+import model.datatransfer.User;
+import model.command.Command;
 
 /**
  * Cung cấp các service cần kết nối với server
@@ -17,9 +19,9 @@ import model.User;
  */
 public class ClientServerService {
     private String serviceName;
-    private String data;
+    private String message;
     private Client client;
-    private RequestCommand requestCommand;
+    private Map<String, Object> paramMap;
     
     /**
      * Kiểm tra thông tin đăng nhập
@@ -30,20 +32,23 @@ public class ClientServerService {
     public String checkLogin(String username, String password) {
         //Tạo thông tin cho process
         serviceName = "CheckLogin";
-        data = username + ";;;" + password;
+        paramMap = new HashMap<>();
+        paramMap.put("username", username);
+        paramMap.put("password", password);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
     
     /**
      * Tạo một user mới
-     * @param newUser user mới
+     * @param user user mới
      * @return Kết quả thực thi service này từ server     
      */
-    public String createUser(User newUser) {
+    public String createUser(User user) {
         //Tạo thông tin cho process
         serviceName = "CreateUser";
-        data = User.toString(newUser);
+        paramMap = new HashMap<>();
+        paramMap.put("user", user);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -56,7 +61,8 @@ public class ClientServerService {
     public String updateUser(User user) {
         //Tạo thông tin cho process
         serviceName = "UpdateUser";
-        data = User.toString(user);
+        paramMap = new HashMap<>();
+        paramMap.put("user", user);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -69,20 +75,22 @@ public class ClientServerService {
     public String openLastNote(String author) {
         //Tạo thông tin cho process
         serviceName = "OpenLastNote";
-        data = author;
+        paramMap = new HashMap<>();
+        paramMap.put("author", author);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
     
     /**
      * Tạo một Note mới
-     * @param newNote Note mới
+     * @param note Note mới
      * @return Kết quả thực thi service này từ server     
      */
-    public String createNote(Note newNote) {
+    public String createNote(Note note) {
         //Tạo thông tin cho process
         serviceName = "CreateNote";
-        data = Note.toString(newNote);
+        paramMap = new HashMap<>();
+        paramMap.put("note", note);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -96,7 +104,9 @@ public class ClientServerService {
     public String openNote(String author, String header) {
         //Tạo thông tin cho process
         serviceName = "OpenNote";
-        data = author + ";;;" + header;
+        paramMap = new HashMap<>();
+        paramMap.put("author", author);
+        paramMap.put("header", header);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -110,7 +120,9 @@ public class ClientServerService {
     public String deleteNote(String author, String header) {
         //Tạo thông tin cho process
         serviceName = "DeleteNote";
-        data = author + ";;;" + header;
+        paramMap = new HashMap<>();
+        paramMap.put("author", author);
+        paramMap.put("header", header);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -123,7 +135,8 @@ public class ClientServerService {
     public String saveNote(Note note) {
         //Tạo thông tin cho process
         serviceName = "SaveNote";
-        data = Note.toString(note);
+        paramMap = new HashMap<>();
+        paramMap.put("note", note);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -136,7 +149,8 @@ public class ClientServerService {
     public String getAllNotes(String author) {
         //Tạo thông tin cho process
         serviceName = "GetAllNotes";
-        data = author;
+        paramMap = new HashMap<>();
+        paramMap.put("author", author);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -149,7 +163,8 @@ public class ClientServerService {
     public String sendNote(ShareNote shareNote) {
         //Tạo thông tin
         serviceName = "SendNote";
-        data = ShareNote.toString(shareNote);
+        paramMap = new HashMap<>();
+        paramMap.put("shareNote", shareNote);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -162,7 +177,8 @@ public class ClientServerService {
     public String getAllReceivedNotes(String receiver) {
         //Tạo thông tin
         serviceName = "GetAllReceivedNotes";
-        data = receiver;
+        paramMap = new HashMap<>();
+        paramMap.put("receiver", receiver);
         //Gửi yêu cầu và nhận phản hồi
         return requestAndGetReply();
     }
@@ -171,8 +187,6 @@ public class ClientServerService {
      * Gửi yêu cầu và nhận phản hồi
      */
     private String requestAndGetReply() {
-        //Tạo request
-        requestCommand = new RequestCommand(serviceName, data);
         //Gửi yêu cầu, nhận phản hồi
         try {
             //Tạo 1 client để truyền dữ liệu
@@ -180,7 +194,8 @@ public class ClientServerService {
             int port = 2222;
             client = new Client(InetAddress.getByName(host), port);
             //Truyền message vào client và chạy client
-            client.setMessage(RequestCommand.toString(requestCommand));
+            message = Command.encode(serviceName, paramMap);
+            client.setMessage(message);
             client.runClient();
             client.closeClient();
             //Lấy reply từ server

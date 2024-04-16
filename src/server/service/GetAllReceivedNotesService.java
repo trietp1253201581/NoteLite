@@ -3,7 +3,8 @@ package server.service;
 import dataaccess.ShareNoteDataAccess;
 import dataaccess.SpecialShareNoteDataAccess;
 import java.util.List;
-import model.ShareNote;
+import java.util.Map;
+import model.datatransfer.ShareNote;
 
 /**
  * Lấy tất cả các ShareNote được share tới user
@@ -17,11 +18,11 @@ public class GetAllReceivedNotesService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data gồm một receiver
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code receiver}
      */
     @Override
-    public void setData(String data) {
-        receiver = data;
+    public void setData(Map<String, String> paramMap) {
+        receiver = paramMap.get("receiver");
     }
     
     /**
@@ -41,7 +42,7 @@ public class GetAllReceivedNotesService implements ServerService {
         String result = "";
         if(!shareNotes.isEmpty()) {
             for(ShareNote shareNote: shareNotes) {
-                result += ShareNote.toString(shareNote) + ":::";
+                result += shareNote.toString() + ":::";
             }
         } else {
             result = ServerServiceErrorType.NOT_EXISTS.toString();

@@ -2,7 +2,8 @@ package server.service;
 
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
-import model.User;
+import java.util.Map;
+import model.datatransfer.User;
 
 /**
  * Tạo một User mới
@@ -16,11 +17,11 @@ public class CreateUserService implements ServerService {
     
     /**
      * Set data cho các service qua một String
-     * @param data String miêu tả data là một String biểu diễn User mới
+     * @param paramMap Một Map miêu tả các tham số, gồm {@code user}
      */
     @Override
-    public void setData(String data) {
-        user = User.valueOf(data);
+    public void setData(Map<String, String> paramMap) {
+        user = User.valueOf(paramMap.get("user"));
     }
 
     /**
@@ -47,7 +48,7 @@ public class CreateUserService implements ServerService {
             //Lấy User mới tạo được
             User newUser = dataAccess.get(user.getUsername());
             //Trả về biểu diễn String của user
-            return User.toString(newUser);
+            return user.toString();
         } else {
             return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
         }        

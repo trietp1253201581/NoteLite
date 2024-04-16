@@ -1,8 +1,8 @@
 package dataaccess;
 
 import java.util.List;
-import model.Note;
-import model.ShareNote;
+import model.datatransfer.Note;
+import model.datatransfer.ShareNote;
 
 /**
  * Định nghĩa các phương thức thao tác đặc biệt với dữ liệu ShareNote
