@@ -1,5 +1,7 @@
 # NoteLite 
-# Author: Lê Minh Triết
+# Nhóm: 23
+# Chủ đề: Phầm mềm Note hỗ trợ học tập
+# Author: Đoàn Nguyễn Hải Nam, Vũ Mạnh Hưng, Nguyễn Huyền San, Nguyễn Thị Diệu Linh, Lê Minh Triết
 ## Mô tả ứng dụng
 Ứng dụng desktop NoteLite hỗ trợ việc ghi chú để học tập, làm việc.
 Ứng dụng được thiết kế theo mô hình Client-Server với một số điểm đặc biệt:
