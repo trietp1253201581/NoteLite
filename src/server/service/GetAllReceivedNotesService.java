@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.ShareNoteDataAccess;
 import dataaccess.SpecialShareNoteDataAccess;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.datatransfer.ShareNote;
@@ -27,27 +28,26 @@ public class GetAllReceivedNotesService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) String gồm các biểu diễn string của từng ShareNote, 
-     * được ngăn cách bởi {@code ":::"}, 
+     * @return Kết quả của việc thực thi là một Map miêu tả các value
+     * (1) List các ShareNote của user này, 
      * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
      * nếu user này chưa có note nào được share bởi user khác
      */
     @Override
-    public String execute() {
+    public Map<String, Object> execute() {
         //Tạo đối tượng access
         dataAccess = new ShareNoteDataAccess();
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note được share tới user này
         List<ShareNote> shareNotes = dataAccess.getAllReceived(receiver);
         //Trả về kết quả
-        String result = "";
         if(!shareNotes.isEmpty()) {
-            for(ShareNote shareNote: shareNotes) {
-                result += shareNote.toString() + ":::";
-            }
+            resultMap.put("ListShareNote", shareNotes);
+            return resultMap;
         } else {
-            result = ServerServiceErrorType.NOT_EXISTS.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            return resultMap;
         }
-        
-        return result;
     }
 }

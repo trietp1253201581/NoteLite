@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
+import java.util.HashMap;
 import java.util.Map;
 import model.datatransfer.User;
 
@@ -28,25 +29,32 @@ public class CheckLoginService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) Một {@link User} nếu tài khoản tồn tại và mật khẩu đúng,
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code FALSE_INFORMATION} 
+     * @return Kết quả của việc thực thi là một Map với các value
+     * (1) Một {@link User} nếu tài khoản tồn tại và mật khẩu đúng,
+     * (2) {@link ServerServiceErrorType}.{@code FALSE_INFORMATION} 
      * nếu tài khoản tồn tại nhưng mật khẩu sai,
-     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS} 
+     * (3) {@link ServerServiceErrorType}.{@code NOT_EXISTS} 
      * nếu tài khoản không tồn tại
      */
     @Override
-    public String execute() { 
+    public Map<String, Object> execute() { 
         //Tạo một đối tượng để xử lý dữ liệu với Database
         dataAccess = new UserDataAccess();   
         //Lấy user có username cho trước
         User user = dataAccess.get(username);
-        //Kiểm tra các điều kiện và trả về
+        //Tạo một Map để miêu tả kết quả
+        Map<String, Object> resultMap = new HashMap<>();
+        //Kiểm tra các điều kiện để thêm tương ứng vào resultMap
         if(user.isDefaultValue()) {
-            return ServerServiceErrorType.NOT_EXISTS.toString();
-        } else if(user.getPassword().equals(password)) {
-            return user.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            return resultMap;
+        }
+        if(user.getPassword().equals(password)) {
+            resultMap.put("User", user);
+            return resultMap;
         } else {
-            return ServerServiceErrorType.FALSE_INFORMATION.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.FALSE_INFORMATION);
+            return resultMap;
         }
     }    
 }

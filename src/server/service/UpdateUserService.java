@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
+import java.util.HashMap;
 import java.util.Map;
 import model.datatransfer.User;
 
@@ -26,14 +27,17 @@ public class UpdateUserService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) User được cập nhật nếu cập nhật được,
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * @return Kết quả của việc thực thi là một Map miêu tả các value
+     * (1) User được cập nhật nếu cập nhật được,
+     * (2) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh cập nhật được
      */
     @Override
-    public String execute() {        
+    public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
         dataAccess = new UserDataAccess();
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Thực hiện cập nhật user
         int rs = dataAccess.update(user);
         //Kiểm tra điều kiện
@@ -41,9 +45,11 @@ public class UpdateUserService implements ServerService {
             //Lấy user vừa cập nhật
             User updatedUser = dataAccess.get(user.getUsername());
             //Trả về dưới dạng string
-            return updatedUser.toString();
+            resultMap.put("User", updatedUser);
+            return resultMap;
         } else {
-            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            return resultMap;
         }        
     }    
 }

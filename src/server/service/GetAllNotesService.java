@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.datatransfer.Note;
@@ -27,27 +28,26 @@ public class GetAllNotesService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) String gồm các biểu diễn string của từng note, 
-     * được ngăn cách bởi {@code ":::"}, 
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * @return Kết quả của việc thực thi là một Map miêu tả các value
+     * (1) List các Note của user này, 
+     * (2) {@link ServerServiceErrorType}.{@code NOT_EXISTS}
      * nếu user này chưa có note nào
      */
     @Override
-    public String execute() {       
+    public Map<String, Object> execute() {       
         //Tạo một đối tượng access dữ liệu
         dataAccess = new NoteDataAccess();
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note của author
         List<Note> notes = dataAccess.getAll(author);  
-        //Tạo và trả về kết quả
-        String result = "";       
+        //Tạo và trả về kết quả     
         if(!notes.isEmpty()) {
-            for(Note note: notes) {
-                result += note.toString() + ":::";
-            }
+            resultMap.put("ListNote", notes);
+            return resultMap;
         } else {
-            result = ServerServiceErrorType.NOT_EXISTS.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            return resultMap;
         }     
-        
-        return result;      
     }   
 }

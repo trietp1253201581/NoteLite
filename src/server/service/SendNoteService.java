@@ -4,6 +4,7 @@ import dataaccess.ShareNoteDataAccess;
 import dataaccess.SpecialShareNoteDataAccess;
 import dataaccess.SpecialUserDataAccess;
 import dataaccess.UserDataAccess;
+import java.util.HashMap;
 import java.util.Map;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
@@ -36,13 +37,16 @@ public class SendNoteService implements ServerService {
      * nếu không thực hiện lệnh tạo được
      */
     @Override
-    public String execute() {
+    public Map<String, Object> execute() {
         //Tạo đối tượng access
         dataAccess = new ShareNoteDataAccess();
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra receiver có tồn tại hay không
         SpecialUserDataAccess userDataAccess = new UserDataAccess();
         if(userDataAccess.get(shareNote.getReceiver()).isDefaultValue()) {
-            return ServerServiceErrorType.NOT_EXISTS.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            return resultMap;
         }
         //Kiểm tra ShareNote đã tồn tại hay chưa
         ShareNote check = dataAccess.get((Note) shareNote, shareNote.getReceiver());
@@ -54,9 +58,11 @@ public class SendNoteService implements ServerService {
                 //Lấy ShareNote vừa update
                 shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
                 //Trả về String biểu diễn ShareNote vừa tạo
-                return shareNote.toString();
+                resultMap.put("ShareNote", shareNote);
+                return resultMap;
             } else {
-                return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
+                resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+                return resultMap;
             }
         }
         //Thực hiện thêm ShareNote
@@ -64,10 +70,12 @@ public class SendNoteService implements ServerService {
         if(addRs > 0) {
             //Lấy ShareNote vừa tạo
             shareNote = dataAccess.get((Note) shareNote, shareNote.getReceiver());
-            //Trả về String biểu diễn ShareNote vừa tạo
-            return shareNote.toString();
+            //Trả về ShareNote vừa tạo
+            resultMap.put("ShareNote", shareNote);
+            return resultMap;
         } else {
-            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+                return resultMap;
         }
     }
 }

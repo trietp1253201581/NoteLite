@@ -34,6 +34,9 @@ public class NoteFilterConverter {
      */
     public static List<String> convertToList(String strFilter) {
         //Chuyển String thành các thành phần filter string (do được ngăn cách bởi ##)
+        if("".equals(strFilter)) {
+            return new ArrayList<>();
+        }
         String[] filters = strFilter.split("##");
         List<String> result = new ArrayList<>();
         //Chuyển từ String[] thành list

@@ -12,7 +12,6 @@ import model.datatransfer.ShareType;
 import dataaccess.connection.DatabaseConnection;
 import java.sql.Date;
 import model.datatransfer.Note;
-import model.datatransfer.attributeconverter.NoteContentConverter;
 import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
@@ -64,7 +63,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setId(resultSet.getInt("ID"));
                 shareNote.setAuthor(resultSet.getString("AUTHOR"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -114,7 +113,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setId(resultSet.getInt("ID"));
                 shareNote.setAuthor(resultSet.getString("AUTHOR"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
@@ -162,7 +161,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setId(resultSet.getInt("ID"));
                 shareNote.setAuthor(resultSet.getString("AUTHOR"));
                 shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(NoteContentConverter.convertToObjectText(resultSet.getString("CONTENT")));
+                shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));

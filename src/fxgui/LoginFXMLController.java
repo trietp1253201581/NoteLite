@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -16,6 +15,7 @@ import javafx.stage.Stage;
 import model.datatransfer.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
+import client.service.ClientServerServiceErrorException;
 
 /**
  * FXML Controller class cho Login GUI
@@ -48,20 +48,23 @@ public class LoginFXMLController {
         String password = passwordField.getText();
       
         //Kiểm tra thông tin đăng nhập
-        String result = clientServerService.checkLogin(username, password);
-        //Thông báo với user
-        if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(result)) {
-            showAlert(AlertType.ERROR, "Not exist account");
-        } else if(ClientServerServiceErrorType.FALSE_INFORMATION.toString().equals(result)) {
-            showAlert(AlertType.ERROR, "False password");
-        } else if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(result)) {
-            showAlert(AlertType.ERROR, "Can't connect to server");
-        } else {
-            showAlert(AlertType.INFORMATION, "Successfully Login");
+        try { 
+            //Trường hợp đăng nhập thành công
             //Thiết lập user nhận được
-            User user = User.valueOf(result);
+            User user = clientServerService.checkLogin(username, password);
+            showAlert(Alert.AlertType.INFORMATION, "Successfully Login");
             //Mở Dashboard của user này
             openDashBoard(user);
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> showAlert(Alert.AlertType.ERROR, "Not exist user");
+                case ClientServerServiceErrorType.FALSE_INFORMATION
+                        -> showAlert(Alert.AlertType.ERROR, "False password");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
         }
     }
     

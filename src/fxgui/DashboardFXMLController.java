@@ -29,6 +29,7 @@ import model.datatransfer.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
 import client.service.PdfService;
+import client.service.ClientServerServiceErrorException;
 import java.io.File;
 import java.util.Optional;
 import javafx.collections.FXCollections;
@@ -193,7 +194,9 @@ public class DashboardFXMLController {
         Stage stage = (Stage)logoutButton.getScene().getWindow();
         try {
             Scene scene = new Scene(fXMLLoader.load());
-
+            LoginFXMLController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.init();
+            
             stage.setTitle("NoteLite");
             stage.setScene(scene);
             stage.show();
@@ -219,14 +222,18 @@ public class DashboardFXMLController {
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
-        replyFromServer = clientServerService.saveNote(myNote);
-        //Nhận reply và thông báo
-        if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't save this note");
-        } else if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else {
+        try { 
+            //Lưu thành công
+            myNote = clientServerService.saveNote(myNote);
             showAlert(Alert.AlertType.INFORMATION, "Successfully save for " + myNote.getHeader());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
+                        -> showAlert(Alert.AlertType.ERROR, "Can't save this note");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
         }
     }
 
@@ -344,24 +351,19 @@ public class DashboardFXMLController {
         //Chuyển sang scene My Notes
         changeScene(myNotesButton);
         //Lấy tất cả các Note của user
-        replyFromServer = clientServerService.getAllNotes(user.getUsername());
-        //Dựa vào reply từ server để xử lý
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open your notes");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            //Do nothing
-        } else {
-            //Thêm các note vào list các note của user
-            String[] datas = replyFromServer.split(":::");      
-            myNotes = new ArrayList<>();
-            for(String element: datas) {
-                myNotes.add(Note.valueOf(element));
+        try { 
+            //Lấy thành công
+            myNotes = clientServerService.getAllNotes(user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> myNotes = new ArrayList<>();
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             }
-            //Thiết lập lại My Notes scene
-            initMyNotesScene(myNotes);
         }
+        initMyNotesScene(myNotes);
     }
     
     @FXML
@@ -397,25 +399,25 @@ public class DashboardFXMLController {
             newNote.setContent("Edit here");
             newNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
             List<String> filters = new ArrayList<>();
-            filters.add("text");
             newNote.setFilters(filters);
             //Tạo Note mới
-            replyFromServer = clientServerService.createNote(newNote);
-            //Nhận reply từ server và thông báo
-            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't create new note");
-            } else if(ClientServerServiceErrorType.ALREADY_EXISTS.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "This note already exists");
-            } else {
-                //Láy dữ liệu note mới
-                newNote = Note.valueOf(replyFromServer);
-                //Thông báo đã tạo được
+            try { 
+                //Tạo thành công
+                newNote = clientServerService.createNote(newNote);
                 showAlert(Alert.AlertType.INFORMATION, "Successfully create " + newNote.getHeader());
-                //Thêm note mới vào list và load lại scene
+                //Thêm vào list và load lại
                 myNotes.add(newNote);
                 initMyNotesScene(myNotes);
+            } catch (ClientServerServiceErrorException ex) {
+                //Xử lý các ngoại lệ
+                switch (ex.getErrorType()) {
+                    case ClientServerServiceErrorType.ALREADY_EXISTS
+                            -> showAlert(Alert.AlertType.ERROR, "This note already exists");
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE
+                            -> showAlert(Alert.AlertType.ERROR, "Can't create new note");
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         });
     }
@@ -436,19 +438,11 @@ public class DashboardFXMLController {
         //Xử lý kết quả khi nhấn OK
         confirm.ifPresent(selectedHeader -> {
             //Xóa Note được chọn
-            replyFromServer = clientServerService.deleteNote(user.getUsername(), selectedHeader);
-            //Nhận reply từ server và thông báo
-            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't delete this note");
-            } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "This note not exists");
-            } else {
-                //Lấy thông tin Note được xóa
-                Note deletedNote = Note.valueOf(replyFromServer);
-                //Thông báo xóa thành công
+            try { 
+                //Xóa thành công
+                Note deletedNote = clientServerService.deleteNote(user.getUsername(), selectedHeader);
                 showAlert(Alert.AlertType.INFORMATION, "Successfully create " + deletedNote.getHeader());
+                //Xóa khỏi list và load lại
                 //Lấy index Note được xóa trong list các Note của user
                 int deletedIndex = -1;
                 for(int i = 0; i < myNotes.size(); i++) {
@@ -460,6 +454,16 @@ public class DashboardFXMLController {
                 myNotes.remove(deletedIndex);  
                 //Load lại My Notes Scene
                 initMyNotesScene(myNotes);
+            } catch (ClientServerServiceErrorException ex) {
+                //Xử lý các ngoại lệ
+                switch (ex.getErrorType()) {
+                    case ClientServerServiceErrorType.ALREADY_EXISTS
+                            -> showAlert(Alert.AlertType.ERROR, "This note already exists");
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE
+                            -> showAlert(Alert.AlertType.ERROR, "Can't create new note");
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         });
     }
@@ -480,16 +484,20 @@ public class DashboardFXMLController {
         user.setBirthday(Date.valueOf(birthdayField.getText()));
         user.setSchool(schoolField.getText());
         //Cập nhật User
-        replyFromServer = clientServerService.updateUser(user);
-        //Nhận reply từ server và thông báo
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't update your user");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "User not exists");
-        } else {
+        try { 
+            //Cập nhật thành công
+            user = clientServerService.updateUser(user);
             showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> showAlert(Alert.AlertType.ERROR, "Not exist user");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
+                        -> showAlert(Alert.AlertType.ERROR, "Can't update your user");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
         }
     }
 
@@ -515,24 +523,19 @@ public class DashboardFXMLController {
         //Chuyển sang Import/Export Scene
         changeScene(importExportButton);
         //Lấy tất cả các note của user
-        replyFromServer = clientServerService.getAllNotes(user.getUsername());
-        //Nhận reply từ server
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open your notes");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            //Do nothing
-        } else {
-            //Thêm các note vào list các note của user
-            String[] datas = replyFromServer.split(":::");      
-            myNotes = new ArrayList<>();
-            for(String element: datas) {
-                myNotes.add(Note.valueOf(element));
+        try { 
+            //Lấy thành công
+            myNotes = clientServerService.getAllNotes(user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> myNotes = new ArrayList<>();
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             }
-            //Thiết lập lại My Notes scene
-            initImportExportScene(myNotes);
         }
+        initImportExportScene(myNotes);
     }
 
     @FXML
@@ -540,22 +543,24 @@ public class DashboardFXMLController {
         //Lấy header được chọn từ ComboBox
         String selectedNoteHeader = exportNoteComboBox.getSelectionModel().getSelectedItem();
         //Lấy dữ liệu từ note được chọn
-        replyFromServer = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open this note");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "This note not exists");
-        } else {
-            Note selectedNote = Note.valueOf(replyFromServer);
-            //Lấy format để export từ ComboBox
-            String selectedFormat = exportFormatComboBox.getSelectionModel().getSelectedItem();
+        try { 
+            //Lấy thành công
+            Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
             //Export file
             PdfService.export(selectedNoteHeader + ".pdf", selectedNote.getContent());
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
-        }       
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> showAlert(Alert.AlertType.ERROR, "This note not exists");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                        -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
+        }
     }
 
     @FXML
@@ -589,34 +594,34 @@ public class DashboardFXMLController {
         //Chuyển sang Scene ShareNote
         changeScene(shareNoteButton);
         //Lấy tất cả các note của user
-        replyFromServer = clientServerService.getAllNotes(user.getUsername());
-        //Nhận reply từ server
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open your notes");
-        } else {
-            //Thêm các note vào list các note của user
-            String[] datas = replyFromServer.split(":::");      
-            myNotes = new ArrayList<>();
-            for(String element: datas) {
-                myNotes.add(Note.valueOf(element));
+        try { 
+            //Lấy thành công
+            myNotes = clientServerService.getAllNotes(user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> myNotes = new ArrayList<>();
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             }
         }
         //Lấy tất cả các note được share tới user này
-        replyFromServer = clientServerService.getAllReceivedNotes(user.getUsername());
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open your notes");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            //Do nothing
-        } else {
-            //Thêm các note vào list
-            String[] datas = replyFromServer.split(":::");      
+        try { 
+            //Lấy thành công
+            List<ShareNote> shareNotes = clientServerService.getAllReceivedNotes(user.getUsername());
+            //Chuyển sang ObservableList
             mySharedNotes = FXCollections.observableArrayList();
-            for(String element: datas) {
-                mySharedNotes.add(ShareNote.valueOf(element));
+            for(ShareNote shareNote: shareNotes) {
+                mySharedNotes.add(shareNote);
+            }
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> mySharedNotes = FXCollections.observableArrayList();
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             }
         }
         initShareNoteScene(myNotes, mySharedNotes);
@@ -626,35 +631,32 @@ public class DashboardFXMLController {
     void handleSendNoteButton(ActionEvent event) {
         //Lấy header được chọn từ ComboBox và lấy note tương ứng
         String selectedNoteHeader = chooseShareNoteComboBox.getSelectionModel().getSelectedItem();
-        replyFromServer = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open this note");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "This note not exists");
-        } else {
+        try { 
+            //Lấy thành công
+            Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
             //Lấy receiver Id
             String receiverUsename = chooseUserShareField.getText();
             //Share Note
             ShareNote newShareNote = new ShareNote();
-            newShareNote.setNote(Note.valueOf(replyFromServer));
+            newShareNote.setNote(selectedNote);
             newShareNote.setReceiver(receiverUsename);
             if(shareTypeReadOnly.isSelected()) {
                 newShareNote.setShareType(ShareType.READ_ONLY);
             } else {
                 newShareNote.setShareType(ShareType.CAN_EDIT);
             }
-            replyFromServer = clientServerService.sendNote(newShareNote);
-            //Xử lý và thông báo
-            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't send this notes");
-            } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "This receiver not exist ");
-            } else {
-                showAlert(Alert.AlertType.INFORMATION, "Successfully share");
+            clientServerService.sendNote(newShareNote);
+            //Thông báo
+            showAlert(Alert.AlertType.INFORMATION, "Successfully share");
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS 
+                        -> showAlert(Alert.AlertType.ERROR, "Not exists note or receiver");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                        -> showAlert(Alert.AlertType.ERROR, "Can't send this note");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
             }
         }
     }
@@ -668,16 +670,9 @@ public class DashboardFXMLController {
             //Lấy ShareNote được chọn
             ShareNote shareNote = sharedByOtherTable.getSelectionModel().getSelectedItem();
             //Lấy note được chọn
-            replyFromServer = clientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
-            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "Can't open this note");
-            } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-                showAlert(Alert.AlertType.ERROR, "This note not exists");
-            } else {
-                //Lấy thông tin note được mở
-                myNote = Note.valueOf(replyFromServer);
+            try { 
+                //Lấy thành công
+                myNote = clientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
                 //Load lại Edit Scene và mở Edit Scene
                 initEditScene();
                 //Nếu là ReadOnly thì không được edit
@@ -685,7 +680,17 @@ public class DashboardFXMLController {
                     contentArea.setEditable(false);
                 }
                 changeScene(editNoteButton);  
-            }            
+            } catch (ClientServerServiceErrorException ex) {
+                //Xử lý các ngoại lệ
+                switch (ex.getErrorType()) {
+                    case ClientServerServiceErrorType.NOT_EXISTS 
+                            -> showAlert(Alert.AlertType.ERROR, "This note not exists");
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                            -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+            }     
         }
     }
     
@@ -700,26 +705,26 @@ public class DashboardFXMLController {
         noteHeaderField.setVisible(false);     
         changeScene(editNoteButton);
         //Mở Note thao tác gần nhất
-        replyFromServer = clientServerService.openLastNote(user.getUsername());
-        //Nhận reply từ server và xử lý
-        if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-            showAlert(Alert.AlertType.ERROR, "Can't open your last note");
-        } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-            //Nếu user chưa có note nào thì tạo một note mới tạm thời
-            myNote = new Note();
-            myNote.setAuthor(user.getUsername());
-            myNote.setHeader("New Note");
-            myNote.setContent("Edit here");
-            List<String> filters = new ArrayList<>();
-            filters.add("text");
-            myNote.setFilters(filters);
-        } else {
-            //Lấy dữ liệu note gần nhất
-            myNote = Note.valueOf(replyFromServer);
+        try { 
+            //Lấy thành công
+            myNote = clientServerService.openLastNote(user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    myNote = new Note();
+                    myNote.setAuthor(user.getUsername());
+                    myNote.setHeader("New Note");
+                    myNote.setContent("Edit here");
+                    List<String> filters = new ArrayList<>();
+                    myNote.setFilters(filters);
+                }
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                        -> showAlert(Alert.AlertType.ERROR, "Can't open your last note");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
         }
-        //Load lại Edit Scene
         initEditScene();
     }
     
@@ -746,6 +751,9 @@ public class DashboardFXMLController {
     private void initMyNotesScene(List<Note> notes) {        
         //Làm sạch layout
         noteCardLayout.getChildren().clear();
+        if(notes.isEmpty()) {
+            return;
+        }
         noteCardLayout.setSpacing(3);
         //Load các Note Card
         for(int i=0; i < notes.size(); i++) {
@@ -768,22 +776,24 @@ public class DashboardFXMLController {
                         alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
                         Optional<ButtonType> optional = alert.showAndWait();
                         if(optional.get() == ButtonType.OK) {
-                            replyFromServer = clientServerService.openNote(user.getUsername(),
+                            try { 
+                                //Lấy thành công
+                                myNote = clientServerService.openNote(user.getUsername(),
                                     noteCardFXMLController.getHeader());
-                            //Nhận reply từ server và thông báo
-                            if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(replyFromServer)) {
-                                showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                            } else if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(replyFromServer)) {
-                                showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                            } else if(ClientServerServiceErrorType.NOT_EXISTS.toString().equals(replyFromServer)) {
-                                showAlert(Alert.AlertType.ERROR, "This note not exists");
-                            } else {
-                                //Lấy thông tin note được mở
-                                myNote = Note.valueOf(replyFromServer);
                                 //Load lại Edit Scene và mở Edit Scene
                                 initEditScene();
                                 changeScene(editNoteButton);
-                            }
+                            } catch (ClientServerServiceErrorException ex) {
+                                //Xử lý các ngoại lệ
+                                switch (ex.getErrorType()) {
+                                    case ClientServerServiceErrorType.NOT_EXISTS 
+                                            -> showAlert(Alert.AlertType.ERROR, "This note not exists");
+                                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                                            -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                                }
+                            } 
                         }
                         noteCardFXMLController.setLabelStyle("-fx-background-color: transparent");
                     }
@@ -817,6 +827,9 @@ public class DashboardFXMLController {
     private void initImportExportScene(List<Note> notes) {
         //Clear ComboBox và thêm vào các header note trong list
         exportNoteComboBox.getItems().clear();
+        if(notes.isEmpty()) {
+            return;
+        }
         for(Note note: notes) {
             exportNoteComboBox.getItems().add(note.getHeader());
         }
@@ -833,6 +846,9 @@ public class DashboardFXMLController {
     private void initShareNoteScene(List<Note> notes, ObservableList<ShareNote> shareNotes) {
         //Clear ComboBox và thêm vào các header note trong list
         chooseShareNoteComboBox.getItems().clear();
+        if(notes.isEmpty()) {
+            return;
+        }
         for(Note note: notes) {
             chooseShareNoteComboBox.getItems().add(note.getHeader());
         }
@@ -840,6 +856,9 @@ public class DashboardFXMLController {
         shareTypeReadOnly.setSelected(true);
         //Clear table và thêm các note được share
         sharedByOtherTable.getItems().clear();
+        if(shareNotes.isEmpty()) {
+            return;
+        }
         senderUsernameColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("author"));
         headerColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("header"));
         shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
@@ -856,6 +875,9 @@ public class DashboardFXMLController {
         int row = 0;
         //Làm sạch filter layout
         filterGridLayout.getChildren().clear();
+        if(filters.isEmpty()) {
+            return;
+        }
         //Thiết lập khoảng cách giữa các filter
         filterGridLayout.setHgap(8);
         filterGridLayout.setVgap(8);

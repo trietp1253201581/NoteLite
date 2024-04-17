@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
+import java.util.HashMap;
 import java.util.Map;
 import model.datatransfer.Note;
 
@@ -26,21 +27,26 @@ public class OpenLastNoteService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) Note được chỉnh sửa gần nhất,
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * @return Kết quả của việc thực thi là một Map miêu tả các value
+     * (1) Note được chỉnh sửa gần nhất,
+     * (2) {@link ServerServiceErrorType}.{@code NOT_EXISTS}
      * nếu user không có note nào
      */
     @Override
-    public String execute() { 
+    public Map<String, Object> execute() { 
         //Tạo đối tượng access dữ liệu
         dataAccess = new NoteDataAccess();
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Lấy Note được chỉnh sửa gần nhất
         Note note = dataAccess.getLast(author);
         //Kiểm tra điều kiện và trả về
         if(!note.isDefaultValue()) {
-            return note.toString();
+            resultMap.put("Note", note);
+            return resultMap;
         } else {
-            return ServerServiceErrorType.NOT_EXISTS.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            return resultMap;
         }        
     }    
 }

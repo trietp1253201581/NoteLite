@@ -20,5 +20,5 @@ public interface ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi
      */
-    String execute();   
+    Map<String, Object> execute();   
 }

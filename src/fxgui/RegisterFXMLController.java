@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import model.datatransfer.User;
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorType;
+import client.service.ClientServerServiceErrorException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javafx.scene.control.DatePicker;
@@ -62,20 +63,23 @@ public class RegisterFXMLController {
         newUser.setBirthday(Date.valueOf(birthdayField.getValue()));
         newUser.setSchool(schoolField.getText());
         
-        //Thực hiện tạo Account
-        String result = clientServerService.createUser(newUser);
-        //Thông báo
-        if(ClientServerServiceErrorType.CAN_NOT_EXECUTE.toString().equals(result)) {
-            showAlert(Alert.AlertType.ERROR, "Can't create user");
-        } else if(ClientServerServiceErrorType.ALREADY_EXISTS.toString().equals(result)) {
-            showAlert(Alert.AlertType.ERROR, "Exist user");
-        } else if(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER.toString().equals(result)) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-        } else {
+        try { 
+            //Tạo User mới thành công
+            clientServerService.createUser(newUser);
             showAlert(Alert.AlertType.INFORMATION, "Successfully create");
             showAlert(Alert.AlertType.CONFIRMATION, "Back to Login");
             //Quay về trang đăng nhập
             openLogin();
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
+                        -> showAlert(Alert.AlertType.ERROR, "Can't create user");
+                case ClientServerServiceErrorType.ALREADY_EXISTS
+                        -> showAlert(Alert.AlertType.ERROR, "Exist user");
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            }
         }
     }
     

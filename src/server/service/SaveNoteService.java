@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.NoteDataAccess;
 import dataaccess.SpecialNoteDataAccess;
+import java.util.HashMap;
 import java.util.Map;
 import model.datatransfer.Note;
 
@@ -26,23 +27,28 @@ public class SaveNoteService implements ServerService {
     
     /**
      * Thực thi service
-     * @return Kết quả của việc thực thi, (1) Note cần lưu nếu lưu được,
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * @return Kết quả của việc thực thi là một Map miêu tả các value
+     * (1) Note cần lưu nếu lưu được,
+     * (2) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh lưu được
      */
     @Override
-    public String execute() {  
+    public Map<String, Object> execute() {  
         //Tạo đối tượng access dữ liệu
         dataAccess = new NoteDataAccess(); 
+        //Tạo Map kết quả
+        Map<String, Object> resultMap = new HashMap<>();
         //Nếu chưa có note thì tạo note mới và trả về
         if(dataAccess.get(note.getAuthor(), note.getHeader()).isDefaultValue()) {
             //Tạo Note mới
             int rs = dataAccess.add(note);    
             //Trả về
             if(rs > 0) {
-                return note.toString();
+                resultMap.put("Note", note);
+                return resultMap;
             } else {
-                return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
+                resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+                return resultMap;
             }
         }
         //Thiết lập note cần lưu là note được chỉnh sửa gần nhất
@@ -56,9 +62,11 @@ public class SaveNoteService implements ServerService {
             //Lấy Note vừa được lưu
             Note updatedNote = dataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về dưới dạng string
-            return updatedNote.toString();
+            resultMap.put("Note", updatedNote);
+            return resultMap;
         } else {
-            return ServerServiceErrorType.CAN_NOT_EXECUTE.toString();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            return resultMap;
         }        
     }    
 }

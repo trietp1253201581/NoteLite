@@ -25,6 +25,7 @@ public class ServerRequestProcessor {
         //Thiết lập data cho service
         serverService.setData(dataMap);
         //Thực thi service và lấy kết quả
-        return serverService.execute();     
+        Map<String, Object> resultMap = serverService.execute();     
+        return Command.encode("Result", resultMap);
     }
 }
