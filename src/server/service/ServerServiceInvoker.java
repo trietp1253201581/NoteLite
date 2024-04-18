@@ -15,30 +15,40 @@ public class ServerServiceInvoker {
      */
     public static ServerService invoke(String serviceName) {
         switch (serviceName) {
-            case "CheckLogin":
+            case "CheckLogin" -> {
                 return new CheckLoginService();
-            case "CreateUser":
+            }
+            case "CreateUser" -> {
                 return new CreateUserService();
-            case "UpdateUser":
+            }
+            case "UpdateUser" -> {
                 return new UpdateUserService();
-            case "CreateNote":
+            }
+            case "CreateNote" -> {
                 return new CreateNoteService();
-            case "DeleteNote":
+            }
+            case "DeleteNote" -> {
                 return new DeleteNoteService();
-            case "OpenNote":
+            }
+            case "OpenNote" -> {
                 return new OpenNoteService();
-            case "OpenLastNote":
+            }
+            case "OpenLastNote" -> {
                 return new OpenLastNoteService();
-            case "GetAllNotes":
+            }
+            case "GetAllNotes" -> {
                 return new GetAllNotesService();
-            case "SaveNote":
+            }
+            case "SaveNote" -> {
                 return new SaveNoteService();
-            case "SendNote":
+            }
+            case "SendNote" -> {
                 return new SendNoteService();
-            case "GetAllReceivedNotes":
+            }
+            case "GetAllReceivedNotes" -> {
                 return new GetAllReceivedNotesService();
-            default:
-                //Thông báo service không tồn tại
+            }
+            default -> //Thông báo service không tồn tại
                 throw new IllegalArgumentException("This service is unsupported");
         }
     }   

@@ -1,7 +1,12 @@
 package fxgui;
 
+import client.service.ClientServerService;
+import client.service.ClientServerServiceErrorException;
+import client.service.ClientServerServiceErrorType;
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,19 +14,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.datatransfer.User;
-import client.service.ClientServerService;
-import client.service.ClientServerServiceErrorType;
-import client.service.ClientServerServiceErrorException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
+import model.datatransfer.User;
 
 /**
  * FXML Controller class cho Register GUI
@@ -73,12 +73,15 @@ public class RegisterFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                        -> showAlert(Alert.AlertType.ERROR, "Can't create user");
-                case ClientServerServiceErrorType.ALREADY_EXISTS
-                        -> showAlert(Alert.AlertType.ERROR, "Exist user");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't create user");
+                }
+                case ClientServerServiceErrorType.ALREADY_EXISTS -> {
+                    showAlert(Alert.AlertType.ERROR, "Exist user");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -146,7 +149,7 @@ public class RegisterFXMLController {
             stage.setScene(scene);  
             stage.show();
         } catch (IOException ex) {
-            System.err.println(ex);
+            showAlert(Alert.AlertType.ERROR, "Can't open login");
         }
     }
     

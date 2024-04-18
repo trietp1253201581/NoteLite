@@ -1,17 +1,17 @@
 package dataaccess;
 
+import dataaccess.connection.DatabaseConnection;
 import dataaccess.connection.MySQLDatabaseConnection;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
 import model.datatransfer.ShareType;
-import dataaccess.connection.DatabaseConnection;
-import java.sql.Date;
-import model.datatransfer.Note;
 import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**

@@ -14,8 +14,8 @@ import server.service.ServerRequestProcessor;
  * @version 1.0
  */
 public class MultiThreadServer implements Server {    
-    private ServerSocket serverSocket;
-    private int port;
+    private final ServerSocket serverSocket;
+    private final int port;
     private ServerStatus status;
     private static final int NUM_OF_THREADS = 20; 
     

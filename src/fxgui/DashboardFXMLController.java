@@ -1,50 +1,49 @@
 package fxgui;
 
+import client.service.ClientServerService;
+import client.service.ClientServerServiceErrorException;
+import client.service.ClientServerServiceErrorType;
+import client.service.PdfService;
 import client.service.UndoRedoService;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.datatransfer.Note;
-import model.datatransfer.User;
-import client.service.ClientServerService;
-import client.service.ClientServerServiceErrorType;
-import client.service.PdfService;
-import client.service.ClientServerServiceErrorException;
-import java.io.File;
-import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
 import model.datatransfer.ShareNote;
 import model.datatransfer.ShareType;
+import model.datatransfer.User;
 import model.datatransfer.attributeconverter.NoteContentConverter;
 
 /**
@@ -170,7 +169,6 @@ public class DashboardFXMLController {
     private User user;   
     private Note myNote;    
     private List<Note> myNotes;   
-    private String replyFromServer;
     private ObservableList<ShareNote> mySharedNotes;
 
     public void setUser(User user) {
@@ -201,7 +199,7 @@ public class DashboardFXMLController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
-            System.err.println(ex);
+            showAlert(Alert.AlertType.ERROR, "Can't open login");
         }
     }
 
@@ -229,10 +227,12 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
-                        -> showAlert(Alert.AlertType.ERROR, "Can't save this note");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't save this note");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -357,12 +357,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> myNotes = new ArrayList<>();
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    myNotes = new ArrayList<>();
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
+        //Init lại Scene
         initMyNotesScene(myNotes);
     }
     
@@ -411,12 +414,15 @@ public class DashboardFXMLController {
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.ALREADY_EXISTS
-                            -> showAlert(Alert.AlertType.ERROR, "This note already exists");
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE
-                            -> showAlert(Alert.AlertType.ERROR, "Can't create new note");
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    case ClientServerServiceErrorType.ALREADY_EXISTS -> {
+                        showAlert(Alert.AlertType.ERROR, "This note already exists");
+                    }
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't create new note");
+                    }
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    }
                 }
             }
         });
@@ -457,12 +463,15 @@ public class DashboardFXMLController {
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.ALREADY_EXISTS
-                            -> showAlert(Alert.AlertType.ERROR, "This note already exists");
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE
-                            -> showAlert(Alert.AlertType.ERROR, "Can't create new note");
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    case ClientServerServiceErrorType.ALREADY_EXISTS -> {
+                        showAlert(Alert.AlertType.ERROR, "This note already exists");
+                    }
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't create new note");
+                    }
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    }
                 }
             }
         });
@@ -491,12 +500,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> showAlert(Alert.AlertType.ERROR, "Not exist user");
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
-                        -> showAlert(Alert.AlertType.ERROR, "Can't update your user");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    showAlert(Alert.AlertType.ERROR, "Not exist user");
+                }
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't update your user");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -529,12 +541,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> myNotes = new ArrayList<>();
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    myNotes = new ArrayList<>();
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
+        //Init lại Scene
         initImportExportScene(myNotes);
     }
 
@@ -553,12 +568,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> showAlert(Alert.AlertType.ERROR, "This note not exists");
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                        -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    showAlert(Alert.AlertType.ERROR, "This note not exists");
+                }
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -600,10 +618,12 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> myNotes = new ArrayList<>();
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    myNotes = new ArrayList<>();
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
         //Lấy tất cả các note được share tới user này
@@ -618,12 +638,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> mySharedNotes = FXCollections.observableArrayList();
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    mySharedNotes = FXCollections.observableArrayList();
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
+        //Init lại Scene
         initShareNoteScene(myNotes, mySharedNotes);
     }
     
@@ -636,7 +659,7 @@ public class DashboardFXMLController {
             Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
             //Lấy receiver Id
             String receiverUsename = chooseUserShareField.getText();
-            //Share Note
+            //Tạo ShareNote mới để Share
             ShareNote newShareNote = new ShareNote();
             newShareNote.setNote(selectedNote);
             newShareNote.setReceiver(receiverUsename);
@@ -651,12 +674,15 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> showAlert(Alert.AlertType.ERROR, "Not exists note or receiver");
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                        -> showAlert(Alert.AlertType.ERROR, "Can't send this note");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    showAlert(Alert.AlertType.ERROR, "Not exists note or receiver");
+                }
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't send this note");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -683,12 +709,15 @@ public class DashboardFXMLController {
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.NOT_EXISTS 
-                            -> showAlert(Alert.AlertType.ERROR, "This note not exists");
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                            -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    case ClientServerServiceErrorType.NOT_EXISTS -> {
+                        showAlert(Alert.AlertType.ERROR, "This note not exists");
+                    }
+                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                    }
+                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    }
                 }
             }     
         }
@@ -719,12 +748,15 @@ public class DashboardFXMLController {
                     List<String> filters = new ArrayList<>();
                     myNote.setFilters(filters);
                 }
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                        -> showAlert(Alert.AlertType.ERROR, "Can't open your last note");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't open your last note");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
+        //Init lại Scene
         initEditScene();
     }
     
@@ -766,37 +798,34 @@ public class DashboardFXMLController {
                 NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
                 noteCardFXMLController.setData(notes.get(i));
                 //Xử lý khi nhấn vào note card
-                box.setOnMouseClicked(new EventHandler<MouseEvent>(){
-                    @Override
-                    public void handle(MouseEvent event) {
-                        noteCardFXMLController.setLabelStyle("-fx-background-color: #3a737a");
-                        //Tạo thông báo và mở note nếu chọn OK
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Open Note");
-                        alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
-                        Optional<ButtonType> optional = alert.showAndWait();
-                        if(optional.get() == ButtonType.OK) {
-                            try { 
-                                //Lấy thành công
-                                myNote = clientServerService.openNote(user.getUsername(),
+                box.setOnMouseClicked((MouseEvent event) -> {
+                    noteCardFXMLController.setLabelStyle("-fx-background-color: #3a737a");
+                    //Tạo thông báo và mở note nếu chọn OK
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Open Note");
+                    alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
+                    Optional<ButtonType> optional = alert.showAndWait();
+                    if(optional.get() == ButtonType.OK) {
+                        try {
+                            //Lấy thành công
+                            myNote = clientServerService.openNote(user.getUsername(),
                                     noteCardFXMLController.getHeader());
-                                //Load lại Edit Scene và mở Edit Scene
-                                initEditScene();
-                                changeScene(editNoteButton);
-                            } catch (ClientServerServiceErrorException ex) {
-                                //Xử lý các ngoại lệ
-                                switch (ex.getErrorType()) {
-                                    case ClientServerServiceErrorType.NOT_EXISTS 
-                                            -> showAlert(Alert.AlertType.ERROR, "This note not exists");
-                                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE 
-                                            -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                                            -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                                }
+                            //Load lại Edit Scene và mở Edit Scene
+                            initEditScene();
+                            changeScene(editNoteButton);
+                        } catch (ClientServerServiceErrorException ex) {
+                            //Xử lý các ngoại lệ
+                            switch (ex.getErrorType()) {
+                                case ClientServerServiceErrorType.NOT_EXISTS
+                                        -> showAlert(Alert.AlertType.ERROR, "This note not exists");
+                                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
+                                        -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
+                                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                             } 
                         }
-                        noteCardFXMLController.setLabelStyle("-fx-background-color: transparent");
                     }
+                    noteCardFXMLController.setLabelStyle("-fx-background-color: transparent");
                 });
 
                 //Thêm Note Card vào layout
@@ -900,7 +929,7 @@ public class DashboardFXMLController {
                 filterGridLayout.add(hbox, column++, row);
             }
         } catch (IOException e) {
-            System.err.println(e);;
+            System.err.println(e);
         }
     }
     

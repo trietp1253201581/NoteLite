@@ -10,8 +10,8 @@ import java.util.Stack;
  */
 public class UndoRedoService {
     //Sử dụng stack để lưu trữ các văn bản
-    private Stack<String> undoStack;
-    private Stack<String> redoStack;
+    private final Stack<String> undoStack;
+    private final Stack<String> redoStack;
     
     public UndoRedoService() {
         undoStack = new Stack<>();

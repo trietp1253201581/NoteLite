@@ -1,15 +1,15 @@
 package dataaccess;
 
+import dataaccess.connection.DatabaseConnection;
 import dataaccess.connection.MySQLDatabaseConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.datatransfer.User;
-import dataaccess.connection.DatabaseConnection;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với User

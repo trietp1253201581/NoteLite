@@ -1,5 +1,8 @@
 package fxgui;
 
+import client.service.ClientServerService;
+import client.service.ClientServerServiceErrorException;
+import client.service.ClientServerServiceErrorType;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,9 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.datatransfer.User;
-import client.service.ClientServerService;
-import client.service.ClientServerServiceErrorType;
-import client.service.ClientServerServiceErrorException;
 
 /**
  * FXML Controller class cho Login GUI
@@ -58,12 +58,15 @@ public class LoginFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS 
-                        -> showAlert(Alert.AlertType.ERROR, "Not exist user");
-                case ClientServerServiceErrorType.FALSE_INFORMATION
-                        -> showAlert(Alert.AlertType.ERROR, "False password");
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    showAlert(Alert.AlertType.ERROR, "Not exist user");
+                }
+                case ClientServerServiceErrorType.FALSE_INFORMATION -> {
+                    showAlert(Alert.AlertType.ERROR, "False password");
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
             }
         }
     }
@@ -106,7 +109,7 @@ public class LoginFXMLController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
-            System.err.println(ex);
+            showAlert(Alert.AlertType.ERROR, "Can't open dashboard");
         }
     }
     
@@ -132,7 +135,7 @@ public class LoginFXMLController {
             stage.setScene(scene);  
             stage.show();
         } catch (IOException ex) {
-            System.err.println(ex);
+            showAlert(Alert.AlertType.ERROR, "Can't open register");
         }
     }
     

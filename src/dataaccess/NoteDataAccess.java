@@ -1,8 +1,7 @@
 package dataaccess;
 
+import dataaccess.connection.DatabaseConnection;
 import dataaccess.connection.MySQLDatabaseConnection;
-import model.datatransfer.attributeconverter.NoteFilterConverter;
-import model.datatransfer.Note;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -10,7 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import dataaccess.connection.DatabaseConnection;
+import model.datatransfer.Note;
+import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với Note
