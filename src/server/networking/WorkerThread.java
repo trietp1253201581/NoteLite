@@ -1,5 +1,6 @@
 package server.networking;
 
+import client.networking.Client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -45,13 +46,14 @@ public class WorkerThread extends Thread {
                 //Nhận dữ liệu từ client
                 String str = dataInputStream.readUTF();
                 //Nếu đó là thông báo kết thúc thì dừng xử lý
-                if(str.equals("end")){
+                if(str.equals(Client.END_STRING_COMMAND)){
                     break;
                 }
                 //Thông báo thông điệp
                 System.out.println(socket + " say " + str);
                 //Chuyển thành RequestCommand và xử lý
                 String rs = serverRequestProcessor.process(str);  
+                System.out.println("reply " + rs);
                 //Trả về kết quả
                 dataOutputStream.writeUTF(rs);
                 dataOutputStream.flush();

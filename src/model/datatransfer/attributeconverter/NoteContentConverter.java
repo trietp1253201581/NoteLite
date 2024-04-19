@@ -7,6 +7,7 @@ package model.datatransfer.attributeconverter;
  * @version 1.0
  */
 public class NoteContentConverter {
+    private static final String ENDLINE_TAGS = "##endline##";
     
     /**
      * Chuyển một text ở GUI sang text lưu trong CSDL
@@ -19,7 +20,7 @@ public class NoteContentConverter {
         String dbText = "";
         //Chuyển ký tự \n ở cuối dòng thành ##endline##
         for (String text: texts) {
-            dbText += text + "##endline##";
+            dbText += text + ENDLINE_TAGS;
         }
 
         return dbText;
@@ -32,7 +33,7 @@ public class NoteContentConverter {
      */
     public static String convertToObjectText(String dbText) {
         //Chia thành các phần ngăn cách bởi ##endline##, mỗi phần là một dòng trên text ở GUI
-        String[] texts = dbText.split("##endline##");
+        String[] texts = dbText.split(ENDLINE_TAGS);
         String areaText = "";
         //Thêm ký tự \n vào cuối mỗi phần tử
         for (String text: texts) {

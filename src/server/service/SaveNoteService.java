@@ -39,7 +39,7 @@ public class SaveNoteService implements ServerService {
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Nếu chưa có note thì tạo note mới và trả về
-        if(dataAccess.get(note.getAuthor(), note.getHeader()).isDefaultValue()) {
+        if(dataAccess.get(note.getId()).isDefaultValue()) {
             //Tạo Note mới
             int rs = dataAccess.add(note);    
             //Trả về

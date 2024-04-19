@@ -54,7 +54,11 @@ public class Command {
         decodeMap.put("serviceName", matcher.group(1));
         for(String str: datas) {
             String[] data = str.split(SPLIT_ATTRIBUTE_VALUE_TAGS);
-            decodeMap.put(data[0], data[1]);
+            if(data.length <= 1) {
+                decodeMap.put(data[0], "");
+            } else {
+                decodeMap.put(data[0], data[1]);
+            }
         }
         
         return decodeMap;

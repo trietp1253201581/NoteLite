@@ -2,9 +2,10 @@ application
 client.networking
 client.service
 dataaccess
-dataaccess.connectdatabase
+dataaccess.connection
 fxgui
-model
+model.command
 model.datatransfer
+model.datatransfer.attributeconverter
 server.networking
 server.service

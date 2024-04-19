@@ -11,6 +11,7 @@ import java.util.List;
  * @version 1.0
  */
 public class NoteFilterConverter {
+    private static final String SPLIT_TAGS = "##";
 
     /**
      * Chuyển list các filter thành String
@@ -21,7 +22,7 @@ public class NoteFilterConverter {
         String result = "";
         //Với mỗi filter string, thêm vào result filter string đó và dấu ##
         for (String filter: filters) {
-            result += filter + "##";
+            result += filter + SPLIT_TAGS;
         }
 
         return result;
@@ -37,7 +38,7 @@ public class NoteFilterConverter {
         if("".equals(strFilter)) {
             return new ArrayList<>();
         }
-        String[] filters = strFilter.split("##");
+        String[] filters = strFilter.split(SPLIT_TAGS);
         List<String> result = new ArrayList<>();
         //Chuyển từ String[] thành list
         result.addAll(Arrays.asList(filters));

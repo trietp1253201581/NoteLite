@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.command.Command;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
@@ -237,7 +239,7 @@ public class ClientServerService {
         //Trả về List các Note của author
         String listNoteString = resultMap.get("ListNote");
         listNoteString = listNoteString.substring(1, listNoteString.length() - 1);
-        String[] listNoteArray = listNoteString.split(", ");//Ký tự ngăn cách giữa các thành phần list
+        String[] listNoteArray = listNoteString.split(Note.END_TAGS + ", ");//Ký tự ngăn cách giữa các thành phần list
         List<Note> notes = new ArrayList<>();
         for(String noteString: listNoteArray) {
             notes.add(Note.valueOf(noteString));
@@ -289,7 +291,7 @@ public class ClientServerService {
         //Trả về List các Note của author
         String listShareNoteString = resultMap.get("ListShareNote");
         listShareNoteString = listShareNoteString.substring(1, listShareNoteString.length() - 1);
-        String[] listShareNoteArray = listShareNoteString.split(", ");//Ký tự ngăn cách giữa các thành phần list
+        String[] listShareNoteArray = listShareNoteString.split(ShareNote.END_TAGS + ", ");//Ký tự ngăn cách giữa các thành phần list
         List<ShareNote> shareNotes = new ArrayList<>();
         for(String shareNoteString: listShareNoteArray) {
             shareNotes.add(ShareNote.valueOf(shareNoteString));
@@ -319,6 +321,16 @@ public class ClientServerService {
             throw new ClientServerServiceErrorException(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER);
         } catch (IOException ex) {
             throw new ClientServerServiceErrorException(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER);
+        }
+    }
+    
+    public static void main(String[] args) {
+        ClientServerService service = new ClientServerService();
+        try {
+            List<Note> notes = service.getAllNotes("huudatbenhvl");
+            System.out.println(notes.get(1));
+        } catch (ClientServerServiceErrorException ex) {
+            ex.printStackTrace();
         }
     }
 }

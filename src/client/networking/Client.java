@@ -19,6 +19,7 @@ public class Client {
     private int portNumber;
     private String message;
     private String result;
+    public static final String END_STRING_COMMAND = "end";
 
     /**
      * Khởi tạo Client
@@ -75,7 +76,7 @@ public class Client {
         //Nhận dữ liệu từ Server và gán vào result
         result = dataInputStream.readUTF();
         //Thông báo kết thúc việc truyền, nhận dữ liệu tới Server
-        dataOutputStream.writeUTF("end");
+        dataOutputStream.writeUTF(END_STRING_COMMAND);
         //Đóng các stream
         dataInputStream.close();
         dataOutputStream.close();

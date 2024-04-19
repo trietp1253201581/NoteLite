@@ -95,7 +95,8 @@ public class LoginFXMLController {
             loginButton.getScene().getWindow().hide();
             //Load GUI Dashboard
             FXMLLoader fXMLLoader = new FXMLLoader();
-            fXMLLoader.setLocation(getClass().getResource("DashboardFXML.fxml"));
+            String dashboardFXMLPath = "DashboardFXML.fxml";
+            fXMLLoader.setLocation(getClass().getResource(dashboardFXMLPath));
             //Chuyển sang GUI Dashboard
             Stage stage = (Stage)loginButton.getScene().getWindow();
             Scene scene = new Scene(fXMLLoader.load());
@@ -123,7 +124,8 @@ public class LoginFXMLController {
             registerLabel.getScene().getWindow().hide();
             //Load Register GUI
             FXMLLoader fXMLLoader = new FXMLLoader();
-            fXMLLoader.setLocation(getClass().getResource("RegisterFXML.fxml"));
+            String registerFXMLPath = "RegisterFXML.fxml";
+            fXMLLoader.setLocation(getClass().getResource(registerFXMLPath));
             //Mở Register GUI
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());

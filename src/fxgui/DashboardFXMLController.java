@@ -5,7 +5,9 @@ import client.service.ClientServerServiceErrorException;
 import client.service.ClientServerServiceErrorType;
 import client.service.PdfService;
 import client.service.UndoRedoService;
+import com.itextpdf.text.DocumentException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -174,10 +176,6 @@ public class DashboardFXMLController {
     public void setUser(User user) {
         this.user = user;
     }
-    
-    public void setMyNote(Note myNote) {
-        this.myNote = myNote;
-    }
 
     @FXML
     void handleLogoutButton(ActionEvent event) {       
@@ -187,7 +185,8 @@ public class DashboardFXMLController {
         logoutButton.getScene().getWindow().hide();
         //Load Login GUI
         FXMLLoader fXMLLoader = new FXMLLoader();
-        fXMLLoader.setLocation(getClass().getResource("LoginFXML.fxml"));
+        String loginFXMLPath = "LoginFXML.fxml";
+        fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Mở Login GUI
         Stage stage = (Stage)logoutButton.getScene().getWindow();
         try {
@@ -247,9 +246,33 @@ public class DashboardFXMLController {
     }
 
     @FXML
-    void handleNoteHeaderField(ActionEvent event) {        
-        //Thiết lập note name vừa nhập cho Label
-        noteHeaderLabel.setText(noteHeaderField.getText());
+    void handleNoteHeaderField(ActionEvent event) { 
+        //Lấy tất cả các Note của user
+        try { 
+            //Lấy thành công
+            myNotes = clientServerService.getAllNotes(user.getUsername());
+            for(Note note: myNotes) {
+                if(note.getHeader().equals(noteHeaderField.getText())) {
+                    showAlert(Alert.AlertType.ERROR, "This header exist");
+                    noteHeaderField.setVisible(false);
+                    noteHeaderLabel.setVisible(true);
+                    return;
+                }
+            }
+            //Thiết lập note name vừa nhập cho Label   
+            noteHeaderLabel.setText(noteHeaderField.getText());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    myNotes = new ArrayList<>();
+                }
+                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+            }
+        }
+        
         //Ẩn field và hiện Label
         noteHeaderField.setVisible(false);
         noteHeaderLabel.setVisible(true);
@@ -449,15 +472,7 @@ public class DashboardFXMLController {
                 Note deletedNote = clientServerService.deleteNote(user.getUsername(), selectedHeader);
                 showAlert(Alert.AlertType.INFORMATION, "Successfully create " + deletedNote.getHeader());
                 //Xóa khỏi list và load lại
-                //Lấy index Note được xóa trong list các Note của user
-                int deletedIndex = -1;
-                for(int i = 0; i < myNotes.size(); i++) {
-                    if(myNotes.get(i).toString().equals(deletedNote.toString())) {
-                        deletedIndex = i;
-                    }
-                }
-                //Xóa Note dựa vào index
-                myNotes.remove(deletedIndex);  
+                myNotes.remove(deletedNote);
                 //Load lại My Notes Scene
                 initMyNotesScene(myNotes);
             } catch (ClientServerServiceErrorException ex) {
@@ -578,17 +593,28 @@ public class DashboardFXMLController {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
             }
+        } catch (FileNotFoundException | DocumentException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't export this file");
         }
     }
 
     @FXML
     void handleImportFileButton(ActionEvent event) {
-        //Lấy dữ liệu từ PDF và chuyển vào content
-        myNote.setContent(PdfService.read(importFileName.getText(), 1));
-        //Load lại Edit Scene
-        initEditScene();
-        //Thông báo
-        showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
+        try {
+            //Lấy số trang
+            int numOfPage = PdfService.getNumberOfPage(importFileName.getText());
+            //Lấy dữ liệu từ PDF và chuyển vào content
+            String contents = "";
+            for(int i = 1; i < numOfPage; i++) {
+                contents += PdfService.read(importFileName.getText(), i);
+                contents += "\n----------------------\n";
+            }
+            contentArea.setText(contents);
+            //Thông báo
+            showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
+        } catch (IOException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't read this file");
+        }
     }
 
     @FXML
@@ -791,7 +817,8 @@ public class DashboardFXMLController {
         for(int i=0; i < notes.size(); i++) {
             //Load Note Card Layout
             FXMLLoader fXMLLoader = new FXMLLoader();
-            fXMLLoader.setLocation(getClass().getResource("NoteCardFXML.fxml"));
+            String noteCardFXMLPath = "NoteCardFXML.fxml";
+            fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
             try {
                 VBox box = fXMLLoader.load();
                 //Thiết lập dữ liệu cho Note Card
@@ -915,7 +942,8 @@ public class DashboardFXMLController {
             for(int i = 0; i < filters.size(); i++) {
                 //Load filter FXML
                 FXMLLoader fXMLLoader = new FXMLLoader();
-                fXMLLoader.setLocation(getClass().getResource("FilterFXML.fxml"));
+                String filterFXMLPath = "FilterFXML.fxml";
+                fXMLLoader.setLocation(getClass().getResource(filterFXMLPath));
                 HBox hbox = fXMLLoader.load();
                 //Thiết lập dữ liệu cho filter
                 FilterFXMLController filterFXMLController = fXMLLoader.getController();

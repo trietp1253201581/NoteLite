@@ -5,6 +5,7 @@ import dataaccess.SpecialNoteDataAccess;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.command.Command;
 import model.datatransfer.Note;
 
 /**

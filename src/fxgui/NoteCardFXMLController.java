@@ -62,7 +62,8 @@ public class NoteCardFXMLController {
             for(int i = 0; i < filters.size(); i++) {
                 //Load filter FXML
                 FXMLLoader fXMLLoader = new FXMLLoader();
-                fXMLLoader.setLocation(getClass().getResource("FilterFXML.fxml"));
+                String filterFXMLPath = "FilterFXML.fxml";
+                fXMLLoader.setLocation(getClass().getResource(filterFXMLPath));
                 HBox hbox = fXMLLoader.load();
                 //Thiết lập dữ liệu cho filter
                 FilterFXMLController filterFXMLController = fXMLLoader.getController();

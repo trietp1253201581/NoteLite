@@ -22,21 +22,18 @@ public class PdfService {
      * Export Note sang PDF
      * @param outputFile tên file sau khi export
      * @param content nội dung cần export
+     * @throws java.io.FileNotFoundException
+     * @throws com.itextpdf.text.DocumentException
      */
-    public static void export(String outputFile, String content) {     
+    public static void export(String outputFile, String content) throws FileNotFoundException, DocumentException {     
         //Tạo 1 document mới
         Document document = new Document();
-       
-        try {
-            //Tạo một PDF Writer để export
-            PdfWriter.getInstance(document, new FileOutputStream(outputFile));
-            //Mở, viết, đóng document
-            document.open();      
-            document.add(new Paragraph(content));           
-            document.close();           
-        } catch (FileNotFoundException | DocumentException ex) {
-            ex.printStackTrace();
-        }    
+        //Tạo một PDF Writer để export
+        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+        //Mở, viết, đóng document
+        document.open();      
+        document.add(new Paragraph(content));           
+        document.close();    
     }
     
     /**
@@ -44,18 +41,17 @@ public class PdfService {
      * @param inputFile đường dẫn file cần đọc
      * @param page trang cần đọc
      * @return nội dung đọc từ file
+     * @throws java.io.IOException
      */
-    public static String read(String inputFile, int page) {       
-        try {
-            //Tạo 1 PdfReader để đọc file PDF
-            PdfReader pdfReader = new PdfReader(inputFile);          
-            String content = PdfTextExtractor.getTextFromPage(pdfReader, page);
-            
-            return content;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        
-        return null;        
+    public static String read(String inputFile, int page) throws IOException {       
+        //Tạo 1 PdfReader để đọc file PDF
+        PdfReader pdfReader = new PdfReader(inputFile);          
+        String content = PdfTextExtractor.getTextFromPage(pdfReader, page);
+        return content;     
     }    
+    
+    public static int getNumberOfPage(String inputFile) throws IOException {
+        PdfReader pdfReader = new PdfReader(inputFile);
+        return pdfReader.getNumberOfPages();
+    }
 }

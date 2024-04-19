@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
@@ -21,6 +22,9 @@ public class Note {
     private Date lastModifiedDate;
     private List<String> filters;
 
+    public static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
+    public static final String END_TAGS = "<///>";
+    
     /**
      * Constructor và cài đặt dữ liệu default cho Note
      */
@@ -98,23 +102,69 @@ public class Note {
         return id == -1;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + this.id;
+        hash = 29 * hash + Objects.hashCode(this.author);
+        hash = 29 * hash + Objects.hashCode(this.header);
+        hash = 29 * hash + Objects.hashCode(this.content);
+        hash = 29 * hash + this.lastModified;
+        hash = 29 * hash + Objects.hashCode(this.lastModifiedDate);
+        hash = 29 * hash + Objects.hashCode(this.filters);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final Note other = (Note) obj;
+        if(this.id != other.id) {
+            return false;
+        }
+        if(this.lastModified != other.lastModified) {
+            return false;
+        }
+        if(!Objects.equals(this.author, other.author)) {
+            return false;
+        }
+        if(!Objects.equals(this.header, other.header)) {
+            return false;
+        }
+        if(!Objects.equals(this.content, other.content)) {
+            return false;
+        }
+        if(!Objects.equals(this.lastModifiedDate, other.lastModifiedDate)) {
+            return false;
+        }
+        return Objects.equals(this.filters, other.filters);
+    }
+
     /**
      * Chuyển một Note thành String
-     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;><///><///>"}
      * trong đó * đại diện cho các thuộc tính
      */
     @Override
     public String toString() {
         String result = "";
         //Tạo ra một String biểu diễn cho note
-        result += id + "<;>";
-        result += author + "<;>";
-        result += header + "<;>";
-        result += content + "<;>";
-        result += lastModified + "<;>";
-        result += lastModifiedDate + "<;>";
-        result += NoteFilterConverter.convertToString(filters) + "<;>";
-        result += "///";
+        result += id + SPLIT_ATTRIBUTE_TAGS;
+        result += author + SPLIT_ATTRIBUTE_TAGS;
+        result += header + SPLIT_ATTRIBUTE_TAGS;
+        result += content + SPLIT_ATTRIBUTE_TAGS;
+        result += lastModified + SPLIT_ATTRIBUTE_TAGS;
+        result += lastModifiedDate + SPLIT_ATTRIBUTE_TAGS;
+        result += NoteFilterConverter.convertToString(filters) + SPLIT_ATTRIBUTE_TAGS;
+        result += END_TAGS + END_TAGS;
         
         return result;    
     }
@@ -128,7 +178,7 @@ public class Note {
     public static Note valueOf(String str) {       
         Note note = new Note();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split("<;>");
+        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
         note.setId(Integer.parseInt(strarr[0]));
         note.setAuthor(strarr[1]);
@@ -140,5 +190,4 @@ public class Note {
         
         return note;      
     }
-    
 }

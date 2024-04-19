@@ -1,6 +1,7 @@
 package model.datatransfer;
 
 import java.sql.Date;
+import java.util.Objects;
 import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
@@ -48,10 +49,44 @@ public class ShareNote extends Note {
     public void setShareType(ShareType shareType) {
         this.shareType = shareType;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + this.shareId;
+        hash = 83 * hash + Objects.hashCode(this.receiver);
+        hash = 83 * hash + Objects.hashCode(this.shareType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final ShareNote other = (ShareNote) obj;
+        final Note otherNote = (Note) other;
+        if(!super.equals(otherNote)) {
+            return false;
+        }
+        if(this.shareId != other.shareId) {
+            return false;
+        }
+        if(!Objects.equals(this.receiver, other.receiver)) {
+            return false;
+        }
+        return this.shareType == other.shareType;
+    }
     
     /**
      * Set giá trị note cho các thuộc tính tương ứng của sharenote
-     * @param note 
+     * @param note note cần set up
      */
     public void setNote(Note note) {
         super.setId(note.getId());
@@ -65,24 +100,24 @@ public class ShareNote extends Note {
     
     /**
      * Chuyển một ShareNote thành một String
-     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;>*<;><///><///>"}
      * trong đó * đại diện cho các thuộc tính
      */
     @Override
     public String toString() {
         String result = "";
         //Tạo ra một String biểu diễn cho note
-        result += super.getId() + "<;>";
-        result += super.getAuthor() + "<;>";
-        result += super.getHeader() + "<;>";
-        result += super.getContent() + "<;>";
-        result += super.getLastModified() + "<;>";
-        result += super.getLastModifiedDate() + "<;>";
-        result += NoteFilterConverter.convertToString(super.getFilters()) + "<;>";
-        result += shareId + "<;>";
-        result += receiver + "<;>";
-        result += shareType + "<;>";
-        result += "///";
+        result += super.getId() + SPLIT_ATTRIBUTE_TAGS;
+        result += super.getAuthor() + SPLIT_ATTRIBUTE_TAGS;
+        result += super.getHeader() + SPLIT_ATTRIBUTE_TAGS;
+        result += super.getContent() + SPLIT_ATTRIBUTE_TAGS;
+        result += super.getLastModified() + SPLIT_ATTRIBUTE_TAGS;
+        result += super.getLastModifiedDate() + SPLIT_ATTRIBUTE_TAGS;
+        result += NoteFilterConverter.convertToString(super.getFilters()) + SPLIT_ATTRIBUTE_TAGS;
+        result += shareId + SPLIT_ATTRIBUTE_TAGS;
+        result += receiver + SPLIT_ATTRIBUTE_TAGS;
+        result += shareType + SPLIT_ATTRIBUTE_TAGS;
+        result += END_TAGS + END_TAGS;
         
         return result;
     }
@@ -96,7 +131,7 @@ public class ShareNote extends Note {
     public static ShareNote valueOf(String str) {
         ShareNote shareNote = new ShareNote();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split("<;>");
+        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
         shareNote.setId(Integer.parseInt(strarr[0]));
         shareNote.setAuthor(strarr[1]);

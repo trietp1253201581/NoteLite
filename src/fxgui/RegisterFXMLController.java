@@ -140,10 +140,14 @@ public class RegisterFXMLController {
             //Ẩn Register GUI
             registerButton.getScene().getWindow().hide();
             //Load Login GUI
-            Parent root = FXMLLoader.load(getClass().getResource("LoginFXML.fxml"));
-            //Mở Login GUI
+            FXMLLoader fXMLLoader = new FXMLLoader();
+            String loginFXMLPath = "LoginFXML.fxml";
+            fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
+            //Chuyển sang GUI Login
             Stage stage = new Stage();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(fXMLLoader.load());
+            LoginFXMLController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.init();
             
             stage.setTitle("NoteLite");
             stage.setScene(scene);  

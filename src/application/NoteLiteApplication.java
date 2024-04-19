@@ -22,7 +22,8 @@ public class NoteLiteApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         //Mở GUI Login trước
         FXMLLoader fXMLLoader = new FXMLLoader();
-        fXMLLoader.setLocation(getClass().getResource("../fxgui/LoginFXML.fxml"));
+        String loginFXMLPath = "../fxgui/LoginFXML.fxml";
+        fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Chuyển sang GUI Login
         Scene scene = new Scene(fXMLLoader.load());
         LoginFXMLController loginFXMLController = fXMLLoader.getController();

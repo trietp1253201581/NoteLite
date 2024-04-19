@@ -2,6 +2,7 @@ package model.datatransfer;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Một transfer cho dữ liệu của các user
@@ -16,6 +17,9 @@ public class User {
     private String password;
     private Date birthday;
     private String school;
+    
+    public static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
+    public static final String END_TAGS = "<///>";
 
     /**
      * Constructor và cài đặt dữ liệu default cho User
@@ -85,22 +89,64 @@ public class User {
         return id == -1;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + this.id;
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.username);
+        hash = 59 * hash + Objects.hashCode(this.password);
+        hash = 59 * hash + Objects.hashCode(this.birthday);
+        hash = 59 * hash + Objects.hashCode(this.school);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.username, other.username)) {
+            return false;
+        }
+        if (!Objects.equals(this.password, other.password)) {
+            return false;
+        }
+        if (!Objects.equals(this.school, other.school)) {
+            return false;
+        }
+        return Objects.equals(this.birthday, other.birthday);
+    }
+
     /**
      * Chuyển một User thành String
-     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;>///"}
+     * @return String thu được, có dạng {@code "*<;>*<;>*<;>*<;>*<;>*<;>*<;><///><///>"}
      * trong đó * đại diện cho các thuộc tính
      */
     @Override
     public String toString() {        
         String result = "";
         //Tạo ra một String biểu diễn cho User
-        result += id + "<;>";
-        result += name + "<;>";
-        result += username + "<;>";
-        result += password + "<;>";
-        result += birthday + "<;>";
-        result += school + "<;>";
-        result += "///";
+        result += id + SPLIT_ATTRIBUTE_TAGS;
+        result += name + SPLIT_ATTRIBUTE_TAGS;
+        result += username + SPLIT_ATTRIBUTE_TAGS;
+        result += password + SPLIT_ATTRIBUTE_TAGS;
+        result += birthday + SPLIT_ATTRIBUTE_TAGS;
+        result += school + SPLIT_ATTRIBUTE_TAGS;
+        result += END_TAGS + END_TAGS;
         
         return result;        
     }
@@ -114,7 +160,7 @@ public class User {
     public static User valueOf(String str) {       
         User user = new User();
         //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split("<;>");
+        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
         //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của user
         user.setId(Integer.parseInt(strarr[0]));
         user.setName(strarr[1]);
