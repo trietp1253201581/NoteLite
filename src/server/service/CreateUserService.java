@@ -37,7 +37,7 @@ public class CreateUserService implements ServerService {
     @Override
     public Map<String, Object> execute() {       
         //Tạo một đối tượng access dữ liệu
-        dataAccess = new UserDataAccess();
+        dataAccess = UserDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra xem tài khoản đã tồn tại chưa

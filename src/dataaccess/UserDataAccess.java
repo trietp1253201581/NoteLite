@@ -20,12 +20,21 @@ import model.datatransfer.User;
 public class UserDataAccess implements SpecialUserDataAccess {
     private final Connection connection;
 
-    /**
-     * Khởi tạo và lấy connection tới Database
-     */
-    public UserDataAccess() {
+    private UserDataAccess() {
         DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
+    }
+    
+    private static class SingletonHelper {
+        private static final UserDataAccess INSTANCE = new UserDataAccess();
+    }
+    
+    /**
+     * Lấy thể hiện duy nhất của lớp này
+     * @return Instance duy nhất
+     */
+    public static UserDataAccess getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     /**

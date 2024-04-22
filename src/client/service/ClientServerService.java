@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.command.Command;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
@@ -321,16 +319,6 @@ public class ClientServerService {
             throw new ClientServerServiceErrorException(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER);
         } catch (IOException ex) {
             throw new ClientServerServiceErrorException(ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER);
-        }
-    }
-    
-    public static void main(String[] args) {
-        ClientServerService service = new ClientServerService();
-        try {
-            List<Note> notes = service.getAllNotes("huudatbenhvl");
-            System.out.println(notes.get(1));
-        } catch (ClientServerServiceErrorException ex) {
-            ex.printStackTrace();
         }
     }
 }

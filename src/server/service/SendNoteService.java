@@ -39,11 +39,11 @@ public class SendNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {
         //Tạo đối tượng access
-        dataAccess = new ShareNoteDataAccess();
+        dataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra receiver có tồn tại hay không
-        SpecialUserDataAccess userDataAccess = new UserDataAccess();
+        SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
         if(userDataAccess.get(shareNote.getReceiver()).isDefaultValue()) {
             resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
             return resultMap;

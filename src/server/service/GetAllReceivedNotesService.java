@@ -36,7 +36,7 @@ public class GetAllReceivedNotesService implements ServerService {
     @Override
     public Map<String, Object> execute() {
         //Tạo đối tượng access
-        dataAccess = new ShareNoteDataAccess();
+        dataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note được share tới user này

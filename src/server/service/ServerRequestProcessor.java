@@ -10,6 +10,16 @@ import model.command.Command;
  * @version 1.0
  */
 public class ServerRequestProcessor {
+    private ServerRequestProcessor() {
+    }
+    
+    private static class SingletonHelper {
+        private static final ServerRequestProcessor INSTANCE = new ServerRequestProcessor();
+    }
+    
+    public static ServerRequestProcessor getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
     
     /**
      * Xử lý request

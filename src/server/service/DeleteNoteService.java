@@ -39,7 +39,7 @@ public class DeleteNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {    
         //Tạo đối tượng access dữ liệu
-        dataAccess = new NoteDataAccess(); 
+        dataAccess = NoteDataAccess.getInstance(); 
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note có tồn tại khong

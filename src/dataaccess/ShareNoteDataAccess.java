@@ -22,13 +22,22 @@ import model.datatransfer.attributeconverter.NoteFilterConverter;
  */
 public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     private final Connection connection;
-     
-    /**
-     * Khởi tạo và lấy connection tới Database
-     */
-    public ShareNoteDataAccess() {
+
+    private ShareNoteDataAccess() {
         DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
+    }
+    
+    private static class SingletonHelper {
+        public static final ShareNoteDataAccess INSTANCE = new ShareNoteDataAccess();
+    }
+    
+    /**
+     * Lấy thể hiện duy nhất của lớp này
+     * @return Instance duy nhất
+     */
+    public static ShareNoteDataAccess getInstance() {
+        return SingletonHelper.INSTANCE;
     }
     
     /**
@@ -196,7 +205,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         
         try {
             //Lấy các dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
             int receiverId = userDataAccess.get(shareNote.getReceiver()).getId();
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -230,7 +239,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
 
         try {
             //Lấy các dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
             int receiverId = userDataAccess.get(shareNote.getReceiver()).getId();
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);

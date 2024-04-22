@@ -37,7 +37,7 @@ public class CreateNoteService implements ServerService {
     @Override
     public Map<String, Object> execute(){        
         //Tạo đối tượng access
-        dataAccess = new NoteDataAccess();  
+        dataAccess = NoteDataAccess.getInstance();  
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note đã tồn tại hay chưa

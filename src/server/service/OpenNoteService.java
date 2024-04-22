@@ -37,7 +37,7 @@ public class OpenNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
-        dataAccess = new NoteDataAccess();
+        dataAccess = NoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy Note được chỉnh sửa gần nhất

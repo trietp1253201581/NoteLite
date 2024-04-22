@@ -71,7 +71,7 @@ public class MultiThreadServer implements Server {
                 //Xử lý các luồng truy cập
                 WorkerThread handler = new WorkerThread(connectSocket);
                 //Set bộ xử lý và chạy luồng
-                handler.setServerRequestProcessor(new ServerRequestProcessor());
+                handler.setServerRequestProcessor(ServerRequestProcessor.getInstance());
                 executorService.execute(handler);           
             } catch (IOException ex) {
                 System.out.println(ex);

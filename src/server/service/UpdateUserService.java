@@ -35,7 +35,7 @@ public class UpdateUserService implements ServerService {
     @Override
     public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
-        dataAccess = new UserDataAccess();
+        dataAccess = UserDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Thực hiện cập nhật user

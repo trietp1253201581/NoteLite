@@ -39,7 +39,7 @@ public class CheckLoginService implements ServerService {
     @Override
     public Map<String, Object> execute() { 
         //Tạo một đối tượng để xử lý dữ liệu với Database
-        dataAccess = new UserDataAccess();   
+        dataAccess = UserDataAccess.getInstance();   
         //Lấy user có username cho trước
         User user = dataAccess.get(username);
         //Tạo một Map để miêu tả kết quả

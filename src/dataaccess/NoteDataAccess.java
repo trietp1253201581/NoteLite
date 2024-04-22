@@ -24,11 +24,23 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
     /**
      * Khởi tạo và lấy connection tới Database
      */
-    public NoteDataAccess() {
+    private NoteDataAccess() {
         DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
     }
 
+    private static class SingletonHelper {
+        private static final NoteDataAccess INSTANCE = new NoteDataAccess();
+    }    
+    
+    /**
+     * Lấy thể hiện duy nhất của lớp này
+     * @return Instance duy nhất
+     */
+    public static NoteDataAccess getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+    
     /**
      * Lấy tất cả các note của một user
      * @param author user cần lấy note
@@ -223,7 +235,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
         try {
             //Lấy dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
             int userId = userDataAccess.get(note.getAuthor()).getId();
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);            
@@ -260,7 +272,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
 
         try {
             //Lấy dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = new UserDataAccess();
+            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
             int userId = userDataAccess.get(note.getAuthor()).getId();
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);            

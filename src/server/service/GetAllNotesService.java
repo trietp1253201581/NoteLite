@@ -37,7 +37,7 @@ public class GetAllNotesService implements ServerService {
     @Override
     public Map<String, Object> execute() {       
         //Tạo một đối tượng access dữ liệu
-        dataAccess = new NoteDataAccess();
+        dataAccess = NoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note của author
