@@ -13,7 +13,7 @@ public class ServerServiceInvoker {
      * @param serviceName String đại diện cho tên của service được gọi
      * @return thể hiện của service được yêu cầu
      */
-    public static ServerService invoke(String serviceName) {
+    public static ServerService invoke(String serviceName) throws IllegalArgumentException {
         switch (serviceName) {
             case "CheckLogin" -> {
                 return new CheckLoginService();

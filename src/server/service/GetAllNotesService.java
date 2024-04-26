@@ -5,7 +5,6 @@ import dataaccess.SpecialNoteDataAccess;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import model.command.Command;
 import model.datatransfer.Note;
 
 /**
@@ -16,7 +15,7 @@ import model.datatransfer.Note;
  */
 public class GetAllNotesService implements ServerService {   
     private String author;
-    private SpecialNoteDataAccess dataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -37,11 +36,11 @@ public class GetAllNotesService implements ServerService {
     @Override
     public Map<String, Object> execute() {       
         //Tạo một đối tượng access dữ liệu
-        dataAccess = NoteDataAccess.getInstance();
+        noteDataAccess = NoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note của author
-        List<Note> notes = dataAccess.getAll(author);  
+        List<Note> notes = noteDataAccess.getAll(author);  
         //Tạo và trả về kết quả     
         if(!notes.isEmpty()) {
             resultMap.put("ListNote", notes);

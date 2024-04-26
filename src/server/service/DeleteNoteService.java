@@ -15,7 +15,7 @@ import model.datatransfer.Note;
 public class DeleteNoteService implements ServerService {    
     private String author;
     private String header;
-    private SpecialNoteDataAccess dataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -39,17 +39,17 @@ public class DeleteNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {    
         //Tạo đối tượng access dữ liệu
-        dataAccess = NoteDataAccess.getInstance(); 
+        noteDataAccess = NoteDataAccess.getInstance(); 
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note có tồn tại khong
-        Note note = dataAccess.get(author, header);
+        Note note = noteDataAccess.get(author, header);
         if(note.isDefaultValue()) {
             resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
             return resultMap;
         }
         //Thực hiện lệnh xóa      
-        int rs = dataAccess.delete(note.getId());        
+        int rs = noteDataAccess.delete(note.getId());        
         if(rs > 0) {
             //Trả về note được xóa
             resultMap.put("Note", note);

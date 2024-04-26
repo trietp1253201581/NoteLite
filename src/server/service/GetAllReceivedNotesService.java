@@ -15,7 +15,7 @@ import model.datatransfer.ShareNote;
  */
 public class GetAllReceivedNotesService implements ServerService {
     private String receiver;
-    private SpecialShareNoteDataAccess dataAccess;
+    private SpecialShareNoteDataAccess shareNoteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -36,11 +36,11 @@ public class GetAllReceivedNotesService implements ServerService {
     @Override
     public Map<String, Object> execute() {
         //Tạo đối tượng access
-        dataAccess = ShareNoteDataAccess.getInstance();
+        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy các note được share tới user này
-        List<ShareNote> shareNotes = dataAccess.getAllReceived(receiver);
+        List<ShareNote> shareNotes = shareNoteDataAccess.getAllReceived(receiver);
         //Trả về kết quả
         if(!shareNotes.isEmpty()) {
             resultMap.put("ListShareNote", shareNotes);

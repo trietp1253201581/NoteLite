@@ -10,5 +10,6 @@ public enum ServerServiceErrorType {
     ALREADY_EXISTS,
     NOT_EXISTS,
     CAN_NOT_EXECUTE, 
-    FALSE_INFORMATION;
+    FALSE_INFORMATION,
+    UNSUPPORTED_SERVICE;
 }

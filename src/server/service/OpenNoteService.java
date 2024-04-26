@@ -15,7 +15,7 @@ import model.datatransfer.Note;
 public class OpenNoteService implements ServerService {    
     private String author;
     private String header;
-    private SpecialNoteDataAccess dataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -37,11 +37,11 @@ public class OpenNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
-        dataAccess = NoteDataAccess.getInstance();
+        noteDataAccess = NoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy Note được chỉnh sửa gần nhất
-        Note note = dataAccess.get(author, header);
+        Note note = noteDataAccess.get(author, header);
         //Kiểm tra điều kiện và trả về
         if(!note.isDefaultValue()) {
             resultMap.put("Note", note);

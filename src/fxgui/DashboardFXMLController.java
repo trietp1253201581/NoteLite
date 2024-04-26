@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -42,6 +44,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
 import model.datatransfer.ShareType;
@@ -116,7 +119,7 @@ public class DashboardFXMLController {
     @FXML
     private TextField nameField;
     @FXML 
-    private TextField birthdayField;
+    private DatePicker birthdayField;
     @FXML
     private TextField schoolField;
     @FXML
@@ -232,6 +235,9 @@ public class DashboardFXMLController {
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
             }
         }
     }
@@ -269,6 +275,9 @@ public class DashboardFXMLController {
                 }
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
         }
@@ -386,6 +395,9 @@ public class DashboardFXMLController {
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
             }
         }
         //Init lại Scene
@@ -446,6 +458,9 @@ public class DashboardFXMLController {
                     case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
+                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                    }
                 }
             }
         });
@@ -487,6 +502,9 @@ public class DashboardFXMLController {
                     case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
+                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                    }
                 }
             }
         });
@@ -505,7 +523,7 @@ public class DashboardFXMLController {
         //Lấy dữ liệu của user vừa được chỉnh sửa
         user.setPassword(passwordField.getText());
         user.setName(nameField.getText());
-        user.setBirthday(Date.valueOf(birthdayField.getText()));
+        user.setBirthday(Date.valueOf(birthdayField.getValue()));
         user.setSchool(schoolField.getText());
         //Cập nhật User
         try { 
@@ -523,6 +541,9 @@ public class DashboardFXMLController {
                 }
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
         }
@@ -562,6 +583,9 @@ public class DashboardFXMLController {
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
             }
         }
         //Init lại Scene
@@ -591,6 +615,9 @@ public class DashboardFXMLController {
                 }
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
         } catch (FileNotFoundException | DocumentException ex) {
@@ -650,6 +677,9 @@ public class DashboardFXMLController {
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
             }
         }
         //Lấy tất cả các note được share tới user này
@@ -669,6 +699,9 @@ public class DashboardFXMLController {
                 }
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
         }
@@ -709,6 +742,9 @@ public class DashboardFXMLController {
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
             }
         }
     }
@@ -744,6 +780,9 @@ public class DashboardFXMLController {
                     case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
+                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
                 }
             }     
         }
@@ -779,6 +818,9 @@ public class DashboardFXMLController {
                 }
                 case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
         }
@@ -843,12 +885,18 @@ public class DashboardFXMLController {
                         } catch (ClientServerServiceErrorException ex) {
                             //Xử lý các ngoại lệ
                             switch (ex.getErrorType()) {
-                                case ClientServerServiceErrorType.NOT_EXISTS
-                                        -> showAlert(Alert.AlertType.ERROR, "This note not exists");
-                                case ClientServerServiceErrorType.CAN_NOT_EXECUTE
-                                        -> showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER
-                                        -> showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                                    showAlert(Alert.AlertType.ERROR, "This note not exists");
+                                }
+                                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                                }
+                                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                                }
+                                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                                }
                             } 
                         }
                     }
@@ -872,8 +920,34 @@ public class DashboardFXMLController {
         passwordField.setText(user.getPassword());
         userIdLabel.setText(String.valueOf(user.getId()));
         nameField.setText(user.getName());
-        birthdayField.setText(String.valueOf(user.getBirthday()));
         schoolField.setText(user.getSchool());
+        //Khởi tạo birthdayField
+        birthdayField.setValue(user.getBirthday().toLocalDate());
+        //Tạo converter từ ngày tháng sang yyyy-MM-dd
+        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+            @Override
+            public String toString(LocalDate date) {
+                if(date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if(string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return LocalDate.now();
+                }
+            }
+        };
+        birthdayField.setConverter(converter);
+        birthdayField.setPromptText("yyyy-MM-dd");
+        birthdayField.setEditable(false);
     }
     
     /**

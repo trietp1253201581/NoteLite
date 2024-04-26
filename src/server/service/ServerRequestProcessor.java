@@ -1,5 +1,6 @@
 package server.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import model.command.Command;
 
@@ -30,12 +31,18 @@ public class ServerRequestProcessor {
         //Lấy serviceName và data
         Map<String, String> dataMap = Command.decode(command);
         String serviceName = dataMap.get("serviceName");
-        //Gọi service
-        ServerService serverService = ServerServiceInvoker.invoke(serviceName);
-        //Thiết lập data cho service
-        serverService.setData(dataMap);
-        //Thực thi service và lấy kết quả
-        Map<String, Object> resultMap = serverService.execute();     
+        Map<String, Object> resultMap;
+        try {
+            //Gọi service
+            ServerService serverService = ServerServiceInvoker.invoke(serviceName);
+            //Thiết lập data cho service
+            serverService.setData(dataMap);
+            //Thực thi service và lấy kết quả
+            resultMap = serverService.execute();
+        } catch (IllegalArgumentException illegalArgumentException) {
+            resultMap = new HashMap<>();
+            resultMap.put("ServerServiceError", ServerServiceErrorType.UNSUPPORTED_SERVICE);
+        }   
         return Command.encode("Result", resultMap);
     }
 }

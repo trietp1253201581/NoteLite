@@ -15,7 +15,7 @@ import model.datatransfer.User;
 public class CheckLoginService implements ServerService {  
     private String username;
     private String password;
-    private SpecialUserDataAccess dataAccess;
+    private SpecialUserDataAccess userDataAccess;
 
     /**
      * Set data cho các service qua một String
@@ -39,9 +39,9 @@ public class CheckLoginService implements ServerService {
     @Override
     public Map<String, Object> execute() { 
         //Tạo một đối tượng để xử lý dữ liệu với Database
-        dataAccess = UserDataAccess.getInstance();   
+        userDataAccess = UserDataAccess.getInstance();   
         //Lấy user có username cho trước
-        User user = dataAccess.get(username);
+        User user = userDataAccess.get(username);
         //Tạo một Map để miêu tả kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra các điều kiện để thêm tương ứng vào resultMap

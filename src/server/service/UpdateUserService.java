@@ -14,7 +14,7 @@ import model.datatransfer.User;
  */
 public class UpdateUserService implements ServerService {    
     private User user;
-    private SpecialUserDataAccess dataAccess;
+    private SpecialUserDataAccess userDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -35,15 +35,15 @@ public class UpdateUserService implements ServerService {
     @Override
     public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
-        dataAccess = UserDataAccess.getInstance();
+        userDataAccess = UserDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Thực hiện cập nhật user
-        int rs = dataAccess.update(user);
+        int rs = userDataAccess.update(user);
         //Kiểm tra điều kiện
         if(rs > 0) {
             //Lấy user vừa cập nhật
-            User updatedUser = dataAccess.get(user.getUsername());
+            User updatedUser = userDataAccess.get(user.getUsername());
             //Trả về dưới dạng string
             resultMap.put("User", updatedUser);
             return resultMap;

@@ -14,7 +14,7 @@ import model.datatransfer.Note;
  */
 public class CreateNoteService implements ServerService {   
     private Note note;
-    private SpecialNoteDataAccess dataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -37,20 +37,20 @@ public class CreateNoteService implements ServerService {
     @Override
     public Map<String, Object> execute(){        
         //Tạo đối tượng access
-        dataAccess = NoteDataAccess.getInstance();  
+        noteDataAccess = NoteDataAccess.getInstance();  
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note đã tồn tại hay chưa
-        Note check = dataAccess.get(note.getAuthor(), note.getHeader());       
+        Note check = noteDataAccess.get(note.getAuthor(), note.getHeader());       
         if(!check.isDefaultValue()) {
             resultMap.put("ServerServiceError", ServerServiceErrorType.ALREADY_EXISTS);
             return resultMap;
         }
         //Thực hiện thêm note
-        int rs = dataAccess.add(note);        
+        int rs = noteDataAccess.add(note);        
         if(rs > 0) {
             //Lấy Note vừa mới tạo
-            Note newNote = dataAccess.get(note.getAuthor(), note.getHeader());
+            Note newNote = noteDataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về Note mới
             resultMap.put("Note", newNote);
             return resultMap;

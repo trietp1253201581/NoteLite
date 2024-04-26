@@ -14,7 +14,7 @@ import model.datatransfer.User;
  */
 public class CreateUserService implements ServerService {    
     private User user;
-    private SpecialUserDataAccess dataAccess;
+    private SpecialUserDataAccess userDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -37,20 +37,20 @@ public class CreateUserService implements ServerService {
     @Override
     public Map<String, Object> execute() {       
         //Tạo một đối tượng access dữ liệu
-        dataAccess = UserDataAccess.getInstance();
+        userDataAccess = UserDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra xem tài khoản đã tồn tại chưa
-        User check = dataAccess.get(user.getUsername());
+        User check = userDataAccess.get(user.getUsername());
         if(!check.isDefaultValue()) {
             resultMap.put("ServerServiceError", ServerServiceErrorType.ALREADY_EXISTS);
             return resultMap;
         }
         //Thực hiện lệnh thêm user
-        int rs = dataAccess.add(user);
+        int rs = userDataAccess.add(user);
         if(rs > 0) {
             //Lấy User mới tạo được
-            User newUser = dataAccess.get(user.getUsername());
+            User newUser = userDataAccess.get(user.getUsername());
             //Trả về user
             resultMap.put("User", newUser);
             return resultMap;

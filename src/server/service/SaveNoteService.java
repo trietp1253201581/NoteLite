@@ -14,7 +14,7 @@ import model.datatransfer.Note;
  */
 public class SaveNoteService implements ServerService {    
     private Note note;
-    private SpecialNoteDataAccess dataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -35,13 +35,13 @@ public class SaveNoteService implements ServerService {
     @Override
     public Map<String, Object> execute() {  
         //Tạo đối tượng access dữ liệu
-        dataAccess = NoteDataAccess.getInstance(); 
+        noteDataAccess = NoteDataAccess.getInstance(); 
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Nếu chưa có note thì tạo note mới và trả về
-        if(dataAccess.get(note.getId()).isDefaultValue()) {
+        if(noteDataAccess.get(note.getId()).isDefaultValue()) {
             //Tạo Note mới
-            int rs = dataAccess.add(note);    
+            int rs = noteDataAccess.add(note);    
             //Trả về
             if(rs > 0) {
                 resultMap.put("Note", note);
@@ -52,15 +52,15 @@ public class SaveNoteService implements ServerService {
             }
         }
         //Thiết lập note cần lưu là note được chỉnh sửa gần nhất
-        Note lastNote = dataAccess.getLast(note.getAuthor());
+        Note lastNote = noteDataAccess.getLast(note.getAuthor());
         lastNote.setLastModified(0);
-        dataAccess.update(lastNote);
+        noteDataAccess.update(lastNote);
         //Update note mới
-        int rs = dataAccess.update(note);
+        int rs = noteDataAccess.update(note);
         //Kiểm tra điều kiện thực hiện lệnh
         if(rs > 0) {
             //Lấy Note vừa được lưu
-            Note updatedNote = dataAccess.get(note.getAuthor(), note.getHeader());
+            Note updatedNote = noteDataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về dưới dạng string
             resultMap.put("Note", updatedNote);
             return resultMap;
