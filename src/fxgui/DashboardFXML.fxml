@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -17,6 +18,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -26,450 +28,496 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.DashboardFXMLController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="630.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.DashboardFXMLController">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <AnchorPane prefHeight="600.0" prefWidth="250.0">
+      <BorderPane prefHeight="630.0" prefWidth="810.0">
+         <left>
+            <AnchorPane prefHeight="600.0" prefWidth="250.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
                <children>
-                  <AnchorPane prefHeight="600.0" prefWidth="250.0" styleClass="left-form" stylesheets="@noteappfxml.css">
+                  <Text fill="#e6e6e6" layoutX="70.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NoteLite" textAlignment="CENTER" wrappingWidth="110.66664632161451" AnchorPane.bottomAnchor="484.17496744791663" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="70.00002034505215" AnchorPane.topAnchor="14.49169921875">
+                     <font>
+                        <Font name="Britannic Bold" size="51.0" />
+                     </font>
+                     <effect>
+                        <Blend />
+                     </effect>
+                  </Text>
+                  <Label layoutX="73.0" layoutY="134.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Corbel Bold" size="26.0" />
+                     </font>
+                  </Label>
+                  <Line endX="126.33332824707031" endY="-7.62939453125E-6" layoutX="111.0" layoutY="116.0" startX="-100.0" />
+                  <Label fx:id="userLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="178.0" prefHeight="31.0" prefWidth="221.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Corbel Bold" size="19.0" />
+                     </font>
+                  </Label>
+                  <Line endX="124.66664123535156" endY="1.52587890625E-5" layoutX="112.0" layoutY="220.0" startX="-100.0" />
+                  <Button fx:id="editNoteButton" layoutX="8.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleEditNoteButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Edit">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/editbutton.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="myNotesButton" layoutX="8.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleMyNotesButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="My Notes">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/envelope-open-text.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="myAccountButton" layoutX="8.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleMyAccountButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="My Account">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/user.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="logoutButton" layoutX="8.0" layoutY="555.0" mnemonicParsing="false" onAction="#handleLogoutButton" prefHeight="25.0" prefWidth="222.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Logout">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/logout%20button.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="importExportButton" layoutX="8.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleImportExportButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Import/Export">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/file-export.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="shareNoteButton" layoutX="8.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleShareNoteButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Share">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/share.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
+         </left>
+         <center>
+            <StackPane layoutX="250.0" prefHeight="600.0" prefWidth="555.0" BorderPane.alignment="CENTER">
+               <children>
+                  <AnchorPane fx:id="importExportScene" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
                      <children>
-                        <Text fill="#e6e6e6" layoutX="70.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NoteLite" textAlignment="CENTER" wrappingWidth="110.66664632161451" AnchorPane.bottomAnchor="484.17496744791663" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="70.00002034505215" AnchorPane.topAnchor="14.49169921875">
-                           <font>
-                              <Font name="Britannic Bold" size="51.0" />
-                           </font>
-                           <effect>
-                              <Blend />
-                           </effect>
-                        </Text>
-                        <Label layoutX="73.0" layoutY="134.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                        <ComboBox fx:id="exportNoteComboBox" layoutX="216.0" layoutY="75.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" styleClass="scene-button" stylesheets="@noteappfxml.css" />
+                        <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="159.0" text="Export Note" textAlignment="CENTER">
                            <font>
                               <Font name="Corbel Bold" size="26.0" />
                            </font>
                         </Label>
-                        <Line endX="126.33332824707031" endY="-7.62939453125E-6" layoutX="111.0" layoutY="116.0" startX="-100.0" />
-                        <Label fx:id="userLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="178.0" prefHeight="31.0" prefWidth="221.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                        <Label layoutX="30.0" layoutY="80.0" text="Choose export Note">
                            <font>
-                              <Font name="Corbel Bold" size="19.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
-                        <Line endX="124.66664123535156" endY="1.52587890625E-5" layoutX="112.0" layoutY="220.0" startX="-100.0" />
-                        <Button fx:id="editNoteButton" layoutX="8.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleEditNoteButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Edit">
+                        <Label layoutX="30.0" layoutY="120.0" text="Choose export format">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font size="14.0" />
                            </font>
+                        </Label>
+                        <ComboBox fx:id="exportFormatComboBox" layoutX="216.0" layoutY="115.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose format" styleClass="scene-button" stylesheets="@noteappfxml.css" />
+                        <Button fx:id="exportFileButton" layoutX="245.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleExportFileButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Export">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Separator layoutX="30.0" layoutY="236.0" prefHeight="3.0" prefWidth="510.0" />
+                        <Label layoutX="30.0" layoutY="250.0" prefHeight="32.0" prefWidth="159.0" text="Import Note" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="30.0" layoutY="300.0" text="Choose import File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="30.0" layoutY="380.0" text="Import to">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="chooseInputFileButton" layoutX="216.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleChooseInputFileButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Choose from your computer" />
+                        <Label fx:id="importFileName" layoutX="217.0" layoutY="300.0" stylesheets="@noteappfxml.css" text="File link">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="importFileButton" layoutX="245.0" layoutY="448.0" mnemonicParsing="false" onAction="#handleImportFileButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Import">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Label fx:id="importNoteName" layoutX="217.0" layoutY="380.0" text="File link">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <StackPane.margin>
+                        <Insets left="5.0" />
+                     </StackPane.margin>
+                  </AnchorPane>
+                  <AnchorPane fx:id="myAccountScene" layoutX="5.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+                     <children>
+                        <Label layoutX="196.0" layoutY="25.0" prefHeight="32.0" prefWidth="159.0" text="Your Account" textAlignment="CENTER" AnchorPane.bottomAnchor="545.6666666666667" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="195.33333333333337" AnchorPane.topAnchor="25.0">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="80.0" prefHeight="32.0" prefWidth="159.0" text="Account Information" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="135.0" text="Username:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="175.0" text="Password:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" editable="false" layoutX="94.0" layoutY="170.0" prefHeight="25.0" prefWidth="348.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </PasswordField>
+                        <Label layoutX="14.0" layoutY="215.0" text="User ID:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="userIdLabel" layoutX="94.0" layoutY="215.0" text="1011">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator layoutX="14.0" layoutY="245.0" prefHeight="1.0" prefWidth="529.0" />
+                        <Separator layoutX="14.0" layoutY="65.0" prefHeight="1.0" prefWidth="529.0" />
+                        <Label layoutX="14.0" layoutY="260.0" prefHeight="32.0" prefWidth="169.0" text="Personal Information" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="usernameLabel" layoutX="94.0" layoutY="135.0" text="Username">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="315.0" text="Name:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="nameField" layoutX="94.0" layoutY="310.0" prefHeight="25.0" prefWidth="438.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="14.0" layoutY="355.0" text="Birthday:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="395.0" text="School:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="schoolField" layoutX="94.0" layoutY="390.0" prefHeight="25.0" prefWidth="438.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="saveAccountButton" layoutX="242.0" layoutY="461.0" mnemonicParsing="false" onAction="#handleSaveAccountButton" prefHeight="37.0" prefWidth="81.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Save">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/user-pen.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Separator layoutX="18.0" layoutY="425.0" prefHeight="1.0" prefWidth="529.0" />
+                        <Button fx:id="changePasswordButton" layoutX="462.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleChangePasswordButton" prefHeight="25.0" prefWidth="70.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Change">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <DatePicker fx:id="birthdayField" editable="false" layoutX="94.0" layoutY="350.0" prefHeight="29.0" prefWidth="438.0" />
+                     </children>
+                     <StackPane.margin>
+                        <Insets left="5.0" />
+                     </StackPane.margin>
+                  </AnchorPane>
+                  <AnchorPane fx:id="editNoteScene" layoutX="5.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+                     <children>
+                        <TextField fx:id="noteHeaderField" layoutX="24.0" layoutY="11.0" onAction="#handleNoteHeaderField">
+                           <font>
+                              <Font name="Corbel" size="20.0" />
+                           </font>
+                        </TextField>
+                        <Label fx:id="noteHeaderLabel" layoutX="24.0" layoutY="14.0" text="Edit" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <TextArea fx:id="contentArea" layoutX="23.0" layoutY="112.0" onKeyTyped="#changeTextArea" prefHeight="318.0" prefWidth="510.0" text="ad" AnchorPane.rightAnchor="17.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextArea>
+                        <Button fx:id="renameButton" layoutX="361.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRenameButton" prefHeight="29.0" prefWidth="87.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Rename" textFill="#94c2d9">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="saveButton" layoutX="462.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="29.0" prefWidth="69.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Save">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Label fx:id="numCharLabel" contentDisplay="RIGHT" layoutX="497.0" layoutY="78.0" text="../5000" textAlignment="RIGHT" AnchorPane.rightAnchor="17.0" />
+                        <Button fx:id="undoButton" layoutX="274.0" layoutY="69.0" mnemonicParsing="false" onAction="#handleUndoButton" prefHeight="29.0" prefWidth="90.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Undo">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/editbutton.png" />
+                                    <Image url="@../image/undo.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="myNotesButton" layoutX="8.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleMyNotesButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="My Notes">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
+                        <Button fx:id="redoButton" layoutX="370.0" layoutY="69.0" mnemonicParsing="false" onAction="#handleRedoButton" prefHeight="29.0" prefWidth="90.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Redo">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/envelope-open-text.png" />
+                                    <Image url="@../image/redo.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="myAccountButton" layoutX="8.0" layoutY="310.0" mnemonicParsing="false" onAction="#handleMyAccountButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="My Account">
+                        <Label layoutX="24.0" layoutY="71.0" text="Content" textAlignment="CENTER">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font name="Corbel" size="24.0" />
                            </font>
+                        </Label>
+                        <Label layoutX="24.0" layoutY="444.0" text="Filters" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel" size="24.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane layoutX="24.0" layoutY="491.0" prefHeight="91.0" prefWidth="510.0">
+                           <content>
+                              <GridPane fx:id="filterGridLayout" prefWidth="200.0">
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="addFilterButton" layoutX="311.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleAddFilterButton" prefHeight="30.0" prefWidth="105.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Add">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/user.png" />
+                                    <Image url="@../image/plus.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="logoutButton" layoutX="8.0" layoutY="555.0" mnemonicParsing="false" onAction="#handleLogoutButton" prefHeight="25.0" prefWidth="222.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Logout">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
+                        <Button fx:id="removeFilterButton" layoutX="423.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleRemoveFilterButton" prefHeight="30.0" prefWidth="105.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Remove">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/logout%20button.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="importExportButton" layoutX="8.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleImportExportButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Import/Export">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/file-export.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="shareNoteButton" layoutX="8.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleShareNoteButton" prefHeight="36.0" prefWidth="228.0" styleClass="notelite-button" stylesheets="@noteappfxml.css" text="Share">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/share.png" />
+                                    <Image url="@../image/trash.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
                      </children>
+                     <StackPane.margin>
+                        <Insets left="5.0" />
+                     </StackPane.margin>
+                  </AnchorPane>
+                  <AnchorPane fx:id="myNotesScene" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+                     <children>
+                        <Label layoutX="26.0" layoutY="14.0" text="Your notes" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="searchNoteField" layoutX="125.0" layoutY="61.0" onAction="#handleSearchNoteField" prefHeight="25.0" prefWidth="423.0" stylesheets="@noteappfxml.css" />
+                        <Label layoutX="26.0" layoutY="65.0" prefHeight="17.0" prefWidth="134.0" text="Search for">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/search.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                        <ScrollPane layoutY="100.0" prefHeight="350.0" prefWidth="550.0">
+                           <content>
+                              <HBox prefHeight="350.0" prefWidth="550.0">
+                                 <children>
+                                    <VBox fx:id="noteCardLayout" prefHeight="350.0" prefWidth="550.0" />
+                                 </children>
+                              </HBox>
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="createNoteButton" layoutX="149.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleCreateNoteButton" prefHeight="30.0" prefWidth="88.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Create">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/plus.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="deleteNoteButton" layoutX="337.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleDeleteNoteButton" prefHeight="30.0" prefWidth="88.0" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Delete">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/trash.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <StackPane.margin>
+                        <Insets left="5.0" />
+                     </StackPane.margin>
+                  </AnchorPane>
+                  <AnchorPane fx:id="shareNoteScene" prefHeight="600.0" prefWidth="550.0">
+                     <children>
+                        <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="191.0" text="Share your Note" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="chooseShareNoteComboBox" layoutX="203.0" layoutY="75.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" styleClass="scene-button" stylesheets="@noteappfxml.css" />
+                        <Label layoutX="30.0" layoutY="80.0" text="Choose Note to share">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="30.0" layoutY="120.0" text="Choose user to share">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="chooseUserShareField" layoutX="203.0" layoutY="115.0" prefHeight="29.0" prefWidth="320.0" stylesheets="@noteappfxml.css" text="Enter the username" />
+                        <Label layoutX="30.0" layoutY="160.0" text="Choose share type">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <RadioButton fx:id="shareTypeReadOnly" layoutX="203.0" layoutY="162.0" mnemonicParsing="false" text="Read Only">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="ShareType" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="shareTypeCanEdit" layoutX="320.0" layoutY="162.0" mnemonicParsing="false" text="Can Edit" toggleGroup="$ShareType" />
+                        <Button fx:id="sendNoteButton" layoutX="260.0" layoutY="200.0" mnemonicParsing="false" onAction="#handleSendNoteButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Send">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Separator layoutX="30.0" layoutY="241.0" prefHeight="3.0" prefWidth="510.0" />
+                        <Label layoutX="30.0" layoutY="260.0" prefHeight="32.0" prefWidth="191.0" text="Shared by other" textAlignment="CENTER">
+                           <font>
+                              <Font name="Corbel Bold" size="26.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="sharedByOtherTable" layoutX="30.0" layoutY="300.0" prefHeight="200.0" prefWidth="510.0">
+                          <columns>
+                            <TableColumn fx:id="senderUsernameColumn" prefWidth="146.6666259765625" text="Sender" />
+                            <TableColumn fx:id="headerColumn" prefWidth="279.3333435058594" text="Header" />
+                              <TableColumn fx:id="shareTypeColumn" prefWidth="83.33331298828125" text="Share Type" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="openShareNoteButton" layoutX="258.0" layoutY="522.0" mnemonicParsing="false" onAction="#handleOpenShareNoteButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Open">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <StackPane.margin>
+                        <Insets left="5.0" />
+                     </StackPane.margin>
                   </AnchorPane>
                </children>
-            </AnchorPane>
-            <AnchorPane fx:id="editNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+            </StackPane>
+         </center>
+         <top>
+            <AnchorPane prefHeight="25.0" prefWidth="810.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextField fx:id="noteHeaderField" layoutX="24.0" layoutY="11.0" onAction="#handleNoteHeaderField">
-                     <font>
-                        <Font name="Corbel" size="20.0" />
-                     </font>
-                  </TextField>
-                  <Label fx:id="noteHeaderLabel" layoutX="24.0" layoutY="14.0" text="Edit" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <TextArea fx:id="contentArea" layoutX="23.0" layoutY="112.0" onKeyTyped="#changeTextArea" prefHeight="318.0" prefWidth="510.0" text="ad" AnchorPane.rightAnchor="17.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextArea>
-                  <Button fx:id="renameButton" layoutX="379.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleRenameButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Rename">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="saveButton" layoutX="462.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="29.0" prefWidth="69.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Save">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Label fx:id="numCharLabel" contentDisplay="RIGHT" layoutX="497.0" layoutY="78.0" text="../5000" textAlignment="RIGHT" AnchorPane.rightAnchor="17.0" />
-                  <Button fx:id="undoButton" layoutX="301.0" layoutY="72.0" mnemonicParsing="false" onAction="#handleUndoButton" prefHeight="30.0" prefWidth="70.0" text="Undo">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <HBox prefHeight="25.0" prefWidth="810.0" styleClass="top-form" stylesheets="@noteappfxml.css">
+                     <children>
+                        <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../image/undo.png" />
+                              <Image url="@../image/journal-alt.png" />
                            </image>
                         </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="redoButton" layoutX="388.0" layoutY="72.0" mnemonicParsing="false" onAction="#handleRedoButton" prefHeight="30.0" prefWidth="70.0" text="Redo">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/redo.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Label layoutX="24.0" layoutY="71.0" text="Content" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel" size="24.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="24.0" layoutY="444.0" text="Filters" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel" size="24.0" />
-                     </font>
-                  </Label>
-                  <ScrollPane layoutX="24.0" layoutY="491.0" prefHeight="91.0" prefWidth="510.0">
-                     <content>
-                        <GridPane fx:id="filterGridLayout" prefWidth="200.0">
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                        </GridPane>
-                     </content>
-                  </ScrollPane>
-                  <Button fx:id="addFilterButton" layoutX="344.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleAddFilterButton" prefHeight="30.0" prefWidth="70.0" text="Add">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/plus.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="removeFilterButton" layoutX="438.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleRemoveFilterButton" prefHeight="30.0" prefWidth="88.0" text="Remove">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/trash.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <Label prefHeight="25.0" prefWidth="735.0" text="  NoteLite">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@noteappfxml.css">
+                           <graphic>
+                              <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/reject.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="myNotesScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
-               <children>
-                  <Label layoutX="26.0" layoutY="14.0" text="Your notes" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="searchNoteField" layoutX="125.0" layoutY="61.0" onAction="#handleSearchNoteField" prefHeight="25.0" prefWidth="423.0" />
-                  <Label layoutX="26.0" layoutY="65.0" prefHeight="17.0" prefWidth="134.0" text="Search for">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/search.png" />
-                           </image>
-                        </ImageView>
-                     </graphic></Label>
-                  <ScrollPane layoutY="100.0" prefHeight="350.0" prefWidth="550.0">
-                     <content>
-                        <HBox prefHeight="350.0" prefWidth="550.0">
-                           <children>
-                              <VBox fx:id="noteCardLayout" prefHeight="350.0" prefWidth="550.0" />
-                           </children>
-                        </HBox>
-                     </content>
-                  </ScrollPane>
-                  <Button fx:id="createNoteButton" layoutX="149.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleCreateNoteButton" prefHeight="30.0" prefWidth="88.0" text="Create">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/plus.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="deleteNoteButton" layoutX="337.0" layoutY="479.0" mnemonicParsing="false" onAction="#handleDeleteNoteButton" prefHeight="30.0" prefWidth="88.0" text="Delete">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/trash.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="myAccountScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css">
-               <children>
-                  <Label layoutX="196.0" layoutY="25.0" prefHeight="32.0" prefWidth="159.0" text="Your Account" textAlignment="CENTER" AnchorPane.bottomAnchor="545.6666666666667" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="195.33333333333337" AnchorPane.topAnchor="25.0">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="14.0" layoutY="80.0" prefHeight="32.0" prefWidth="159.0" text="Account Information" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="14.0" layoutY="135.0" text="Username:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="14.0" layoutY="175.0" text="Password:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <PasswordField fx:id="passwordField" editable="false" layoutX="94.0" layoutY="170.0" prefHeight="25.0" prefWidth="348.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </PasswordField>
-                  <Label layoutX="14.0" layoutY="215.0" text="User ID:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="userIdLabel" layoutX="94.0" layoutY="215.0" text="1011">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Separator layoutX="14.0" layoutY="245.0" prefHeight="1.0" prefWidth="529.0" />
-                  <Separator layoutX="14.0" layoutY="65.0" prefHeight="1.0" prefWidth="529.0" />
-                  <Label layoutX="14.0" layoutY="260.0" prefHeight="32.0" prefWidth="169.0" text="Personal Information" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="usernameLabel" layoutX="94.0" layoutY="135.0" text="Username">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="14.0" layoutY="315.0" text="Name:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="nameField" layoutX="94.0" layoutY="310.0" prefHeight="25.0" prefWidth="438.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <Label layoutX="14.0" layoutY="355.0" text="Birthday:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="14.0" layoutY="395.0" text="School:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="schoolField" layoutX="94.0" layoutY="390.0" prefHeight="25.0" prefWidth="438.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <Button fx:id="saveAccountButton" layoutX="242.0" layoutY="461.0" mnemonicParsing="false" onAction="#handleSaveAccountButton" prefHeight="37.0" prefWidth="81.0" text="Save">
-                     <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/user-pen.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Separator layoutX="18.0" layoutY="425.0" prefHeight="1.0" prefWidth="529.0" />
-                  <Button fx:id="changePasswordButton" layoutX="462.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleChangePasswordButton" prefHeight="25.0" prefWidth="70.0" text="Change">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <DatePicker fx:id="birthdayField" editable="false" layoutX="94.0" layoutY="350.0" prefHeight="29.0" prefWidth="438.0" />
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="importExportScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
-               <children>
-                  <ComboBox fx:id="exportNoteComboBox" layoutX="216.0" layoutY="77.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" />
-                  <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="159.0" text="Export Note" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="30.0" layoutY="80.0" text="Choose export Note">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="30.0" layoutY="120.0" text="Choose export format">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="exportFormatComboBox" layoutX="216.0" layoutY="117.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose format" />
-                  <Button fx:id="exportFileButton" layoutX="245.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleExportFileButton" text="Export">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Separator layoutX="30.0" layoutY="236.0" prefHeight="3.0" prefWidth="510.0" />
-                  <Label layoutX="30.0" layoutY="250.0" prefHeight="32.0" prefWidth="159.0" text="Import Note" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="30.0" layoutY="300.0" text="Choose import File">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="30.0" layoutY="380.0" text="Import to">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="chooseInputFileButton" layoutX="216.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleChooseInputFileButton" text="Choose from your computer" />
-                  <Label fx:id="importFileName" layoutX="217.0" layoutY="300.0" text="File link">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="importFileButton" layoutX="245.0" layoutY="448.0" mnemonicParsing="false" onAction="#handleImportFileButton" text="Import">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Label fx:id="importNoteName" layoutX="217.0" layoutY="380.0" text="File link">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-            <AnchorPane fx:id="shareNoteScene" layoutX="255.0" prefHeight="600.0" prefWidth="550.0" visible="false">
-               <children>
-                  <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="191.0" text="Share your Note" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="chooseShareNoteComboBox" layoutX="203.0" layoutY="77.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" />
-                  <Label layoutX="30.0" layoutY="80.0" text="Choose Note to share">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="30.0" layoutY="120.0" text="Choose user to share">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="chooseUserShareField" layoutX="203.0" layoutY="115.0" prefHeight="29.0" prefWidth="320.0" text="Enter the username" />
-                  <Label layoutX="30.0" layoutY="160.0" text="Choose share type">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <RadioButton fx:id="shareTypeReadOnly" layoutX="203.0" layoutY="162.0" mnemonicParsing="false" text="Read Only">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="ShareType" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="shareTypeCanEdit" layoutX="320.0" layoutY="162.0" mnemonicParsing="false" text="Can Edit" toggleGroup="$ShareType" />
-                  <Button fx:id="sendNoteButton" layoutX="260.0" layoutY="200.0" mnemonicParsing="false" onAction="#handleSendNoteButton" text="Send">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Separator layoutX="30.0" layoutY="241.0" prefHeight="3.0" prefWidth="510.0" />
-                  <Label layoutX="30.0" layoutY="260.0" prefHeight="32.0" prefWidth="191.0" text="Shared by other" textAlignment="CENTER">
-                     <font>
-                        <Font name="Corbel Bold" size="26.0" />
-                     </font>
-                  </Label>
-                  <TableView fx:id="sharedByOtherTable" layoutX="30.0" layoutY="300.0" prefHeight="200.0" prefWidth="510.0">
-                    <columns>
-                      <TableColumn fx:id="senderUsernameColumn" prefWidth="146.6666259765625" text="Sender" />
-                      <TableColumn fx:id="headerColumn" prefWidth="279.3333435058594" text="Header" />
-                        <TableColumn fx:id="shareTypeColumn" prefWidth="83.33331298828125" text="Share Type" />
-                    </columns>
-                  </TableView>
-                  <Button fx:id="openShareNoteButton" layoutX="258.0" layoutY="522.0" mnemonicParsing="false" onAction="#handleOpenShareNoteButton" text="Open">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-               </children>
-            </AnchorPane>
-         </children>
-      </AnchorPane>
+         </top>
+      </BorderPane>
    </children>
 </StackPane>

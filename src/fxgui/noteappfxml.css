@@ -1,14 +1,26 @@
-
-
+.top-form{
+    -fx-background-color: #fff;
+}
+.close-button{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-background-radius: 0px;
+}
+.close-button:hover{
+    -fx-background-color: red;
+}
 .left-form{
     -fx-background-color: linear-gradient(to bottom right, #1aba51, #1a91b8);
     -fx-border-color: #000;
     -fx-border-width: .4px 0px .4px .4px;
 }
 .login-button{
-    -fx-background-color: linear-gradient(to bottom, #1aba51, #1a91b8);
-    -fx-background-radius: 5px;
-    -fx-text-fill: #fff;
+    -fx-background-color: #d2f4fb;
+    -fx-cursor: hand;
+    -fx-text-fill: #000;
+    -fx-font-size: 16px;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 0px;
 }
 .login-button:hover{
     -fx-background-color: #3a737a;
@@ -41,4 +53,20 @@
     -fx-border-color: #000;
     -fx-border-width: 1.5px 0px 1.5px 0px;
 }
-
+.field_form{
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-background-color: transparent;
+    -fx-border-color: #000;
+    -fx-text-fill: #fff;
+}
+.scene-button{
+    -fx-background-color: #94c2d9;
+    -fx-cursor: hand;
+    -fx-text-fill: #000;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 0px;
+}
+.scene-button:hover{
+    -fx-background-color: #3a737a;
+}

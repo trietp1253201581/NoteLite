@@ -5,79 +5,114 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="450.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.RegisterFXMLController">
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.RegisterFXMLController">
    <children>
-      <AnchorPane prefHeight="90.0" prefWidth="400.0" styleClass="register-top-form" stylesheets="@noteappfxml.css">
-         <children>
-            <Label layoutX="69.0" layoutY="30.0" text="CREATE AN ACCOUNT" textFill="#ededed">
-               <font>
-                  <Font name="Tahoma Bold" size="24.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutY="90.0" prefHeight="360.0" prefWidth="400.0">
-         <children>
-            <Label layoutX="12.0" layoutY="30.0" text="Name">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="12.0" layoutY="80.0" text="Username">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="12.0" layoutY="130.0" text="Password">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="12.0" layoutY="180.0" text="Birthday">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="12.0" layoutY="230.0" text="School">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="nameField" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="291.0" promptText="Your Name">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="usernameField" layoutX="94.0" layoutY="75.0" prefHeight="25.0" prefWidth="291.0" promptText="Username">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="schoolField" layoutX="94.0" layoutY="225.0" prefHeight="25.0" prefWidth="291.0" promptText="School">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <PasswordField fx:id="passwordField" layoutX="94.0" layoutY="125.0" prefHeight="25.0" prefWidth="291.0" promptText="Password">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </PasswordField>
-            <Button fx:id="registerButton" layoutX="161.0" layoutY="275.0" mnemonicParsing="false" onAction="#handleRegisterButton" styleClass="login-button" stylesheets="@noteappfxml.css" text="Register">
-               <font>
-                  <Font name="Tahoma Bold" size="14.0" />
-               </font>
-            </Button>
-            <Label fx:id="backLoginLabel" layoutX="157.0" layoutY="317.0" onMouseClicked="#backLoginLabelClicked" prefHeight="20.0" prefWidth="85.0" text="Back to Login" textFill="#2dc7b0" underline="true">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <DatePicker fx:id="birthdayField" editable="false" layoutX="94.0" layoutY="177.0" prefHeight="25.0" prefWidth="291.0" promptText="yyyy-MM-dd" />
-         </children>
-      </AnchorPane>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <center>
+            <AnchorPane prefHeight="450.0" prefWidth="400.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="13.0" layoutY="100.0" text="Name">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="13.0" layoutY="150.0" text="Username">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="13.0" layoutY="200.0" text="Password">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="13.0" layoutY="250.0" text="Birthday">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="13.0" layoutY="300.0" text="School">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nameField" layoutX="95.0" layoutY="95.0" prefHeight="25.0" prefWidth="291.0" promptText="Your Name" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="usernameField" layoutX="95.0" layoutY="145.0" prefHeight="25.0" prefWidth="291.0" promptText="Username" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="schoolField" layoutX="95.0" layoutY="295.0" prefHeight="25.0" prefWidth="291.0" promptText="School" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <PasswordField fx:id="passwordField" layoutX="95.0" layoutY="195.0" prefHeight="25.0" prefWidth="291.0" promptText="Password" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </PasswordField>
+                  <Button fx:id="registerButton" layoutX="13.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="36.0" prefWidth="373.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Register">
+                     <font>
+                        <Font name="Tahoma Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="backLoginLabel" layoutX="157.0" layoutY="399.0" onMouseClicked="#backLoginLabelClicked" prefHeight="20.0" prefWidth="85.0" text="Back to Login" textFill="WHITE" underline="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <DatePicker fx:id="birthdayField" editable="false" layoutX="95.0" layoutY="246.0" prefHeight="27.0" prefWidth="291.0" promptText="yyyy-MM-dd" stylesheets="@noteappfxml.css" />
+                  <Label alignment="CENTER" layoutY="33.0" prefHeight="30.0" prefWidth="400.0" text="CREATE AN ACCOUNT" textAlignment="CENTER" textFill="#ededed">
+                     <font>
+                        <Font name="Tahoma Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </center>
+         <top>
+            <AnchorPane prefHeight="25.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox prefHeight="25.0" prefWidth="400.0" styleClass="top-form" stylesheets="@noteappfxml.css">
+                     <children>
+                        <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/journal-alt.png" />
+                           </image>
+                        </ImageView>
+                        <Label prefHeight="25.0" prefWidth="325.0" text="  NoteLite">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@noteappfxml.css">
+                           <graphic>
+                              <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/reject.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </top>
+      </BorderPane>
    </children>
-</AnchorPane>
+</StackPane>

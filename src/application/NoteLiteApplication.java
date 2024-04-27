@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Class chính của project, tạo ứng dụng chạy cho user
@@ -29,8 +30,8 @@ public class NoteLiteApplication extends Application {
         LoginFXMLController loginFXMLController = fXMLLoader.getController();
         loginFXMLController.init();
         
-        primaryStage.setTitle("NoteLite");
         primaryStage.setScene(scene);
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
     }
 

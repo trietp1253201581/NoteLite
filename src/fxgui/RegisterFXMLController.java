@@ -7,18 +7,21 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import model.datatransfer.User;
 
@@ -45,13 +48,20 @@ public class RegisterFXMLController {
     private TextField usernameField;   
     @FXML
     private Label backLoginLabel;
+    @FXML
+    private Button closeButton;
     
     private ClientServerService clientServerService;
     
-    /**
-     * Xử lý sự kiện ấn vào Register Button
-     * @param event 
-     */
+    @FXML
+    void handleCloseButton(ActionEvent event) {
+        Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
+                "Close NoteLite?");
+        if(optional.get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
+    
     @FXML
     void handleRegisterButton(ActionEvent event) {   
         //Thiết lập các thuộc tính cho new user
@@ -87,11 +97,7 @@ public class RegisterFXMLController {
             }
         }
     }
-    
-    /**
-     * Xử lý sự kiện khi click vào Login Label
-     * @param event
-     */
+
     @FXML
     void backLoginLabelClicked(MouseEvent event) {
         //Quay trở lại trang Login
@@ -134,9 +140,6 @@ public class RegisterFXMLController {
         birthdayField.setEditable(false);
     }
     
-    /**
-     * Mở trang Login
-     */
     private void openLogin() {
         try {
             //Ẩn Register GUI
@@ -151,7 +154,7 @@ public class RegisterFXMLController {
             LoginFXMLController loginFXMLController = fXMLLoader.getController();
             loginFXMLController.init();
             
-            stage.setTitle("NoteLite");
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);  
             stage.show();
         } catch (IOException ex) {
@@ -159,15 +162,10 @@ public class RegisterFXMLController {
         }
     }
     
-    /**
-     * Show thông báo
-     * @param alertType Kiểu thông báo
-     * @param text Nội dung thông báo
-     */
-    private void showAlert(Alert.AlertType alertType, String text) {
+    private Optional<ButtonType> showAlert(Alert.AlertType alertType, String text) {
         Alert alert = new Alert(alertType);
         alert.setTitle(String.valueOf(alertType));
         alert.setHeaderText(text);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 }

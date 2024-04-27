@@ -44,6 +44,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
@@ -60,6 +61,8 @@ import model.datatransfer.attributeconverter.NoteContentConverter;
  */
 public class DashboardFXMLController {
     //Các thuộc tính FXML
+    @FXML
+    private Button closeButton;
     @FXML
     private TextArea contentArea;
     @FXML
@@ -181,6 +184,15 @@ public class DashboardFXMLController {
     }
 
     @FXML
+    void handleCloseButton(ActionEvent event) {
+        Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
+                "Close NoteLite?");
+        if(optional.get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
+    
+    @FXML
     void handleLogoutButton(ActionEvent event) {       
         //Set lại style của button
         logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
@@ -191,13 +203,13 @@ public class DashboardFXMLController {
         String loginFXMLPath = "LoginFXML.fxml";
         fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Mở Login GUI
-        Stage stage = (Stage)logoutButton.getScene().getWindow();
+        Stage stage = new Stage();
         try {
             Scene scene = new Scene(fXMLLoader.load());
             LoginFXMLController loginFXMLController = fXMLLoader.getController();
             loginFXMLController.init();
             
-            stage.setTitle("NoteLite");
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
@@ -827,10 +839,7 @@ public class DashboardFXMLController {
         //Init lại Scene
         initEditScene();
     }
-    
-    /**
-     * Load Edit Scene
-     */
+
     private void initEditScene() { 
         //Thiết lập content, header
         contentArea.setText(NoteContentConverter.convertToObjectText(myNote.getContent()));
@@ -843,11 +852,7 @@ public class DashboardFXMLController {
         //Load lại Filter GUI
         loadFilter(myNote.getFilters(), 6);   
     }
-    
-    /**
-     * Load MyNotes Scene
-     * @param notes list các note muốn hiện
-     */
+
     private void initMyNotesScene(List<Note> notes) {        
         //Làm sạch layout
         noteCardLayout.getChildren().clear();
@@ -870,10 +875,8 @@ public class DashboardFXMLController {
                 box.setOnMouseClicked((MouseEvent event) -> {
                     noteCardFXMLController.setLabelStyle("-fx-background-color: #3a737a");
                     //Tạo thông báo và mở note nếu chọn OK
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Open Note");
-                    alert.setHeaderText("Open " + noteCardFXMLController.getHeader());
-                    Optional<ButtonType> optional = alert.showAndWait();
+                    Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
+                            "Open " + noteCardFXMLController.getHeader());
                     if(optional.get() == ButtonType.OK) {
                         try {
                             //Lấy thành công
@@ -911,9 +914,6 @@ public class DashboardFXMLController {
         }      
     }
     
-    /**
-     * Load My Account Scene
-     */
     private void initMyAccountScene() {
         //Thiết lập các thuộc tính
         usernameLabel.setText(user.getUsername());
@@ -950,10 +950,6 @@ public class DashboardFXMLController {
         birthdayField.setEditable(false);
     }
     
-    /**
-     * Load Import/Export Scene
-     * @param notes 
-     */
     private void initImportExportScene(List<Note> notes) {
         //Clear ComboBox và thêm vào các header note trong list
         exportNoteComboBox.getItems().clear();
@@ -970,9 +966,6 @@ public class DashboardFXMLController {
         importNoteName.setText(myNote.getHeader());
     }
 
-    /**
-     * Load Share Note Scene
-     */
     private void initShareNoteScene(List<Note> notes, ObservableList<ShareNote> shareNotes) {
         //Clear ComboBox và thêm vào các header note trong list
         chooseShareNoteComboBox.getItems().clear();
@@ -994,12 +987,7 @@ public class DashboardFXMLController {
         shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
         sharedByOtherTable.setItems(shareNotes);
     }
-    
-    /**
-     * Thiết lập thể hiện của filter tới người dùng
-     * @param filters List chứa các filter
-     * @param maxColumn số lượng filter lớn nhất trên một hàng
-     */
+
     private void loadFilter(List<String> filters, int maxColumn) {
         int column = 0;
         int row = 0;
@@ -1035,10 +1023,6 @@ public class DashboardFXMLController {
         }
     }
     
-    /**
-     * Chuyển Scene khi ấn vào một Button nào đó
-     * @param button 
-     */
     private void changeScene(Button button) {
         if(button == editNoteButton) {
             editNoteButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
@@ -1118,15 +1102,10 @@ public class DashboardFXMLController {
         }
     }
     
-    /**
-     * Show thông báo
-     * @param alertType Kiểu thông báo
-     * @param text Nội dung thông báo
-     */
-    private void showAlert(Alert.AlertType alertType, String text) {
+    private Optional<ButtonType> showAlert(Alert.AlertType alertType, String text) {
         Alert alert = new Alert(alertType);
         alert.setTitle(String.valueOf(alertType));
         alert.setHeaderText(text);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 }

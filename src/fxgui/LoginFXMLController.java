@@ -4,17 +4,20 @@ import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorException;
 import client.service.ClientServerServiceErrorType;
 import java.io.IOException;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import model.datatransfer.User;
 
 /**
@@ -34,13 +37,20 @@ public class LoginFXMLController {
     private TextField usernameField;    
     @FXML 
     private Label registerLabel;
+    @FXML
+    private Button closeButton;
 
     private ClientServerService clientServerService;   
             
-    /**
-     * Xử lý sự kiện khi ấn vào Login Button
-     * @param event 
-     */
+    @FXML
+    void handleCloseButton(ActionEvent event) {
+        Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
+                "Close NoteLite?");
+        if(optional.get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
+    
     @FXML
     void handleLoginButton(ActionEvent event) {  
         //Lấy username và password
@@ -74,24 +84,18 @@ public class LoginFXMLController {
         }
     }
     
-    /**
-     * Xử lý sự kiện khi click chuột vào Register Label
-     * @param event
-     */
     @FXML
     void registerLabelClicked(MouseEvent event) {       
         openRegister();
     }
     
+    /**
+     * Khởi tạo Login Controller
+     */
     public void init() {
         clientServerService = new ClientServerService();
     }
-    
-    /**
-     * Mở Dashboard GUI
-     * @param user user được mở Dashboard
-     * @throws IOException 
-     */
+
     private void openDashBoard(User user) {
         try {
             //Ẩn Login GUI
@@ -101,7 +105,7 @@ public class LoginFXMLController {
             String dashboardFXMLPath = "DashboardFXML.fxml";
             fXMLLoader.setLocation(getClass().getResource(dashboardFXMLPath));
             //Chuyển sang GUI Dashboard
-            Stage stage = (Stage)loginButton.getScene().getWindow();
+            Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
             //Thiết lập dữ liệu user cho Dashboard
             DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
@@ -109,18 +113,14 @@ public class LoginFXMLController {
             //Hiển thị Dashboard
             dashboardFXMLController.init();
             
-            stage.setTitle("NoteLite");
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
             showAlert(Alert.AlertType.ERROR, "Can't open dashboard");
         }
     }
-    
-    /**
-     * Mở Register GUI
-     * @throws IOException 
-     */
+
     private void openRegister() {
         try {
             //Ẩn Login GUI
@@ -136,7 +136,7 @@ public class LoginFXMLController {
             RegisterFXMLController registerFXMLController = fXMLLoader.getController();
             registerFXMLController.init();
             
-            stage.setTitle("NoteLite");
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);  
             stage.show();
         } catch (IOException ex) {
@@ -144,15 +144,10 @@ public class LoginFXMLController {
         }
     }
     
-    /**
-     * Show thông báo
-     * @param alertType Kiểu thông báo
-     * @param text Nội dung thông báo
-     */
-    private void showAlert(Alert.AlertType alertType, String text) {
+    private Optional<ButtonType> showAlert(Alert.AlertType alertType, String text) {
         Alert alert = new Alert(alertType);
         alert.setTitle(String.valueOf(alertType));
         alert.setHeaderText(text);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 }
