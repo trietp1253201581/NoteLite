@@ -31,9 +31,9 @@ public class DeleteNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) {@link Note} vừa được xóa nếu xóa được,
-     * (2) {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * (2) {@link ServerService.ErrorType}.{@code NOT_EXISTS}
      * nếu note không tồn tại,
-     * (3) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE} 
+     * (3) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE} 
      * nếu không thực hiện lệnh xóa được
      */
     @Override
@@ -45,7 +45,7 @@ public class DeleteNoteService implements ServerService {
         //Kiểm tra note có tồn tại khong
         Note note = noteDataAccess.get(author, header);
         if(note.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }
         //Thực hiện lệnh xóa      
@@ -55,7 +55,7 @@ public class DeleteNoteService implements ServerService {
             resultMap.put("Note", note);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
             return resultMap;
         }      
     } 

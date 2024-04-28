@@ -41,7 +41,7 @@ public class ServerRequestProcessor {
             resultMap = serverService.execute();
         } catch (IllegalArgumentException illegalArgumentException) {
             resultMap = new HashMap<>();
-            resultMap.put("ServerServiceError", ServerServiceErrorType.UNSUPPORTED_SERVICE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.UNSUPPORTED_SERVICE);
         }   
         return Command.encode("Result", resultMap);
     }

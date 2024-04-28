@@ -7,7 +7,14 @@ package server.networking;
  * @version 1.0
  */
 public interface Server {  
-
+    
+    /**
+     * Các status của server
+     */
+    enum ServerStatus{
+        CLOSE, WAITING, SUCCESS; 
+    }
+    
     /**
      * Chạy Server
      */

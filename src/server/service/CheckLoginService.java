@@ -31,9 +31,9 @@ public class CheckLoginService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map với các value
      * (1) Một {@link User} nếu tài khoản tồn tại và mật khẩu đúng,
-     * (2) {@link ServerServiceErrorType}.{@code FALSE_INFORMATION} 
+     * (2) {@link ServerService.ErrorType}.{@code FALSE_INFORMATION} 
      * nếu tài khoản tồn tại nhưng mật khẩu sai,
-     * (3) {@link ServerServiceErrorType}.{@code NOT_EXISTS} 
+     * (3) {@link ServerService.ErrorType}.{@code NOT_EXISTS} 
      * nếu tài khoản không tồn tại
      */
     @Override
@@ -46,14 +46,14 @@ public class CheckLoginService implements ServerService {
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra các điều kiện để thêm tương ứng vào resultMap
         if(user.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }
         if(user.getPassword().equals(password)) {
             resultMap.put("User", user);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.FALSE_INFORMATION);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.FALSE_INFORMATION);
             return resultMap;
         }
     }    

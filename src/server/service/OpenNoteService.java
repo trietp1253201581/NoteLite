@@ -31,7 +31,7 @@ public class OpenNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) Note được mở nếu tìm được,
-     * (2) {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * (2) {@link ServerService.ErrorType}.{@code NOT_EXISTS}
      * nếu user không có note nào
      */
     @Override
@@ -47,7 +47,7 @@ public class OpenNoteService implements ServerService {
             resultMap.put("Note", note);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }           
     }    

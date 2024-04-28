@@ -15,6 +15,7 @@ import javafx.stage.StageStyle;
  * @version 1.0
  */
 public class NoteLiteApplication extends Application {
+    
     /**
      * @param primaryStage Stage khởi tạo
      * @throws IOException
@@ -35,9 +36,6 @@ public class NoteLiteApplication extends Application {
         primaryStage.show();
     }
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         launch(args);
     }

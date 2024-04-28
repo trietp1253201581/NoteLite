@@ -2,7 +2,6 @@ package fxgui;
 
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorException;
-import client.service.ClientServerServiceErrorType;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.event.ActionEvent;
@@ -68,16 +67,16 @@ public class LoginFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     showAlert(Alert.AlertType.ERROR, "Not exist user");
                 }
-                case ClientServerServiceErrorType.FALSE_INFORMATION -> {
+                case ClientServerService.ErrorType.FALSE_INFORMATION -> {
                     showAlert(Alert.AlertType.ERROR, "False password");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }

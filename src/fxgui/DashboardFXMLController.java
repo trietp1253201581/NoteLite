@@ -2,7 +2,6 @@ package fxgui;
 
 import client.service.ClientServerService;
 import client.service.ClientServerServiceErrorException;
-import client.service.ClientServerServiceErrorType;
 import client.service.PdfService;
 import client.service.UndoRedoService;
 import com.itextpdf.text.DocumentException;
@@ -11,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +24,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -45,10 +42,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.StringConverter;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
-import model.datatransfer.ShareType;
 import model.datatransfer.User;
 import model.datatransfer.attributeconverter.NoteContentConverter;
 
@@ -60,33 +55,28 @@ import model.datatransfer.attributeconverter.NoteContentConverter;
  * @version 1.0
  */
 public class DashboardFXMLController {
-    //Các thuộc tính FXML
+    //Các thuộc tính FXML của form dashboard chung
+    @FXML
+    private Label userLabel;   
     @FXML
     private Button closeButton;
     @FXML
-    private TextArea contentArea;
-    @FXML
-    private Button editNoteButton;
-    @FXML
-    private AnchorPane editNoteScene;
-    @FXML
-    private Label header;
-    @FXML
-    private Label id;
-    @FXML
     private Button logoutButton;
     @FXML
-    private AnchorPane myNotesScene;
-    @FXML
-    private VBox noteCardLayout;   
+    private Button editNoteButton;
     @FXML
     private Button myNotesButton;
     @FXML
     private Button myAccountButton;
     @FXML
-    private Label userId;
+    private Button importExportButton;
     @FXML
-    private Label userLabel;   
+    private Button shareNoteButton;
+    //Các thuộc tính FXML của editNoteScene
+    @FXML
+    private AnchorPane editNoteScene;
+    @FXML
+    private TextArea contentArea;    
     @FXML
     private Label noteHeaderLabel;  
     @FXML
@@ -105,16 +95,22 @@ public class DashboardFXMLController {
     private Button addFilterButton;   
     @FXML
     private Button removeFilterButton;   
+    //Các thuộc tính của myNotesScene
+    @FXML
+    private AnchorPane myNotesScene;
     @FXML
     private TextField searchNoteField;  
     @FXML
+    private VBox noteCardLayout;   
+    @FXML
     private Button createNoteButton;   
     @FXML
-    private Button deleteNoteButton;    
+    private Button deleteNoteButton; 
+    //Các thuộc tính của myAccountScene
     @FXML
-    private AnchorPane myAccountScene;
+    private AnchorPane myAccountScene;    
     @FXML
-    private Label usernameLabel;
+    private TextField usernameField;
     @FXML
     private PasswordField passwordField;
     @FXML
@@ -122,19 +118,34 @@ public class DashboardFXMLController {
     @FXML
     private TextField nameField;
     @FXML 
-    private DatePicker birthdayField;
+    private TextField dayOfBirthField;
+    @FXML
+    private TextField monthOfBirthField;
+    @FXML
+    private TextField yearOfBirthField;
     @FXML
     private TextField schoolField;
+    @FXML
+    private RadioButton genderMale;
+    @FXML
+    private RadioButton genderFemale;
+    @FXML
+    private RadioButton genderOther;
+    @FXML
+    private Label errorNameFieldLabel;
+    @FXML
+    private Label errorPasswordFieldLabel;
+    @FXML
+    private Label errorBirthdayFieldLabel;
     @FXML
     private Button changePasswordButton;
     @FXML
     private Button saveAccountButton;  
-    @FXML
-    private Button importExportButton;
-    @FXML
-    private Button exportFileButton;
+    //Các thuộc tính FXML của importExportScene
     @FXML
     private AnchorPane importExportScene;
+    @FXML
+    private Button exportFileButton;
     @FXML
     private ComboBox<String> exportNoteComboBox;
     @FXML
@@ -147,8 +158,7 @@ public class DashboardFXMLController {
     private Button importFileButton;
     @FXML
     private Label importFileName;
-    @FXML
-    private Button shareNoteButton;
+    //Các thuộc tính FXML của shareNoteScene
     @FXML
     private AnchorPane shareNoteScene;
     @FXML
@@ -178,6 +188,7 @@ public class DashboardFXMLController {
     private Note myNote;    
     private List<Note> myNotes;   
     private ObservableList<ShareNote> mySharedNotes;
+    private boolean savedNoteStatus;
 
     public void setUser(User user) {
         this.user = user;
@@ -185,6 +196,8 @@ public class DashboardFXMLController {
 
     @FXML
     void handleCloseButton(ActionEvent event) {
+        //Kiểm tra Note hiện hành đã được lưu chưa?
+        checkAndAutoSave();
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
@@ -238,16 +251,18 @@ public class DashboardFXMLController {
             //Lưu thành công
             myNote = clientServerService.saveNote(myNote);
             showAlert(Alert.AlertType.INFORMATION, "Successfully save for " + myNote.getHeader());
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = true;     
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                     showAlert(Alert.AlertType.ERROR, "Can't save this note");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -282,13 +297,13 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNotes = new ArrayList<>();
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -310,6 +325,8 @@ public class DashboardFXMLController {
         if(nowLength < lastLength || nowLength > lastLength + 3) {
             undoRedoService.saveText(contentArea.getText());
         }
+        //Chỉnh trạng thái lưu Note 
+        savedNoteStatus = false;
     }
 
     @FXML
@@ -325,6 +342,8 @@ public class DashboardFXMLController {
             contentArea.setText(text);
             numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
         }
+        //Chỉnh trạng thái lưu Note 
+        savedNoteStatus = false;        
     }
 
     @FXML
@@ -340,6 +359,8 @@ public class DashboardFXMLController {
             contentArea.setText(text);       
             numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
         }
+        //Chỉnh trạng thái lưu Note 
+        savedNoteStatus = false;        
     }
 
     @FXML
@@ -366,7 +387,10 @@ public class DashboardFXMLController {
                 //Load lại filter GUI
                 loadFilter(filters, 6);
             }     
-        });      
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = false;
+        }); 
+
     }
     
     @FXML
@@ -387,6 +411,8 @@ public class DashboardFXMLController {
             myNote.setFilters(filters);
             //Load lại filter GUI
             loadFilter(filters, 6);     
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = false;     
         });  
     }    
 
@@ -401,13 +427,13 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNotes = new ArrayList<>();
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -461,16 +487,16 @@ public class DashboardFXMLController {
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.ALREADY_EXISTS -> {
+                    case ClientServerService.ErrorType.ALREADY_EXISTS -> {
                         showAlert(Alert.AlertType.ERROR, "This note already exists");
                     }
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                         showAlert(Alert.AlertType.ERROR, "Can't create new note");
                     }
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
-                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                         showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                     }
                 }
@@ -505,16 +531,16 @@ public class DashboardFXMLController {
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.ALREADY_EXISTS -> {
+                    case ClientServerService.ErrorType.ALREADY_EXISTS -> {
                         showAlert(Alert.AlertType.ERROR, "This note already exists");
                     }
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                         showAlert(Alert.AlertType.ERROR, "Can't create new note");
                     }
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
-                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                         showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                     }
                 }
@@ -532,11 +558,62 @@ public class DashboardFXMLController {
 
     @FXML
     void handleSaveAccountButton(ActionEvent event) {
-        //Lấy dữ liệu của user vừa được chỉnh sửa
+        errorBirthdayFieldLabel.setVisible(false);
+        errorNameFieldLabel.setVisible(false);
+        errorPasswordFieldLabel.setVisible(false);
+        //Lấy password
+        if("".equals(passwordField.getText())) {
+            errorPasswordFieldLabel.setVisible(true);
+        }
         user.setPassword(passwordField.getText());
+        //Láy thông tin name
+        if("".equals(nameField.getText())) {
+            errorNameFieldLabel.setVisible(true);
+        }
         user.setName(nameField.getText());
-        user.setBirthday(Date.valueOf(birthdayField.getValue()));
+        //Lấy school
         user.setSchool(schoolField.getText());
+        //Lấy thông tin về birth
+        int dayOfBirth = -1;
+        int monthOfBirth = -1;
+        int yearOfBirth = -1;
+        if(dayOfBirthField.getText().matches("^[0-9]{1,2}$")) {
+            dayOfBirth = Integer.parseInt(dayOfBirthField.getText());
+        } else if("".equals(dayOfBirthField.getText())) {
+            dayOfBirth = LocalDate.now().getDayOfMonth();
+        } else {
+            errorBirthdayFieldLabel.setVisible(true);
+        }
+        if(monthOfBirthField.getText().matches("^[0-9]{1,2}$")) {
+            monthOfBirth = Integer.parseInt(monthOfBirthField.getText());
+        } else if("".equals(monthOfBirthField.getText())) {
+            monthOfBirth = LocalDate.now().getMonthValue();
+        } else {
+            errorBirthdayFieldLabel.setVisible(true);
+        }
+        if(yearOfBirthField.getText().matches("^[0-9]{4}$")) {
+            yearOfBirth = Integer.parseInt(yearOfBirthField.getText());
+        } else if("".equals(yearOfBirthField.getText())) {
+            yearOfBirth = LocalDate.now().getYear();
+        } else {
+            errorBirthdayFieldLabel.setVisible(true);
+        } 
+        if(!errorBirthdayFieldLabel.isVisible()) {
+            user.setBirthday(Date.valueOf(LocalDate.of(yearOfBirth, monthOfBirth, dayOfBirth)));
+        }
+        //Lấy gender
+        if(genderMale.isSelected()) {
+            user.setGender(User.Gender.MALE);
+        } else if (genderFemale.isSelected()) {
+            user.setGender(User.Gender.FEMALE);
+        } else {
+            user.setGender(User.Gender.OTHER);
+        }
+        //Kiểm tra xem có lỗi nào không
+        if(errorNameFieldLabel.isVisible() || errorPasswordFieldLabel.isVisible() 
+                || errorBirthdayFieldLabel.isVisible()) {
+            return;
+        }
         //Cập nhật User
         try { 
             //Cập nhật thành công
@@ -545,16 +622,16 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     showAlert(Alert.AlertType.ERROR, "Not exist user");
                 }
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                     showAlert(Alert.AlertType.ERROR, "Can't update your user");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -589,13 +666,13 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNotes = new ArrayList<>();
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -619,16 +696,16 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     showAlert(Alert.AlertType.ERROR, "This note not exists");
                 }
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                     showAlert(Alert.AlertType.ERROR, "Can't open this note");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -683,13 +760,13 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNotes = new ArrayList<>();
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -706,13 +783,13 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     mySharedNotes = FXCollections.observableArrayList();
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -735,9 +812,9 @@ public class DashboardFXMLController {
             newShareNote.setNote(selectedNote);
             newShareNote.setReceiver(receiverUsename);
             if(shareTypeReadOnly.isSelected()) {
-                newShareNote.setShareType(ShareType.READ_ONLY);
+                newShareNote.setShareType(ShareNote.ShareType.READ_ONLY);
             } else {
-                newShareNote.setShareType(ShareType.CAN_EDIT);
+                newShareNote.setShareType(ShareNote.ShareType.CAN_EDIT);
             }
             clientServerService.sendNote(newShareNote);
             //Thông báo
@@ -745,16 +822,16 @@ public class DashboardFXMLController {
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     showAlert(Alert.AlertType.ERROR, "Not exists note or receiver");
                 }
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                     showAlert(Alert.AlertType.ERROR, "Can't send this note");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -776,23 +853,26 @@ public class DashboardFXMLController {
                 //Load lại Edit Scene và mở Edit Scene
                 initEditScene();
                 //Nếu là ReadOnly thì không được edit
-                if(shareNote.getShareType() == ShareType.READ_ONLY) {
+                if(shareNote.getShareType() == ShareNote.ShareType.READ_ONLY) {
                     contentArea.setEditable(false);
+                } else {
+                    //Chỉnh trạng thái lưu Note 
+                    savedNoteStatus = true;     
                 }
                 changeScene(editNoteButton);  
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
-                    case ClientServerServiceErrorType.NOT_EXISTS -> {
+                    case ClientServerService.ErrorType.NOT_EXISTS -> {
                         showAlert(Alert.AlertType.ERROR, "This note not exists");
                     }
-                    case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                         showAlert(Alert.AlertType.ERROR, "Can't open this note");
                     }
-                    case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                         showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                     }
-                    case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
                 }
@@ -814,24 +894,28 @@ public class DashboardFXMLController {
         try { 
             //Lấy thành công
             myNote = clientServerService.openLastNote(user.getUsername());
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = true;     
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
-                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNote = new Note();
                     myNote.setAuthor(user.getUsername());
                     myNote.setHeader("New Note");
                     myNote.setContent("Edit here");
                     List<String> filters = new ArrayList<>();
                     myNote.setFilters(filters);
+                    //Chỉnh trạng thái lưu Note 
+                    savedNoteStatus = false;     
                 }
-                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                     showAlert(Alert.AlertType.ERROR, "Can't open your last note");
                 }
-                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                 }
-                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                 }
             }
@@ -878,6 +962,7 @@ public class DashboardFXMLController {
                     Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                             "Open " + noteCardFXMLController.getHeader());
                     if(optional.get() == ButtonType.OK) {
+                        checkAndAutoSave();
                         try {
                             //Lấy thành công
                             myNote = clientServerService.openNote(user.getUsername(),
@@ -885,19 +970,21 @@ public class DashboardFXMLController {
                             //Load lại Edit Scene và mở Edit Scene
                             initEditScene();
                             changeScene(editNoteButton);
+                            //Chỉnh trạng thái lưu Note 
+                            savedNoteStatus = true;     
                         } catch (ClientServerServiceErrorException ex) {
                             //Xử lý các ngoại lệ
                             switch (ex.getErrorType()) {
-                                case ClientServerServiceErrorType.NOT_EXISTS -> {
+                                case ClientServerService.ErrorType.NOT_EXISTS -> {
                                     showAlert(Alert.AlertType.ERROR, "This note not exists");
                                 }
-                                case ClientServerServiceErrorType.CAN_NOT_EXECUTE -> {
+                                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
                                     showAlert(Alert.AlertType.ERROR, "Can't open this note");
                                 }
-                                case ClientServerServiceErrorType.FAILED_CONNECT_TO_SERVER -> {
+                                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
                                 }
-                                case ClientServerServiceErrorType.UNSUPPORTED_SERVICE -> {
+                                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
                                     showAlert(Alert.AlertType.ERROR, "This service is unsupported");
                                 }
                             } 
@@ -916,38 +1003,30 @@ public class DashboardFXMLController {
     
     private void initMyAccountScene() {
         //Thiết lập các thuộc tính
-        usernameLabel.setText(user.getUsername());
+        usernameField.setText(user.getUsername());
+        usernameField.setEditable(false);
         passwordField.setText(user.getPassword());
         userIdLabel.setText(String.valueOf(user.getId()));
         nameField.setText(user.getName());
         schoolField.setText(user.getSchool());
-        //Khởi tạo birthdayField
-        birthdayField.setValue(user.getBirthday().toLocalDate());
-        //Tạo converter từ ngày tháng sang yyyy-MM-dd
-        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            
-            @Override
-            public String toString(LocalDate date) {
-                if(date != null) {
-                    return dateFormatter.format(date);
-                } else {
-                    return "";
-                }
+        dayOfBirthField.setText(String.valueOf(user.getBirthday().toLocalDate().getDayOfMonth()));
+        monthOfBirthField.setText(String.valueOf(user.getBirthday().toLocalDate().getMonthValue()));
+        yearOfBirthField.setText(String.valueOf(user.getBirthday().toLocalDate().getYear()));
+        switch(user.getGender()) {
+            case User.Gender.MALE -> {
+                genderMale.setSelected(true);
             }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if(string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, dateFormatter);
-                } else {
-                    return LocalDate.now();
-                }
+            case User.Gender.FEMALE -> {
+                genderFemale.setSelected(true);
             }
-        };
-        birthdayField.setConverter(converter);
-        birthdayField.setPromptText("yyyy-MM-dd");
-        birthdayField.setEditable(false);
+            case User.Gender.OTHER -> {
+                genderOther.setSelected(true);
+            }
+        }
+        //Ẩn các error
+        errorBirthdayFieldLabel.setVisible(false);
+        errorNameFieldLabel.setVisible(false);
+        errorPasswordFieldLabel.setVisible(false);
     }
     
     private void initImportExportScene(List<Note> notes) {
@@ -986,6 +1065,41 @@ public class DashboardFXMLController {
         headerColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("header"));
         shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
         sharedByOtherTable.setItems(shareNotes);
+    }
+    
+    private void checkAndAutoSave() {
+        if(!savedNoteStatus) {
+            Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
+                    myNote.getHeader() + " is unsaved. Do you want to save?");
+            if(optional.get() == ButtonType.OK) {
+                //Set dữ liệu gần nhất cho myNote
+                myNote.setHeader(noteHeaderLabel.getText());
+                myNote.setContent(NoteContentConverter.convertToDBText(contentArea.getText()));
+                myNote.setLastModified(1);
+                myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
+                //Lưu note
+                try { 
+                    //Lưu thành công
+                    myNote = clientServerService.saveNote(myNote);
+                    showAlert(Alert.AlertType.INFORMATION, "Successfully save for " + myNote.getHeader());
+                    //Chỉnh trạng thái lưu Note 
+                    savedNoteStatus = true;     
+                } catch (ClientServerServiceErrorException ex) {
+                    //Xử lý các ngoại lệ
+                    switch (ex.getErrorType()) {
+                        case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
+                            showAlert(Alert.AlertType.ERROR, "Can't save this note");
+                        }
+                        case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
+                            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                        }
+                        case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
+                            showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                        }
+                    }
+                }
+            }           
+        }
     }
 
     private void loadFilter(List<String> filters, int maxColumn) {

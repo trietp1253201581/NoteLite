@@ -3,6 +3,7 @@ package dataaccess;
 /**
  * Định nghĩa các phương thức thao tác cơ bản với CSDL
  * @author Lê Minh Triết
+ * @param <T> Kiểu datatransfer cho data từ CSDL
  * @since 30/03/2024
  * @version 1.0
  */

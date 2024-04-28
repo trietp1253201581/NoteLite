@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
-import model.datatransfer.ShareType;
 import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
@@ -78,7 +77,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 //Thêm shareNote vào list
                 shareNotes.add(shareNote);
             }
@@ -128,7 +127,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 
                 return shareNote;
             }
@@ -176,7 +175,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                shareNote.setShareType(ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 
                 return shareNote;
             }

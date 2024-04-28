@@ -77,7 +77,7 @@ public class NoteCardFXMLController {
                 filterGridLayout.add(hbox, column++, row);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e);
         }
     }
 }

@@ -29,9 +29,9 @@ public class CreateNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value: 
      * (1) {@link Note} mới nếu tạo được,
-     * (2) {@link ServerServiceErrorType}.{@code ALREADY_EXISTS}
+     * (2) {@link ServerService.ErrorType}.{@code ALREADY_EXISTS}
      * nếu note đã tồn tại,
-     * (3) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * (3) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh tạo được
      */
     @Override
@@ -43,7 +43,7 @@ public class CreateNoteService implements ServerService {
         //Kiểm tra note đã tồn tại hay chưa
         Note check = noteDataAccess.get(note.getAuthor(), note.getHeader());       
         if(!check.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.ALREADY_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.ALREADY_EXISTS);
             return resultMap;
         }
         //Thực hiện thêm note
@@ -55,7 +55,7 @@ public class CreateNoteService implements ServerService {
             resultMap.put("Note", newNote);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
             return resultMap;
         }       
     }    

@@ -29,7 +29,7 @@ public class UpdateUserService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) User được cập nhật nếu cập nhật được,
-     * (2) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * (2) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh cập nhật được
      */
     @Override
@@ -48,7 +48,7 @@ public class UpdateUserService implements ServerService {
             resultMap.put("User", updatedUser);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
             return resultMap;
         }        
     }    

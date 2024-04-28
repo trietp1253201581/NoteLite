@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,74 +14,82 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.RegisterFXMLController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxgui.RegisterFXMLController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
-            <AnchorPane prefHeight="450.0" prefWidth="400.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="475.0" prefWidth="400.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="13.0" layoutY="100.0" text="Name">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="13.0" layoutY="150.0" text="Username">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="13.0" layoutY="200.0" text="Password">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="13.0" layoutY="250.0" text="Birthday">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="13.0" layoutY="300.0" text="School">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="nameField" layoutX="95.0" layoutY="95.0" prefHeight="25.0" prefWidth="291.0" promptText="Your Name" stylesheets="@noteappfxml.css">
+                  <Label layoutX="23.0" layoutY="70.0" text="Name *" />
+                  <Label layoutX="23.0" layoutY="120.0" text="Username *" />
+                  <Label layoutX="23.0" layoutY="170.0" text="Password *" />
+                  <Label layoutX="23.0" layoutY="220.0" text="Birthday" />
+                  <Label layoutX="23.0" layoutY="270.0" text="School" />
+                  <TextField fx:id="nameField" layoutX="15.0" layoutY="85.0" prefHeight="30.0" prefWidth="370.0" promptText="Your Name" styleClass="field_form" stylesheets="@noteappfxml.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="usernameField" layoutX="95.0" layoutY="145.0" prefHeight="25.0" prefWidth="291.0" promptText="Username" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="usernameField" layoutX="15.0" layoutY="135.0" prefHeight="30.0" prefWidth="370.0" promptText="Username" styleClass="field_form" stylesheets="@noteappfxml.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="schoolField" layoutX="95.0" layoutY="295.0" prefHeight="25.0" prefWidth="291.0" promptText="School" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="schoolField" layoutX="15.0" layoutY="285.0" prefHeight="30.0" prefWidth="370.0" promptText="School" styleClass="field_form" stylesheets="@noteappfxml.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <PasswordField fx:id="passwordField" layoutX="95.0" layoutY="195.0" prefHeight="25.0" prefWidth="291.0" promptText="Password" stylesheets="@noteappfxml.css">
+                  <PasswordField fx:id="passwordField" layoutX="15.0" layoutY="185.0" prefHeight="30.0" prefWidth="370.0" promptText="Password" styleClass="field_form" stylesheets="@noteappfxml.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Button fx:id="registerButton" layoutX="13.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="36.0" prefWidth="373.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Register">
+                  <Button fx:id="registerButton" layoutX="15.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="36.0" prefWidth="370.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Register">
                      <font>
                         <Font name="Tahoma Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Label fx:id="backLoginLabel" layoutX="157.0" layoutY="399.0" onMouseClicked="#backLoginLabelClicked" prefHeight="20.0" prefWidth="85.0" text="Back to Login" textFill="WHITE" underline="true">
+                  <Label fx:id="backLoginLabel" layoutX="157.0" layoutY="429.0" onMouseClicked="#backLoginLabelClicked" prefHeight="20.0" prefWidth="85.0" text="Back to Login" textFill="WHITE" underline="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <DatePicker fx:id="birthdayField" editable="false" layoutX="95.0" layoutY="246.0" prefHeight="27.0" prefWidth="291.0" promptText="yyyy-MM-dd" stylesheets="@noteappfxml.css" />
                   <Label alignment="CENTER" layoutY="33.0" prefHeight="30.0" prefWidth="400.0" text="CREATE AN ACCOUNT" textAlignment="CENTER" textFill="#ededed">
                      <font>
                         <Font name="Tahoma Bold" size="24.0" />
                      </font>
                   </Label>
+                  <TextField fx:id="dayOfBirthField" layoutX="63.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="dd" styleClass="field_form" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Label layoutX="23.0" layoutY="241.0" text="Day" />
+                  <TextField fx:id="monthOfBirthField" layoutX="183.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="mm" styleClass="field_form" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Label layoutX="143.0" layoutY="241.0" text="Month" />
+                  <TextField fx:id="yearOfBirthField" layoutX="303.0" layoutY="234.0" prefHeight="30.0" prefWidth="50.0" promptText="yyyy" styleClass="field_form" stylesheets="@noteappfxml.css">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Label layoutX="263.0" layoutY="241.0" text="Year" />
+                  <Label fx:id="errorNameFieldLabel" layoutX="97.0" layoutY="70.0" text="Input your name!" textFill="#b71818" />
+                  <Label fx:id="errorUsernameFieldLabel" layoutX="97.0" layoutY="120.0" text="Input your username!" textFill="#b71818" />
+                  <Label fx:id="errorPasswordFieldLabel" layoutX="97.0" layoutY="170.0" text="Input your password!" textFill="#b71818" />
+                  <Label fx:id="errorBirthdayFieldLabel" layoutX="97.0" layoutY="220.0" text="Invalid information!" textFill="#b71818" />
+                  <Label layoutX="23.0" layoutY="320.0" text="Gender" />
+                  <RadioButton fx:id="genderMale" layoutX="15.0" layoutY="345.0" mnemonicParsing="false" text="Male">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="GenderGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="genderFemale" layoutX="125.0" layoutY="345.0" mnemonicParsing="false" text="Female" toggleGroup="$GenderGroup" />
+                  <RadioButton fx:id="genderOther" layoutX="235.0" layoutY="345.0" mnemonicParsing="false" text="Other" toggleGroup="$GenderGroup" />
                </children>
             </AnchorPane>
          </center>

@@ -30,7 +30,7 @@ public class GetAllNotesService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) List các Note của user này, 
-     * (2) {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * (2) {@link ServerService.ErrorType}.{@code NOT_EXISTS}
      * nếu user này chưa có note nào
      */
     @Override
@@ -46,7 +46,7 @@ public class GetAllNotesService implements ServerService {
             resultMap.put("ListNote", notes);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }     
     }   

@@ -65,7 +65,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setPassword(resultSet.getString("PASSWORD"));
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
-
+                user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
+                
                 users.add(user);
             }
         } catch (SQLException ex) {
@@ -104,7 +105,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setPassword(resultSet.getString("PASSWORD"));
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
-
+                user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
+               
                 return user;
             }
         } catch (SQLException ex) {
@@ -143,7 +145,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setPassword(resultSet.getString("PASSWORD"));
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
-
+                user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
+                
                 return user;
             }
         } catch (SQLException ex) {
@@ -166,7 +169,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
             return -1;
         }
         //Câu truy vấn SQL
-        String query = "INSERT INTO USERS(NAME, USERNAME, PASSWORD, BIRTHDAY, SCHOOL) VALUES(?,?,?,?,?)";
+        String query = "INSERT INTO USERS(NAME, USERNAME, PASSWORD, BIRTHDAY, SCHOOL, GENDER) "
+                + "VALUES(?,?,?,?,?,?)";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -176,7 +180,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
             preparedStatement.setString(3, user.getPassword());
             preparedStatement.setDate(4, user.getBirthday());
             preparedStatement.setString(5, user.getSchool());
-
+            preparedStatement.setString(6, user.getGender().toString());
+            
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
@@ -198,7 +203,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
             return -1;
         }
         //Câu truy vấn SQL
-        String query = "UPDATE USERS SET NAME = ?, USERNAME = ?, PASSWORD = ?, BIRTHDAY = ?, SCHOOL = ? WHERE ID = ?";
+        String query = "UPDATE USERS SET NAME = ?, USERNAME = ?, PASSWORD = ?, "
+                + "BIRTHDAY = ?, SCHOOL = ?, GENDER = ? WHERE ID = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -208,7 +214,8 @@ public class UserDataAccess implements SpecialUserDataAccess {
             preparedStatement.setString(3, user.getPassword());
             preparedStatement.setDate(4, user.getBirthday());
             preparedStatement.setString(5, user.getSchool());
-            preparedStatement.setInt(6, user.getId());
+            preparedStatement.setString(6, user.getGender().toString());
+            preparedStatement.setInt(7, user.getId());
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {

@@ -18,7 +18,7 @@ import model.datatransfer.ShareNote;
 public class SendNoteService implements ServerService {
     private ShareNote shareNote;
     private SpecialShareNoteDataAccess shareNoteDataAccess;
-    private UserDataAccess userDataAccess;
+    private SpecialUserDataAccess userDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -32,9 +32,9 @@ public class SendNoteService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi, (1) ShareNote send được,
-     * (2) String biểu diễn {@link ServerServiceErrorType}.{@code NOT_EXISTS}
+     * (2) String biểu diễn {@link ServerService.ErrorType}.{@code NOT_EXISTS}
      * nếu receiver không tồn tại
-     * (3) String biểu diễn {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * (3) String biểu diễn {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh tạo được
      */
     @Override
@@ -46,7 +46,7 @@ public class SendNoteService implements ServerService {
         //Kiểm tra receiver có tồn tại hay không
         userDataAccess = UserDataAccess.getInstance();
         if(userDataAccess.get(shareNote.getReceiver()).isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.NOT_EXISTS);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }
         //Kiểm tra ShareNote đã tồn tại hay chưa
@@ -62,7 +62,7 @@ public class SendNoteService implements ServerService {
                 resultMap.put("ShareNote", shareNote);
                 return resultMap;
             } else {
-                resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+                resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
                 return resultMap;
             }
         }
@@ -75,7 +75,7 @@ public class SendNoteService implements ServerService {
             resultMap.put("ShareNote", shareNote);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
                 return resultMap;
         }
     }

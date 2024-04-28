@@ -17,9 +17,17 @@ public class User {
     private String password;
     private Date birthday;
     private String school;
+    private Gender gender;
     
     public static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
     public static final String END_TAGS = "<///>";
+    
+    /**
+     * Các giới tính
+     */
+    public static enum Gender {
+        MALE, FEMALE, OTHER;
+    }
 
     /**
      * Constructor và cài đặt dữ liệu default cho User
@@ -31,6 +39,7 @@ public class User {
         this.password = "";
         this.birthday = Date.valueOf(LocalDate.MIN);
         this.school = "";
+        this.gender = Gender.MALE;
     }
     
     public int getId() {
@@ -57,6 +66,10 @@ public class User {
         return school;
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -80,6 +93,10 @@ public class User {
     public void setSchool(String school) {
         this.school = school;
     }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
     
     /**
      * Kiểm tra xem một thể hiện User có mang giá trị default không
@@ -91,13 +108,14 @@ public class User {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + this.id;
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.username);
-        hash = 59 * hash + Objects.hashCode(this.password);
-        hash = 59 * hash + Objects.hashCode(this.birthday);
-        hash = 59 * hash + Objects.hashCode(this.school);
+        int hash = 7;
+        hash = 67 * hash + this.id;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.username);
+        hash = 67 * hash + Objects.hashCode(this.password);
+        hash = 67 * hash + Objects.hashCode(this.birthday);
+        hash = 67 * hash + Objects.hashCode(this.school);
+        hash = 67 * hash + Objects.hashCode(this.gender);
         return hash;
     }
 
@@ -128,7 +146,10 @@ public class User {
         if (!Objects.equals(this.school, other.school)) {
             return false;
         }
-        return Objects.equals(this.birthday, other.birthday);
+        if (!Objects.equals(this.birthday, other.birthday)) {
+            return false;
+        }
+        return this.gender == other.gender;
     }
 
     /**
@@ -146,6 +167,7 @@ public class User {
         result += password + SPLIT_ATTRIBUTE_TAGS;
         result += birthday + SPLIT_ATTRIBUTE_TAGS;
         result += school + SPLIT_ATTRIBUTE_TAGS;
+        result += gender + SPLIT_ATTRIBUTE_TAGS;
         result += END_TAGS + END_TAGS;
         
         return result;        
@@ -168,6 +190,7 @@ public class User {
         user.setPassword(strarr[3]);
         user.setBirthday(Date.valueOf(strarr[4]));
         user.setSchool(strarr[5]);
+        user.setGender(Gender.valueOf(strarr[6]));
         
         return user;       
     }

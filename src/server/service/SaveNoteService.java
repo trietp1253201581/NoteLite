@@ -29,7 +29,7 @@ public class SaveNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) Note cần lưu nếu lưu được,
-     * (2) {@link ServerServiceErrorType}.{@code CAN_NOT_EXECUTE}
+     * (2) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
      * nếu không thực hiện lệnh lưu được
      */
     @Override
@@ -47,7 +47,7 @@ public class SaveNoteService implements ServerService {
                 resultMap.put("Note", note);
                 return resultMap;
             } else {
-                resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+                resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
                 return resultMap;
             }
         }
@@ -65,7 +65,7 @@ public class SaveNoteService implements ServerService {
             resultMap.put("Note", updatedNote);
             return resultMap;
         } else {
-            resultMap.put("ServerServiceError", ServerServiceErrorType.CAN_NOT_EXECUTE);
+            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
             return resultMap;
         }        
     }    

@@ -17,6 +17,13 @@ public class ShareNote extends Note {
     private ShareType shareType;
     
     /**
+     * Định nghĩa các kiểu Share
+     */
+    public static enum ShareType {
+        READ_ONLY, CAN_EDIT;
+    }
+    
+    /**
      * Constructor và cài đặt dữ liệu default cho ShareNote
      */
     public ShareNote() {

@@ -12,15 +12,15 @@ import server.networking.Server;
  */
 public class NoteLiteServer {
     //Cổng kết nối
-    private static final int PORT_NUMBER = 2222;
-    
-    /**
-     * @param args the command line arguments
-     * @throws IOException
-     */
-    public static void main(String[] args) throws IOException {
-        //Tạo và chạy server
-        Server server = new MultiThreadServer(PORT_NUMBER);
-        server.runServer(); 
+    public static final int PORT_NUMBER = 2222;
+
+    public static void main(String[] args) {
+        try {
+            //Tạo và chạy server
+            Server server = new MultiThreadServer(PORT_NUMBER); 
+            server.runServer();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }   
 }

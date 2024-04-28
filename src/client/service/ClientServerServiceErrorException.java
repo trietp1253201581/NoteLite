@@ -8,14 +8,14 @@ package client.service;
  * @version 1.0
  */
 public class ClientServerServiceErrorException extends Exception {
-    private final ClientServerServiceErrorType errorType;
+    private final ClientServerService.ErrorType errorType;
     
-    public ClientServerServiceErrorException(ClientServerServiceErrorType errorType) {
+    public ClientServerServiceErrorException(ClientServerService.ErrorType errorType) {
         super("ClientServerServiceError");
         this.errorType = errorType;
     }
     
-    public ClientServerServiceErrorType getErrorType() {
+    public ClientServerService.ErrorType getErrorType() {
         return errorType;
     }
 }
