@@ -3,8 +3,10 @@ package application;
 import fxgui.LoginFXMLController;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -15,6 +17,7 @@ import javafx.stage.StageStyle;
  * @version 1.0
  */
 public class NoteLiteApplication extends Application {
+    private double x,y;
     
     /**
      * @param primaryStage Stage khởi tạo
@@ -30,6 +33,17 @@ public class NoteLiteApplication extends Application {
         Scene scene = new Scene(fXMLLoader.load());
         LoginFXMLController loginFXMLController = fXMLLoader.getController();
         loginFXMLController.init();
+        
+        x = 0;
+        y = 0;
+        scene.setOnMousePressed((MouseEvent mouseEvent) -> {
+            x = mouseEvent.getSceneX();
+            y = mouseEvent.getSceneY();
+        });       
+        scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
+            primaryStage.setX(mouseEvent.getScreenX() - x);
+            primaryStage.setY(mouseEvent.getScreenY() - y);
+        });
         
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.UNDECORATED);

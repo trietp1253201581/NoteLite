@@ -125,25 +125,15 @@
          <center>
             <StackPane layoutX="250.0" prefHeight="600.0" prefWidth="555.0" BorderPane.alignment="CENTER">
                <children>
-                  <AnchorPane fx:id="importExportScene" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
+                  <AnchorPane fx:id="importExportScene" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css">
                      <children>
-                        <ComboBox fx:id="exportNoteComboBox" layoutX="216.0" layoutY="75.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose your Note" styleClass="scene-button" stylesheets="@noteappfxml.css" />
+                        <ComboBox fx:id="exportNoteComboBox" layoutX="30.0" layoutY="75.0" prefHeight="27.0" prefWidth="500.0" promptText="Choose your Note" styleClass="dashboard-field-form" stylesheets="@noteappfxml.css" />
                         <Label layoutX="30.0" layoutY="30.0" prefHeight="32.0" prefWidth="159.0" text="Export Note" textAlignment="CENTER">
                            <font>
                               <Font name="Corbel Bold" size="26.0" />
                            </font>
                         </Label>
-                        <Label layoutX="30.0" layoutY="80.0" text="Choose export Note">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="30.0" layoutY="120.0" text="Choose export format">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="exportFormatComboBox" layoutX="216.0" layoutY="115.0" prefHeight="25.0" prefWidth="320.0" promptText="Choose format" styleClass="scene-button" stylesheets="@noteappfxml.css" />
+                        <ComboBox fx:id="exportFormatComboBox" layoutX="30.0" layoutY="115.0" prefHeight="25.0" prefWidth="500.0" promptText="Choose format" styleClass="dashboard-field-form" stylesheets="@noteappfxml.css" />
                         <Button fx:id="exportFileButton" layoutX="245.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleExportFileButton" styleClass="scene-button" stylesheets="@noteappfxml.css" text="Export">
                            <font>
                               <Font size="14.0" />
@@ -186,7 +176,7 @@
                         <Insets left="5.0" />
                      </StackPane.margin>
                   </AnchorPane>
-                  <AnchorPane fx:id="myAccountScene" layoutX="5.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css">
+                  <AnchorPane fx:id="myAccountScene" layoutX="5.0" prefHeight="600.0" prefWidth="550.0" styleClass="right-form" stylesheets="@noteappfxml.css" visible="false">
                      <children>
                         <Label layoutX="198.0" layoutY="14.0" prefHeight="32.0" prefWidth="159.0" text="Your Account" textAlignment="CENTER" AnchorPane.bottomAnchor="558.0" AnchorPane.leftAnchor="197.99999999999991" AnchorPane.rightAnchor="197.3333333333333" AnchorPane.topAnchor="5.0">
                            <font>

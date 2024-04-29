@@ -190,6 +190,8 @@ public class DashboardFXMLController {
     private ObservableList<ShareNote> mySharedNotes;
     private boolean savedNoteStatus;
 
+    private double x,y;
+    
     public void setUser(User user) {
         this.user = user;
     }
@@ -197,7 +199,7 @@ public class DashboardFXMLController {
     @FXML
     void handleCloseButton(ActionEvent event) {
         //Kiểm tra Note hiện hành đã được lưu chưa?
-        checkAndAutoSave();
+        autoSave();
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
@@ -206,7 +208,9 @@ public class DashboardFXMLController {
     }
     
     @FXML
-    void handleLogoutButton(ActionEvent event) {       
+    void handleLogoutButton(ActionEvent event) { 
+        //Kiểm tra và lưu
+        autoSave();
         //Set lại style của button
         logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
         //Ẩn Dashboard GUI
@@ -221,6 +225,17 @@ public class DashboardFXMLController {
             Scene scene = new Scene(fXMLLoader.load());
             LoginFXMLController loginFXMLController = fXMLLoader.getController();
             loginFXMLController.init();
+            
+            x = 0;
+            y = 0;
+            scene.setOnMousePressed((MouseEvent mouseEvent) -> {
+                x = mouseEvent.getSceneX();
+                y = mouseEvent.getSceneY();
+            });       
+            scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
+                stage.setX(mouseEvent.getScreenX() - x);
+                stage.setY(mouseEvent.getScreenY() - y);
+            });
             
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
@@ -962,7 +977,7 @@ public class DashboardFXMLController {
                     Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                             "Open " + noteCardFXMLController.getHeader());
                     if(optional.get() == ButtonType.OK) {
-                        checkAndAutoSave();
+                        autoSave();
                         try {
                             //Lấy thành công
                             myNote = clientServerService.openNote(user.getUsername(),
@@ -1067,7 +1082,7 @@ public class DashboardFXMLController {
         sharedByOtherTable.setItems(shareNotes);
     }
     
-    private void checkAndAutoSave() {
+    private void autoSave() {
         if(!savedNoteStatus) {
             Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                     myNote.getHeader() + " is unsaved. Do you want to save?");
@@ -1138,80 +1153,34 @@ public class DashboardFXMLController {
     }
     
     private void changeScene(Button button) {
+        String pressedStyle = "-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)";
+        String unPressedStyle = "-fx-background-color: transparent";
+        //init lại
+        editNoteButton.setStyle(unPressedStyle);
+        editNoteScene.setVisible(false);
+        myNotesButton.setStyle(unPressedStyle);
+        myNotesScene.setVisible(false);
+        myAccountButton.setStyle(unPressedStyle);
+        myAccountScene.setVisible(false);
+        importExportButton.setStyle(unPressedStyle);
+        importExportScene.setVisible(false);
+        shareNoteButton.setStyle(unPressedStyle);
+        shareNoteScene.setVisible(false);
+        //Press button được chọn và chuyển scene tương ứng
         if(button == editNoteButton) {
-            editNoteButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+            editNoteButton.setStyle(pressedStyle);
             editNoteScene.setVisible(true);
-            
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myNotesScene.setVisible(false);
-            
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            myAccountScene.setVisible(false);
-            
-            importExportButton.setStyle("-fx-background-color: transparent");
-            importExportScene.setVisible(false);
-            
-            shareNoteButton.setStyle("-fx-background-color: transparent");
-            shareNoteScene.setVisible(false);
         } else if (button == myNotesButton) {
-            editNoteButton.setStyle("-fx-background-color: transparent");
-            editNoteScene.setVisible(false);
-            
-            myNotesButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+            myNotesButton.setStyle(pressedStyle);
             myNotesScene.setVisible(true);
-            
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            myAccountScene.setVisible(false);
-            
-            importExportButton.setStyle("-fx-background-color: transparent");
-            importExportScene.setVisible(false);
-            
-            shareNoteButton.setStyle("-fx-background-color: transparent");
-            shareNoteScene.setVisible(false);
-        } else if (button == myAccountButton) {
-            editNoteButton.setStyle("-fx-background-color: transparent");
-            editNoteScene.setVisible(false);
-            
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myNotesScene.setVisible(false);
-            
-            myAccountButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+        } else if (button == myAccountButton) {          
+            myAccountButton.setStyle(pressedStyle);
             myAccountScene.setVisible(true);
-            
-            importExportButton.setStyle("-fx-background-color: transparent");
-            importExportScene.setVisible(false);
-            
-            shareNoteButton.setStyle("-fx-background-color: transparent");
-            shareNoteScene.setVisible(false);
         } else if (button == importExportButton) {
-            editNoteButton.setStyle("-fx-background-color: transparent");
-            editNoteScene.setVisible(false);
-            
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myNotesScene.setVisible(false);
-            
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            myAccountScene.setVisible(false);
-            
-            importExportButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+            importExportButton.setStyle(pressedStyle);
             importExportScene.setVisible(true);
-            
-            shareNoteButton.setStyle("-fx-background-color: transparent");
-            shareNoteScene.setVisible(false);
         } else if (button == shareNoteButton) {
-            editNoteButton.setStyle("-fx-background-color: transparent");
-            editNoteScene.setVisible(false);
-            
-            myNotesButton.setStyle("-fx-background-color: transparent");
-            myNotesScene.setVisible(false);
-            
-            myAccountButton.setStyle("-fx-background-color: transparent");
-            myAccountScene.setVisible(false);
-            
-            importExportButton.setStyle("-fx-background-color: transparent");
-            importExportScene.setVisible(false);
-            
-            shareNoteButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+            shareNoteButton.setStyle(pressedStyle);
             shareNoteScene.setVisible(true);
         }
     }

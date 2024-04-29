@@ -40,6 +40,7 @@ public class LoginFXMLController {
     private Button closeButton;
 
     private ClientServerService clientServerService;   
+    private double x,y;
             
     @FXML
     void handleCloseButton(ActionEvent event) {
@@ -112,6 +113,17 @@ public class LoginFXMLController {
             //Hiển thị Dashboard
             dashboardFXMLController.init();
             
+            x = 0;
+            y = 0;
+            scene.setOnMousePressed((MouseEvent mouseEvent) -> {
+                x = mouseEvent.getSceneX();
+                y = mouseEvent.getSceneY();
+            });       
+            scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
+                stage.setX(mouseEvent.getScreenX() - x);
+                stage.setY(mouseEvent.getScreenY() - y);
+            });
+            
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
             stage.show();
@@ -134,6 +146,17 @@ public class LoginFXMLController {
             //Khởi tạo và chạy
             RegisterFXMLController registerFXMLController = fXMLLoader.getController();
             registerFXMLController.init();
+            
+            x = 0;
+            y = 0;
+            scene.setOnMousePressed((MouseEvent mouseEvent) -> {
+                x = mouseEvent.getSceneX();
+                y = mouseEvent.getSceneY();
+            });       
+            scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
+                stage.setX(mouseEvent.getScreenX() - x);
+                stage.setY(mouseEvent.getScreenY() - y);
+            });
             
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);  
