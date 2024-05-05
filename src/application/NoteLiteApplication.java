@@ -3,7 +3,6 @@ package application;
 import fxgui.LoginFXMLController;
 import java.io.IOException;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;

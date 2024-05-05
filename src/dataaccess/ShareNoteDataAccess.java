@@ -53,7 +53,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, SHAREID, us2.USERNAME as RECEIVER, "
+                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
                 + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
                 + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
                 + "AND us2.USERNAME = ?";
@@ -102,7 +102,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, SHAREID, us2.USERNAME as RECEIVER, "
+                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
                 + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
                 + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
                 + "AND nt.ID = ? AND us2.USERNAME = ?";
@@ -151,7 +151,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, SHAREID, us2.USERNAME as RECEIVER, "
+                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
                 + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
                 + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
                 + "AND sh.SHAREID = ?";
@@ -234,7 +234,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "UPDATE SHARENOTES SET NOTEID = ?, RECEIVER = ?, "
-                + "SHARETYPE = ? WHERE SHAREID = ?";
+                + "SHARETYPE = ? WHERE ID = ?";
 
         try {
             //Lấy các dữ liệu từ bảng khác
@@ -268,7 +268,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             return -1;
         }
         //Câu truy vấn SQL
-        String query = "DELETE FROM SHARENOTES WHERE SHAREID = ?";
+        String query = "DELETE FROM SHARENOTES WHERE ID = ?";
 
         try {
             //Set tham số và thực thi truy vấn

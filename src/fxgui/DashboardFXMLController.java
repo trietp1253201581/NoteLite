@@ -36,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -56,14 +57,48 @@ import model.datatransfer.attributeconverter.NoteContentConverter;
  */
 public class DashboardFXMLController {
     //Các thuộc tính FXML của form dashboard chung
+    @FXML 
+    private BorderPane extraServiceScene;
+    @FXML
+    private VBox mainScene;
+    //Các thuộc tính của main scene
+    //Các thuộc tính chung
+    @FXML 
+    private Label noteHeaderLabel;
+    @FXML
+    private Button homeMenuButton;
+    @FXML
+    private Button editMenuButton;
+    @FXML
+    private HBox editBox;
+    //Các thuộc tính của edit Box
+    @FXML
+    private Button saveNoteButton;
+    @FXML
+    private Button openNoteButton;
+    @FXML
+    private Button undoButton;
+    @FXML
+    private Button redoButton;
+    @FXML 
+    private Button addFilterButton;
+    //Các thuộc tính còn lại
+    @FXML
+    private TextArea contentArea;
+    @FXML
+    private Label numCharLabel;
+    @FXML
+    private GridPane filterGridLayout;
+    //Các thuộc tính của extra scene
+    //Các thuộc tính chung
     @FXML
     private Label userLabel;   
     @FXML
-    private Button closeButton;
+    private Button extraCloseButton;
     @FXML
     private Button logoutButton;
     @FXML
-    private Button editNoteButton;
+    private Button backMainSceneButton;
     @FXML
     private Button myNotesButton;
     @FXML
@@ -72,29 +107,6 @@ public class DashboardFXMLController {
     private Button importExportButton;
     @FXML
     private Button shareNoteButton;
-    //Các thuộc tính FXML của editNoteScene
-    @FXML
-    private AnchorPane editNoteScene;
-    @FXML
-    private TextArea contentArea;    
-    @FXML
-    private Label noteHeaderLabel;  
-    @FXML
-    private Button renameButton;  
-    @FXML
-    private TextField noteHeaderField;  
-    @FXML
-    private Label numCharLabel;  
-    @FXML
-    private Button undoButton;
-    @FXML
-    private Button redoButton;   
-    @FXML
-    private GridPane filterGridLayout;    
-    @FXML
-    private Button addFilterButton;   
-    @FXML
-    private Button removeFilterButton;   
     //Các thuộc tính của myNotesScene
     @FXML
     private AnchorPane myNotesScene;
@@ -208,51 +220,50 @@ public class DashboardFXMLController {
     }
     
     @FXML
-    void handleLogoutButton(ActionEvent event) { 
-        //Kiểm tra và lưu
-        autoSave();
-        //Set lại style của button
-        logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
-        //Ẩn Dashboard GUI
-        logoutButton.getScene().getWindow().hide();
-        //Load Login GUI
-        FXMLLoader fXMLLoader = new FXMLLoader();
-        String loginFXMLPath = "LoginFXML.fxml";
-        fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
-        //Mở Login GUI
-        Stage stage = new Stage();
-        try {
-            Scene scene = new Scene(fXMLLoader.load());
-            LoginFXMLController loginFXMLController = fXMLLoader.getController();
-            loginFXMLController.init();
-            
-            x = 0;
-            y = 0;
-            scene.setOnMousePressed((MouseEvent mouseEvent) -> {
-                x = mouseEvent.getSceneX();
-                y = mouseEvent.getSceneY();
-            });       
-            scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
-                stage.setX(mouseEvent.getScreenX() - x);
-                stage.setY(mouseEvent.getScreenY() - y);
-            });
-            
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            showAlert(Alert.AlertType.ERROR, "Can't open login");
-        }
-    }
-
-    @FXML
-    void handleEditNoteButton(ActionEvent event) {  
-        //Chuyển sang scene edit
-        changeScene(editNoteButton);
+    void handleNoteHeaderLabel(MouseEvent event) {
+        //Mở dialog
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Change header for " + myNote.getHeader());
+        inputDialog.setHeaderText("Input your new header");
+        //Lấy kết quả và xử lý
+        Optional<String> confirm = inputDialog.showAndWait();
+        confirm.ifPresent(newNoteHeader -> {
+            //Lấy tất cả các Note của user
+            try { 
+                //Lấy thành công
+                myNotes = clientServerService.getAllNotes(user.getUsername());
+                for(Note note: myNotes) {
+                    if(note.getHeader().equals(newNoteHeader)) {
+                        showAlert(Alert.AlertType.ERROR, "This header exist");
+                        return;
+                    }
+                }
+                //Thiết lập note name vừa nhập cho Label   
+                noteHeaderLabel.setText(newNoteHeader);
+            } catch (ClientServerServiceErrorException ex) {
+                //Xử lý các ngoại lệ
+                switch (ex.getErrorType()) {
+                    case ClientServerService.ErrorType.NOT_EXISTS -> {
+                        myNotes = new ArrayList<>();
+                    }
+                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
+                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                    }
+                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
+                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                    }
+                }
+            }
+        });
     }
     
     @FXML
-    void handleSaveButton(ActionEvent event) {  
+    void handleEditMenuButton(ActionEvent event) {  
+        
+    }
+    
+    @FXML
+    void handleSaveNoteButton(ActionEvent event) {
         //Thiết lập lại undoRedoService
         undoRedoService = new UndoRedoService();    
         undoRedoService.saveText(contentArea.getText());
@@ -283,67 +294,7 @@ public class DashboardFXMLController {
             }
         }
     }
-
-    @FXML
-    void handleRenameButton(ActionEvent event) {        
-        //Thiết lập note name hiện tại cho noteHeaderField
-        noteHeaderField.setText(noteHeaderLabel.getText());
-        //Ẩn Label và hiện field
-        noteHeaderLabel.setVisible(false);
-        noteHeaderField.setVisible(true);
-    }
-
-    @FXML
-    void handleNoteHeaderField(ActionEvent event) { 
-        //Lấy tất cả các Note của user
-        try { 
-            //Lấy thành công
-            myNotes = clientServerService.getAllNotes(user.getUsername());
-            for(Note note: myNotes) {
-                if(note.getHeader().equals(noteHeaderField.getText())) {
-                    showAlert(Alert.AlertType.ERROR, "This header exist");
-                    noteHeaderField.setVisible(false);
-                    noteHeaderLabel.setVisible(true);
-                    return;
-                }
-            }
-            //Thiết lập note name vừa nhập cho Label   
-            noteHeaderLabel.setText(noteHeaderField.getText());
-        } catch (ClientServerServiceErrorException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
-        }
-        
-        //Ẩn field và hiện Label
-        noteHeaderField.setVisible(false);
-        noteHeaderLabel.setVisible(true);
-    }
-
-    @FXML
-    void changeTextArea(KeyEvent event) {  
-        //Lấy các thông số
-        int nowLength = contentArea.getText().length();
-        int lastLength = undoRedoService.getLastText().length();
-        //Kiểm tra đã vượt quá số ký tự quy định
-        numCharLabel.setText(String.valueOf(nowLength) + "/10000");
-        //Tự động lưu văn bản vào undoRedoService
-        if(nowLength < lastLength || nowLength > lastLength + 3) {
-            undoRedoService.saveText(contentArea.getText());
-        }
-        //Chỉnh trạng thái lưu Note 
-        savedNoteStatus = false;
-    }
-
+    
     @FXML
     void handleUndoButton(ActionEvent event) {      
         //Lấy text thu được khi undo
@@ -388,53 +339,88 @@ public class DashboardFXMLController {
         Optional<String> confirm = inputDialog.showAndWait();
         //Xử lý kết quả khi nhấn OK
         confirm.ifPresent(newFilter -> {
-            //Thiết lập và add tất cả các filter cũ
-            List<String> filters = new ArrayList<>();
-            filters.addAll(myNote.getFilters());
-          
-            if(filters.contains(newFilter)) {
+            //Thiết lập và add tất cả các filter cũ     
+            if(myNote.getFilters().contains(newFilter)) {
                 //Nếu filter đã tồn tại thì thông báo lỗi
                 showAlert(Alert.AlertType.ERROR, "Exist Filter");
             } else {
                 //Thêm filter vào list
-                filters.add(newFilter);
-                myNote.setFilters(filters);
+                myNote.getFilters().add(newFilter);
                 //Load lại filter GUI
-                loadFilter(filters, 6);
+                loadFilter(myNote.getFilters(), 8);
             }     
             //Chỉnh trạng thái lưu Note 
             savedNoteStatus = false;
         }); 
-
     }
     
     @FXML
-    void handleRemoveFilterButton(ActionEvent event) {     
-        //Lấy list các filter
-        List<String> filters = new ArrayList<>();
-        filters.addAll(myNote.getFilters());
-        //Hiện dialog để chọn filter cần xóa
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(filters.get(0), filters);     
-        dialog.setTitle("Remove filter of" + myNote.getHeader());
-        dialog.setHeaderText("Choose the filter to remove");   
-        //Lấy kết quả
-        Optional<String> confirm = dialog.showAndWait();
-        //Xử lý kết quả khi nhấn Enter
-        confirm.ifPresent(removedFilter -> {     
-            //Xóa filter được chọn
-            filters.remove(removedFilter);
-            myNote.setFilters(filters);
-            //Load lại filter GUI
-            loadFilter(filters, 6);     
-            //Chỉnh trạng thái lưu Note 
-            savedNoteStatus = false;     
-        });  
-    }    
+    void changeTextArea(KeyEvent event) {  
+        //Lấy các thông số
+        int nowLength = contentArea.getText().length();
+        int lastLength = undoRedoService.getLastText().length();
+        //Kiểm tra đã vượt quá số ký tự quy định
+        numCharLabel.setText(String.valueOf(nowLength) + "/10000");
+        //Tự động lưu văn bản vào undoRedoService
+        if(nowLength < lastLength || nowLength > lastLength + 3) {
+            undoRedoService.saveText(contentArea.getText());
+        }
+        //Chỉnh trạng thái lưu Note 
+        savedNoteStatus = false;
+    }
+    
+    @FXML
+    void handleHomeMenuButton(ActionEvent event) {
+        initAndChangeToExtraServiceScene();
+    }
+    
+    @FXML
+    void handleBackMainSceneButton(ActionEvent event) {
+        initAndChangeToMainScene();
+    }
+    
+    @FXML
+    void handleLogoutButton(ActionEvent event) { 
+        //Kiểm tra và lưu
+        autoSave();
+        //Set lại style của button
+        logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+        //Ẩn Dashboard GUI
+        logoutButton.getScene().getWindow().hide();
+        //Load Login GUI
+        FXMLLoader fXMLLoader = new FXMLLoader();
+        String loginFXMLPath = "LoginFXML.fxml";
+        fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
+        //Mở Login GUI
+        Stage stage = new Stage();
+        try {
+            Scene scene = new Scene(fXMLLoader.load());
+            LoginFXMLController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.init();
+            
+            x = 0;
+            y = 0;
+            scene.setOnMousePressed((MouseEvent mouseEvent) -> {
+                x = mouseEvent.getSceneX();
+                y = mouseEvent.getSceneY();
+            });       
+            scene.setOnMouseDragged((MouseEvent mouseEvent) -> {
+                stage.setX(mouseEvent.getScreenX() - x);
+                stage.setY(mouseEvent.getScreenY() - y);
+            });
+            
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't open login");
+        }
+    }
 
     @FXML
     void handleMyNotesButton(ActionEvent event) {        
         //Chuyển sang scene My Notes
-        changeScene(myNotesButton);
+        changeSceneInExtraScene(myNotesButton);
         //Lấy tất cả các Note của user
         try { 
             //Lấy thành công
@@ -566,7 +552,7 @@ public class DashboardFXMLController {
     @FXML
     void handleMyAccountButton(ActionEvent event) {
         //Chuyển scene sang My Account Scene
-        changeScene(myAccountButton);
+        changeSceneInExtraScene(myAccountButton);
         //Load My Account Scene
         initMyAccountScene();
     }
@@ -673,7 +659,7 @@ public class DashboardFXMLController {
     @FXML
     void handleImportExportButton(ActionEvent event) {
         //Chuyển sang Import/Export Scene
-        changeScene(importExportButton);
+        changeSceneInExtraScene(importExportButton);
         //Lấy tất cả các note của user
         try { 
             //Lấy thành công
@@ -705,7 +691,8 @@ public class DashboardFXMLController {
             //Lấy thành công
             Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
             //Export file
-            PdfService.export(selectedNoteHeader + ".pdf", selectedNote.getContent());
+            PdfService.export(selectedNoteHeader + ".pdf", 
+                    NoteContentConverter.convertToObjectText(selectedNote.getContent()));
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
         } catch (ClientServerServiceErrorException ex) {
@@ -736,13 +723,16 @@ public class DashboardFXMLController {
             int numOfPage = PdfService.getNumberOfPage(importFileName.getText());
             //Lấy dữ liệu từ PDF và chuyển vào content
             String contents = "";
-            for(int i = 1; i < numOfPage; i++) {
+            for(int i = 1; i <= numOfPage; i++) {
                 contents += PdfService.read(importFileName.getText(), i);
                 contents += "\n----------------------\n";
             }
             contentArea.setText(contents);
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
+            //Chuyển sang main
+            mainScene.setVisible(true);
+            extraServiceScene.setVisible(false);
         } catch (IOException ex) {
             showAlert(Alert.AlertType.ERROR, "Can't read this file");
         }
@@ -767,7 +757,7 @@ public class DashboardFXMLController {
     @FXML
     void handleShareNoteButton(ActionEvent event) {
         //Chuyển sang Scene ShareNote
-        changeScene(shareNoteButton);
+        changeSceneInExtraScene(shareNoteButton);
         //Lấy tất cả các note của user
         try { 
             //Lấy thành công
@@ -866,7 +856,7 @@ public class DashboardFXMLController {
                 //Lấy thành công
                 myNote = clientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
                 //Load lại Edit Scene và mở Edit Scene
-                initEditScene();
+                initAndChangeToMainScene();
                 //Nếu là ReadOnly thì không được edit
                 if(shareNote.getShareType() == ShareNote.ShareType.READ_ONLY) {
                     contentArea.setEditable(false);
@@ -874,7 +864,7 @@ public class DashboardFXMLController {
                     //Chỉnh trạng thái lưu Note 
                     savedNoteStatus = true;     
                 }
-                changeScene(editNoteButton);  
+                initAndChangeToMainScene();
             } catch (ClientServerServiceErrorException ex) {
                 //Xử lý các ngoại lệ
                 switch (ex.getErrorType()) {
@@ -901,10 +891,8 @@ public class DashboardFXMLController {
     public void init() {  
         //Mở Client Server Service
         clientServerService = new ClientServerService();
-        //Chuyển sang scene Edit Note và thiết lập các thông tin user
+        //Thiết lập các thông tin user
         userLabel.setText(user.getName());
-        noteHeaderField.setVisible(false);     
-        changeScene(editNoteButton);
         //Mở Note thao tác gần nhất
         try { 
             //Lấy thành công
@@ -936,10 +924,13 @@ public class DashboardFXMLController {
             }
         }
         //Init lại Scene
-        initEditScene();
+        initAndChangeToMainScene();
     }
 
-    private void initEditScene() { 
+    private void initAndChangeToMainScene() { 
+        //Chuyển sang main scene
+        mainScene.setVisible(true);
+        extraServiceScene.setVisible(false);
         //Thiết lập content, header
         contentArea.setText(NoteContentConverter.convertToObjectText(myNote.getContent()));
         contentArea.setEditable(true);
@@ -949,7 +940,35 @@ public class DashboardFXMLController {
         undoRedoService = new UndoRedoService();
         undoRedoService.saveText(contentArea.getText()); 
         //Load lại Filter GUI
-        loadFilter(myNote.getFilters(), 6);   
+        loadFilter(myNote.getFilters(), 8);   
+    }
+    
+    private void initAndChangeToExtraServiceScene() {
+        //Chuyển sang extra scene
+        mainScene.setVisible(false);
+        extraServiceScene.setVisible(true);
+        //Chuyển sang scene My Notes
+        changeSceneInExtraScene(myNotesButton);
+        //Lấy tất cả các Note của user
+        try { 
+            //Lấy thành công
+            myNotes = clientServerService.getAllNotes(user.getUsername());
+        } catch (ClientServerServiceErrorException ex) {
+            //Xử lý các ngoại lệ
+            switch (ex.getErrorType()) {
+                case ClientServerService.ErrorType.NOT_EXISTS -> {
+                    myNotes = new ArrayList<>();
+                }
+                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
+                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                }
+                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
+                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                }
+            }
+        }
+        //Init lại Scene
+        initMyNotesScene(myNotes);
     }
 
     private void initMyNotesScene(List<Note> notes) {        
@@ -982,11 +1001,10 @@ public class DashboardFXMLController {
                             //Lấy thành công
                             myNote = clientServerService.openNote(user.getUsername(),
                                     noteCardFXMLController.getHeader());
-                            //Load lại Edit Scene và mở Edit Scene
-                            initEditScene();
-                            changeScene(editNoteButton);
                             //Chỉnh trạng thái lưu Note 
                             savedNoteStatus = true;     
+                            //Load lại Edit Scene và mở Edit Scene
+                            initAndChangeToMainScene();
                         } catch (ClientServerServiceErrorException ex) {
                             //Xử lý các ngoại lệ
                             switch (ex.getErrorType()) {
@@ -1139,6 +1157,10 @@ public class DashboardFXMLController {
                 //Thiết lập dữ liệu cho filter
                 FilterFXMLController filterFXMLController = fXMLLoader.getController();
                 filterFXMLController.setData(filters.get(i));
+                filterFXMLController.getRemoveFilterView().setOnMouseClicked(event -> {
+                    myNote.getFilters().remove(filterFXMLController.getFilter());
+                    loadFilter(myNote.getFilters(), 8);
+                });
                 //Chuyển hàng
                 if(column == maxColumn){
                     column = 0;
@@ -1152,12 +1174,10 @@ public class DashboardFXMLController {
         }
     }
     
-    private void changeScene(Button button) {
+    private void changeSceneInExtraScene(Button button) {
         String pressedStyle = "-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)";
         String unPressedStyle = "-fx-background-color: transparent";
         //init lại
-        editNoteButton.setStyle(unPressedStyle);
-        editNoteScene.setVisible(false);
         myNotesButton.setStyle(unPressedStyle);
         myNotesScene.setVisible(false);
         myAccountButton.setStyle(unPressedStyle);
@@ -1167,10 +1187,7 @@ public class DashboardFXMLController {
         shareNoteButton.setStyle(unPressedStyle);
         shareNoteScene.setVisible(false);
         //Press button được chọn và chuyển scene tương ứng
-        if(button == editNoteButton) {
-            editNoteButton.setStyle(pressedStyle);
-            editNoteScene.setVisible(true);
-        } else if (button == myNotesButton) {
+        if (button == myNotesButton) {
             myNotesButton.setStyle(pressedStyle);
             myNotesScene.setVisible(true);
         } else if (button == myAccountButton) {          

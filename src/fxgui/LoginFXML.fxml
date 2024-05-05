@@ -19,7 +19,7 @@
          <top>
             <AnchorPane prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox prefHeight="25.0" prefWidth="600.0" styleClass="top-form" stylesheets="@noteappfxml.css">
+                  <HBox prefHeight="25.0" prefWidth="600.0" styleClass="top-form" stylesheets="@anotherStyle.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -31,7 +31,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@noteappfxml.css">
+                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@anotherStyle.css">
                            <graphic>
                               <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -46,7 +46,7 @@
             </AnchorPane>
          </top>
          <center>
-            <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="login-form" stylesheets="@anotherStyle.css" BorderPane.alignment="CENTER">
                <children>
                   <Text fill="#e6e6e6" layoutX="55.0" layoutY="252.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NoteLite" textAlignment="CENTER" wrappingWidth="144.66666666666663">
                      <font>
@@ -63,17 +63,17 @@
                         <Font name="Tahoma Bold" size="22.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="usernameField" layoutX="255.0" layoutY="120.0" prefHeight="31.0" prefWidth="320.0" promptText="Username" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="usernameField" layoutX="255.0" layoutY="120.0" prefHeight="31.0" prefWidth="320.0" promptText="Username" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <PasswordField fx:id="passwordField" layoutX="255.0" layoutY="180.0" prefHeight="31.0" prefWidth="320.0" promptText="Password" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <PasswordField fx:id="passwordField" layoutX="255.0" layoutY="180.0" prefHeight="31.0" prefWidth="320.0" promptText="Password" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Button fx:id="loginButton" alignment="CENTER" contentDisplay="CENTER" layoutX="255.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="36.0" prefWidth="320.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Login" textAlignment="CENTER" textFill="WHITE">
+                  <Button fx:id="loginButton" alignment="CENTER" contentDisplay="CENTER" layoutX="255.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="36.0" prefWidth="320.0" styleClass="login-button" stylesheets="@anotherStyle.css" text="Login" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

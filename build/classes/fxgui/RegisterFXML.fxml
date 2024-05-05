@@ -18,34 +18,34 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
-            <AnchorPane prefHeight="475.0" prefWidth="400.0" styleClass="left-form" stylesheets="@noteappfxml.css" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="475.0" prefWidth="400.0" styleClass="register-form" stylesheets="@anotherStyle.css" BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="23.0" layoutY="70.0" text="Name *" />
                   <Label layoutX="23.0" layoutY="120.0" text="Username *" />
                   <Label layoutX="23.0" layoutY="170.0" text="Password *" />
                   <Label layoutX="23.0" layoutY="220.0" text="Birthday" />
                   <Label layoutX="23.0" layoutY="270.0" text="School" />
-                  <TextField fx:id="nameField" layoutX="15.0" layoutY="85.0" prefHeight="30.0" prefWidth="370.0" promptText="Your Name" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="nameField" layoutX="15.0" layoutY="85.0" prefHeight="30.0" prefWidth="370.0" promptText="Your Name" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="usernameField" layoutX="15.0" layoutY="135.0" prefHeight="30.0" prefWidth="370.0" promptText="Username" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="usernameField" layoutX="15.0" layoutY="135.0" prefHeight="30.0" prefWidth="370.0" promptText="Username" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="schoolField" layoutX="15.0" layoutY="285.0" prefHeight="30.0" prefWidth="370.0" promptText="School" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="schoolField" layoutX="15.0" layoutY="285.0" prefHeight="30.0" prefWidth="370.0" promptText="School" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <PasswordField fx:id="passwordField" layoutX="15.0" layoutY="185.0" prefHeight="30.0" prefWidth="370.0" promptText="Password" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <PasswordField fx:id="passwordField" layoutX="15.0" layoutY="185.0" prefHeight="30.0" prefWidth="370.0" promptText="Password" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Button fx:id="registerButton" layoutX="15.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="36.0" prefWidth="370.0" styleClass="login-button" stylesheets="@noteappfxml.css" text="Register">
+                  <Button fx:id="registerButton" layoutX="15.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="36.0" prefWidth="370.0" styleClass="login-button" stylesheets="@anotherStyle.css" text="Register">
                      <font>
                         <Font name="Tahoma Bold" size="14.0" />
                      </font>
@@ -60,19 +60,19 @@
                         <Font name="Tahoma Bold" size="24.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="dayOfBirthField" layoutX="63.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="dd" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="dayOfBirthField" layoutX="63.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="dd" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
                   <Label layoutX="23.0" layoutY="241.0" text="Day" />
-                  <TextField fx:id="monthOfBirthField" layoutX="183.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="mm" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="monthOfBirthField" layoutX="183.0" layoutY="235.0" prefHeight="30.0" prefWidth="50.0" promptText="mm" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
                   <Label layoutX="143.0" layoutY="241.0" text="Month" />
-                  <TextField fx:id="yearOfBirthField" layoutX="303.0" layoutY="234.0" prefHeight="30.0" prefWidth="50.0" promptText="yyyy" styleClass="field_form" stylesheets="@noteappfxml.css">
+                  <TextField fx:id="yearOfBirthField" layoutX="303.0" layoutY="234.0" prefHeight="30.0" prefWidth="50.0" promptText="yyyy" styleClass="field-form" stylesheets="@anotherStyle.css">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -96,7 +96,7 @@
          <top>
             <AnchorPane prefHeight="25.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox prefHeight="25.0" prefWidth="400.0" styleClass="top-form" stylesheets="@noteappfxml.css">
+                  <HBox prefHeight="25.0" prefWidth="400.0" styleClass="register-form" stylesheets="@anotherStyle.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -108,7 +108,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@noteappfxml.css">
+                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="50.0" styleClass="close-button" stylesheets="@anotherStyle.css">
                            <graphic>
                               <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
