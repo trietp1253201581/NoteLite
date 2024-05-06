@@ -13,8 +13,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,12 +25,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -46,7 +41,6 @@ import javafx.stage.StageStyle;
 import model.datatransfer.Note;
 import model.datatransfer.ShareNote;
 import model.datatransfer.User;
-import model.datatransfer.attributeconverter.NoteContentConverter;
 
 /**
  * FXML Controller class cho Dashboard GUI
@@ -184,28 +178,20 @@ public class DashboardFXMLController {
     @FXML
     private Button sendNoteButton;
     @FXML
-    private TableView<ShareNote> sharedByOtherTable;
-    @FXML
-    private TableColumn<ShareNote, String> senderUsernameColumn;
-    @FXML
-    private TableColumn<ShareNote, String> headerColumn;
-    @FXML
-    private TableColumn<ShareNote, String> shareTypeColumn;
-    @FXML
-    private Button openShareNoteButton;
+    private VBox shareNoteCardLayout;
     
     private UndoRedoService undoRedoService;
     private ClientServerService clientServerService;
-    private User user;   
+    private User myUser;   
     private Note myNote;    
     private List<Note> myNotes;   
-    private ObservableList<ShareNote> mySharedNotes;
+    private List<ShareNote> mySharedNotes;
     private boolean savedNoteStatus;
 
     private double x,y;
     
-    public void setUser(User user) {
-        this.user = user;
+    public void setMyUser(User myUser) {
+        this.myUser = myUser;
     }
 
     @FXML
@@ -228,10 +214,10 @@ public class DashboardFXMLController {
         //Lấy kết quả và xử lý
         Optional<String> confirm = inputDialog.showAndWait();
         confirm.ifPresent(newNoteHeader -> {
-            //Lấy tất cả các Note của user
+            //Lấy tất cả các Note của myUser
             try { 
                 //Lấy thành công
-                myNotes = clientServerService.getAllNotes(user.getUsername());
+                myNotes = clientServerService.getAllNotes(myUser.getUsername());
                 for(Note note: myNotes) {
                     if(note.getHeader().equals(newNoteHeader)) {
                         showAlert(Alert.AlertType.ERROR, "This header exist");
@@ -269,7 +255,7 @@ public class DashboardFXMLController {
         undoRedoService.saveText(contentArea.getText());
         //Set dữ liệu gần nhất cho myNote
         myNote.setHeader(noteHeaderLabel.getText());
-        myNote.setContent(NoteContentConverter.convertToDBText(contentArea.getText()));
+        myNote.setContent(Note.NoteContentConverter.convertToDBText(contentArea.getText()));
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
@@ -421,10 +407,10 @@ public class DashboardFXMLController {
     void handleMyNotesButton(ActionEvent event) {        
         //Chuyển sang scene My Notes
         changeSceneInExtraScene(myNotesButton);
-        //Lấy tất cả các Note của user
+        //Lấy tất cả các Note của myUser
         try { 
             //Lấy thành công
-            myNotes = clientServerService.getAllNotes(user.getUsername());
+            myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
@@ -451,7 +437,8 @@ public class DashboardFXMLController {
         List<Note> notes = new ArrayList<>();
         //Thêm các note hợp lệ vào list
         for(Note newNote: myNotes) {
-            if(newNote.getHeader().contains(searchText) || newNote.getFilters().contains(searchText)) { 
+            if(newNote.getHeader().contains(searchText) 
+                    || Note.NoteFilterConverter.convertToString(newNote.getFilters()).contains(searchText)) { 
                 notes.add(newNote);
             }     
         }
@@ -471,7 +458,7 @@ public class DashboardFXMLController {
         confirm.ifPresent(selectedHeader -> {
             //Set dữ liệu cho note mới
             Note newNote = new Note();
-            newNote.setAuthor(user.getUsername());
+            newNote.setAuthor(myUser.getUsername());
             newNote.setHeader(selectedHeader);
             newNote.setContent("Edit here");
             newNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
@@ -523,7 +510,7 @@ public class DashboardFXMLController {
             //Xóa Note được chọn
             try { 
                 //Xóa thành công
-                Note deletedNote = clientServerService.deleteNote(user.getUsername(), selectedHeader);
+                Note deletedNote = clientServerService.deleteNote(myUser.getUsername(), selectedHeader);
                 showAlert(Alert.AlertType.INFORMATION, "Successfully create " + deletedNote.getHeader());
                 //Xóa khỏi list và load lại
                 myNotes.remove(deletedNote);
@@ -554,7 +541,7 @@ public class DashboardFXMLController {
         //Chuyển scene sang My Account Scene
         changeSceneInExtraScene(myAccountButton);
         //Load My Account Scene
-        initMyAccountScene();
+        initMyAccountScene(myUser);
     }
 
     @FXML
@@ -566,14 +553,14 @@ public class DashboardFXMLController {
         if("".equals(passwordField.getText())) {
             errorPasswordFieldLabel.setVisible(true);
         }
-        user.setPassword(passwordField.getText());
+        myUser.setPassword(passwordField.getText());
         //Láy thông tin name
         if("".equals(nameField.getText())) {
             errorNameFieldLabel.setVisible(true);
         }
-        user.setName(nameField.getText());
+        myUser.setName(nameField.getText());
         //Lấy school
-        user.setSchool(schoolField.getText());
+        myUser.setSchool(schoolField.getText());
         //Lấy thông tin về birth
         int dayOfBirth = -1;
         int monthOfBirth = -1;
@@ -600,15 +587,15 @@ public class DashboardFXMLController {
             errorBirthdayFieldLabel.setVisible(true);
         } 
         if(!errorBirthdayFieldLabel.isVisible()) {
-            user.setBirthday(Date.valueOf(LocalDate.of(yearOfBirth, monthOfBirth, dayOfBirth)));
+            myUser.setBirthday(Date.valueOf(LocalDate.of(yearOfBirth, monthOfBirth, dayOfBirth)));
         }
         //Lấy gender
         if(genderMale.isSelected()) {
-            user.setGender(User.Gender.MALE);
+            myUser.setGender(User.Gender.MALE);
         } else if (genderFemale.isSelected()) {
-            user.setGender(User.Gender.FEMALE);
+            myUser.setGender(User.Gender.FEMALE);
         } else {
-            user.setGender(User.Gender.OTHER);
+            myUser.setGender(User.Gender.OTHER);
         }
         //Kiểm tra xem có lỗi nào không
         if(errorNameFieldLabel.isVisible() || errorPasswordFieldLabel.isVisible() 
@@ -618,8 +605,8 @@ public class DashboardFXMLController {
         //Cập nhật User
         try { 
             //Cập nhật thành công
-            user = clientServerService.updateUser(user);
-            showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + user.getUsername());
+            myUser = clientServerService.updateUser(myUser);
+            showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
@@ -650,7 +637,7 @@ public class DashboardFXMLController {
         //Xử lý kết quả
         confirm.ifPresent(password -> {
             //Nếu nhập đúng thì cho phép nhập mật khẩu mới
-            if(password.equals(user.getPassword())) {
+            if(password.equals(myUser.getPassword())) {
                 passwordField.setEditable(true);
             }
         });      
@@ -660,10 +647,10 @@ public class DashboardFXMLController {
     void handleImportExportButton(ActionEvent event) {
         //Chuyển sang Import/Export Scene
         changeSceneInExtraScene(importExportButton);
-        //Lấy tất cả các note của user
+        //Lấy tất cả các note của myUser
         try { 
             //Lấy thành công
-            myNotes = clientServerService.getAllNotes(user.getUsername());
+            myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
@@ -689,10 +676,10 @@ public class DashboardFXMLController {
         //Lấy dữ liệu từ note được chọn
         try { 
             //Lấy thành công
-            Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
+            Note selectedNote = clientServerService.openNote(myUser.getUsername(), selectedNoteHeader);
             //Export file
             PdfService.export(selectedNoteHeader + ".pdf", 
-                    NoteContentConverter.convertToObjectText(selectedNote.getContent()));
+                    Note.NoteContentConverter.convertToObjectText(selectedNote.getContent()));
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
         } catch (ClientServerServiceErrorException ex) {
@@ -728,6 +715,7 @@ public class DashboardFXMLController {
                 contents += "\n----------------------\n";
             }
             contentArea.setText(contents);
+            numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
             //Chuyển sang main
@@ -758,10 +746,10 @@ public class DashboardFXMLController {
     void handleShareNoteButton(ActionEvent event) {
         //Chuyển sang Scene ShareNote
         changeSceneInExtraScene(shareNoteButton);
-        //Lấy tất cả các note của user
+        //Lấy tất cả các note của myUser
         try { 
             //Lấy thành công
-            myNotes = clientServerService.getAllNotes(user.getUsername());
+            myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
@@ -776,20 +764,15 @@ public class DashboardFXMLController {
                 }
             }
         }
-        //Lấy tất cả các note được share tới user này
+        //Lấy tất cả các note được share tới myUser này
         try { 
             //Lấy thành công
-            List<ShareNote> shareNotes = clientServerService.getAllReceivedNotes(user.getUsername());
-            //Chuyển sang ObservableList
-            mySharedNotes = FXCollections.observableArrayList();
-            for(ShareNote shareNote: shareNotes) {
-                mySharedNotes.add(shareNote);
-            }
+            mySharedNotes = clientServerService.getAllReceivedNotes(myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
                 case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    mySharedNotes = FXCollections.observableArrayList();
+                    mySharedNotes = new ArrayList<>();
                 }
                 case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
                     showAlert(Alert.AlertType.ERROR, "Can't connect to server");
@@ -809,7 +792,7 @@ public class DashboardFXMLController {
         String selectedNoteHeader = chooseShareNoteComboBox.getSelectionModel().getSelectedItem();
         try { 
             //Lấy thành công
-            Note selectedNote = clientServerService.openNote(user.getUsername(), selectedNoteHeader);
+            Note selectedNote = clientServerService.openNote(myUser.getUsername(), selectedNoteHeader);
             //Lấy receiver Id
             String receiverUsename = chooseUserShareField.getText();
             //Tạo ShareNote mới để Share
@@ -843,60 +826,18 @@ public class DashboardFXMLController {
         }
     }
     
-    @FXML
-    void handleOpenShareNoteButton(ActionEvent event) {
-        int num = sharedByOtherTable.getSelectionModel().getSelectedIndex();
-        if(num < 0) {
-            showAlert(Alert.AlertType.ERROR, "Choose the note you want open");
-        } else {
-            //Lấy ShareNote được chọn
-            ShareNote shareNote = sharedByOtherTable.getSelectionModel().getSelectedItem();
-            //Lấy note được chọn
-            try { 
-                //Lấy thành công
-                myNote = clientServerService.openNote(shareNote.getAuthor(), shareNote.getHeader());
-                //Load lại Edit Scene và mở Edit Scene
-                initAndChangeToMainScene();
-                //Nếu là ReadOnly thì không được edit
-                if(shareNote.getShareType() == ShareNote.ShareType.READ_ONLY) {
-                    contentArea.setEditable(false);
-                } else {
-                    //Chỉnh trạng thái lưu Note 
-                    savedNoteStatus = true;     
-                }
-                initAndChangeToMainScene();
-            } catch (ClientServerServiceErrorException ex) {
-                //Xử lý các ngoại lệ
-                switch (ex.getErrorType()) {
-                    case ClientServerService.ErrorType.NOT_EXISTS -> {
-                        showAlert(Alert.AlertType.ERROR, "This note not exists");
-                    }
-                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                    }
-                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                    }
-                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-                }
-            }     
-        }
-    }
-    
     /**
      * Chạy Dashboard và thiết lập các thuộc tính ban đầu
      */
     public void init() {  
         //Mở Client Server Service
         clientServerService = new ClientServerService();
-        //Thiết lập các thông tin user
-        userLabel.setText(user.getName());
+        //Thiết lập các thông tin myUser
+        userLabel.setText(myUser.getName());
         //Mở Note thao tác gần nhất
         try { 
             //Lấy thành công
-            myNote = clientServerService.openLastNote(user.getUsername());
+            myNote = clientServerService.openLastNote(myUser.getUsername());
             //Chỉnh trạng thái lưu Note 
             savedNoteStatus = true;     
         } catch (ClientServerServiceErrorException ex) {
@@ -904,7 +845,7 @@ public class DashboardFXMLController {
             switch (ex.getErrorType()) {
                 case ClientServerService.ErrorType.NOT_EXISTS -> {
                     myNote = new Note();
-                    myNote.setAuthor(user.getUsername());
+                    myNote.setAuthor(myUser.getUsername());
                     myNote.setHeader("New Note");
                     myNote.setContent("Edit here");
                     List<String> filters = new ArrayList<>();
@@ -932,7 +873,7 @@ public class DashboardFXMLController {
         mainScene.setVisible(true);
         extraServiceScene.setVisible(false);
         //Thiết lập content, header
-        contentArea.setText(NoteContentConverter.convertToObjectText(myNote.getContent()));
+        contentArea.setText(Note.NoteContentConverter.convertToObjectText(myNote.getContent()));
         contentArea.setEditable(true);
         noteHeaderLabel.setText(myNote.getHeader());
         numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
@@ -949,10 +890,10 @@ public class DashboardFXMLController {
         extraServiceScene.setVisible(true);
         //Chuyển sang scene My Notes
         changeSceneInExtraScene(myNotesButton);
-        //Lấy tất cả các Note của user
+        //Lấy tất cả các Note của myUser
         try { 
             //Lấy thành công
-            myNotes = clientServerService.getAllNotes(user.getUsername());
+            myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceErrorException ex) {
             //Xử lý các ngoại lệ
             switch (ex.getErrorType()) {
@@ -977,7 +918,6 @@ public class DashboardFXMLController {
         if(notes.isEmpty()) {
             return;
         }
-        noteCardLayout.setSpacing(3);
         //Load các Note Card
         for(int i=0; i < notes.size(); i++) {
             //Load Note Card Layout
@@ -985,13 +925,12 @@ public class DashboardFXMLController {
             String noteCardFXMLPath = "NoteCardFXML.fxml";
             fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
             try {
-                VBox box = fXMLLoader.load();
+                HBox box = fXMLLoader.load();
                 //Thiết lập dữ liệu cho Note Card
                 NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
                 noteCardFXMLController.setData(notes.get(i));
                 //Xử lý khi nhấn vào note card
                 box.setOnMouseClicked((MouseEvent event) -> {
-                    noteCardFXMLController.setLabelStyle("-fx-background-color: #3a737a");
                     //Tạo thông báo và mở note nếu chọn OK
                     Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                             "Open " + noteCardFXMLController.getHeader());
@@ -999,7 +938,7 @@ public class DashboardFXMLController {
                         autoSave();
                         try {
                             //Lấy thành công
-                            myNote = clientServerService.openNote(user.getUsername(),
+                            myNote = clientServerService.openNote(noteCardFXMLController.getAuthor(),
                                     noteCardFXMLController.getHeader());
                             //Chỉnh trạng thái lưu Note 
                             savedNoteStatus = true;     
@@ -1023,9 +962,7 @@ public class DashboardFXMLController {
                             } 
                         }
                     }
-                    noteCardFXMLController.setLabelStyle("-fx-background-color: transparent");
                 });
-
                 //Thêm Note Card vào layout
                 noteCardLayout.getChildren().add(box);
             } catch (IOException ex) {
@@ -1034,7 +971,7 @@ public class DashboardFXMLController {
         }      
     }
     
-    private void initMyAccountScene() {
+    private void initMyAccountScene(User user) {
         //Thiết lập các thuộc tính
         usernameField.setText(user.getUsername());
         usernameField.setEditable(false);
@@ -1078,7 +1015,7 @@ public class DashboardFXMLController {
         importNoteName.setText(myNote.getHeader());
     }
 
-    private void initShareNoteScene(List<Note> notes, ObservableList<ShareNote> shareNotes) {
+    private void initShareNoteScene(List<Note> notes, List<ShareNote> shareNotes) {
         //Clear ComboBox và thêm vào các header note trong list
         chooseShareNoteComboBox.getItems().clear();
         if(notes.isEmpty()) {
@@ -1089,15 +1026,65 @@ public class DashboardFXMLController {
         }
         //Set Type mặc định là Read Only
         shareTypeReadOnly.setSelected(true);
-        //Clear table và thêm các note được share
-        sharedByOtherTable.getItems().clear();
+        //Khởi tạo các share note card
+        shareNoteCardLayout.getChildren().clear();
         if(shareNotes.isEmpty()) {
             return;
         }
-        senderUsernameColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("author"));
-        headerColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("header"));
-        shareTypeColumn.setCellValueFactory(new PropertyValueFactory<ShareNote, String>("shareType"));
-        sharedByOtherTable.setItems(shareNotes);
+        for(int i=0; i < shareNotes.size(); i++) {
+            //Load Note Card Layout
+            FXMLLoader fXMLLoader = new FXMLLoader();
+            String noteCardFXMLPath = "NoteCardFXML.fxml";
+            fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
+            try {
+                HBox box = fXMLLoader.load();
+                //Thiết lập dữ liệu cho Note Card
+                NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
+                noteCardFXMLController.setData(shareNotes.get(i));
+                //Xử lý khi nhấn vào note card
+                box.setOnMouseClicked((MouseEvent event) -> {
+                    //Tạo thông báo và mở note nếu chọn OK
+                    Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
+                            "Open " + noteCardFXMLController.getHeader());
+                    if(optional.get() == ButtonType.OK) {
+                        autoSave();
+                        try {
+                            //Lấy thành công
+                            myNote = clientServerService.openNote(noteCardFXMLController.getAuthor(),
+                                    noteCardFXMLController.getHeader());
+                            //Chỉnh trạng thái lưu Note 
+                            savedNoteStatus = true;                                
+                            //Load lại Edit Scene và mở Edit Scene
+                            initAndChangeToMainScene();
+                            //Nếu là READ_ONLY thì không được sửa
+                            if(noteCardFXMLController.getShareType() == ShareNote.ShareType.READ_ONLY) {
+                                contentArea.setEditable(false);
+                            }
+                        } catch (ClientServerServiceErrorException ex) {
+                            //Xử lý các ngoại lệ
+                            switch (ex.getErrorType()) {
+                                case ClientServerService.ErrorType.NOT_EXISTS -> {
+                                    showAlert(Alert.AlertType.ERROR, "This note not exists");
+                                }
+                                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
+                                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
+                                }
+                                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
+                                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+                                }
+                                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
+                                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
+                                }
+                            } 
+                        }
+                    }
+                });
+                //Thêm Note Card vào layout
+                shareNoteCardLayout.getChildren().add(box);
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
+        }        
     }
     
     private void autoSave() {
@@ -1107,7 +1094,7 @@ public class DashboardFXMLController {
             if(optional.get() == ButtonType.OK) {
                 //Set dữ liệu gần nhất cho myNote
                 myNote.setHeader(noteHeaderLabel.getText());
-                myNote.setContent(NoteContentConverter.convertToDBText(contentArea.getText()));
+                myNote.setContent(Note.NoteContentConverter.convertToDBText(contentArea.getText()));
                 myNote.setLastModified(1);
                 myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
                 //Lưu note

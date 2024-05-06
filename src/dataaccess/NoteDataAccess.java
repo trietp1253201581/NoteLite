@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.datatransfer.Note;
-import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với Note
@@ -74,7 +73,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
                 //Thêm note vào list
                 notes.add(note);
             }
@@ -120,7 +119,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
 
                 return note;
             }
@@ -163,7 +162,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
 
                 return note;
             }
@@ -206,7 +205,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
 
                 return note;
             }
@@ -244,7 +243,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
-            preparedStatement.setString(6, NoteFilterConverter.convertToString(note.getFilters()));
+            preparedStatement.setString(6, Note.NoteFilterConverter.convertToString(note.getFilters()));
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -281,7 +280,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
-            preparedStatement.setString(6, NoteFilterConverter.convertToString(note.getFilters()));
+            preparedStatement.setString(6, Note.NoteFilterConverter.convertToString(note.getFilters()));
             preparedStatement.setInt(7, note.getId());
 
             return preparedStatement.executeUpdate();

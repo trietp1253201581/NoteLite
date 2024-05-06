@@ -1,13 +1,9 @@
 package fxgui;
 
-import java.io.IOException;
-import java.util.List;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import model.datatransfer.Note;
+import model.datatransfer.ShareNote;
 
 /**
  * FXML Controller class cho các Note Card
@@ -19,19 +15,24 @@ import model.datatransfer.Note;
 public class NoteCardFXMLController {  
     //Các thuộc tính FXML
     @FXML
-    private GridPane filterGridLayout;
-    @FXML
     private Label header;
     @FXML
-    private Label lastModified;
+    private Label lastModifiedDate;
+    @FXML
+    private Label author;
+    @FXML
+    private Label filtersOrShareType;
     
     public String getHeader() {
         return header.getText();
     }
     
-    public void setLabelStyle(String style) {
-        header.setStyle(style);
-        lastModified.setStyle(style);
+    public ShareNote.ShareType getShareType() {
+        return ShareNote.ShareType.valueOf(filtersOrShareType.getText());
+    }
+    
+    public String getAuthor() {
+        return author.getText();
     }
     
     /**
@@ -40,44 +41,23 @@ public class NoteCardFXMLController {
      */
     public void setData(Note note) {
         header.setText(note.getHeader());
-        lastModified.setText(String.valueOf(note.getLastModifiedDate()));
-        loadFilter(note.getFilters(), 5);
+        lastModifiedDate.setText(String.valueOf(note.getLastModifiedDate()));
+        author.setText(note.getAuthor());
+        String filtersString = "";
+        for(String filter: note.getFilters()) {
+            filtersString += filter + ", ";
+        }
+        filtersOrShareType.setText(filtersString.substring(0, filtersString.length() - 2));
     }
     
     /**
-     * Thiết lập thể hiện của filter tới người dùng
-     * @param filters List chứa các filter
-     * @param maxColumn số lượng filter lớn nhất trên một hàng
+     * Thiết lập dữ liệu cho Note Card
+     * @param shareNote shareNote chứa dữ liệu cần chuyển
      */
-    private void loadFilter(List<String> filters, int maxColumn) {
-        int column = 0;
-        int row = 0;
-        //Làm sạch filter layout
-        filterGridLayout.getChildren().clear();
-        //Thiết lập khoảng cách giữa các filter
-        filterGridLayout.setHgap(8);
-        filterGridLayout.setVgap(8);
-        //Thiết lập filter layout
-        try {
-            for(int i = 0; i < filters.size(); i++) {
-                //Load filter FXML
-                FXMLLoader fXMLLoader = new FXMLLoader();
-                String filterFXMLPath = "FilterFXML.fxml";
-                fXMLLoader.setLocation(getClass().getResource(filterFXMLPath));
-                HBox hbox = fXMLLoader.load();
-                //Thiết lập dữ liệu cho filter
-                FilterFXMLController filterFXMLController = fXMLLoader.getController();
-                filterFXMLController.setData(filters.get(i));
-                //Chuyển hàng
-                if(column == maxColumn){
-                    column = 0;
-                    row++;
-                }
-                //Thêm filter vừa tạo vào layout
-                filterGridLayout.add(hbox, column++, row);
-            }
-        } catch (IOException e) {
-            System.err.println(e);
-        }
+    public void setData(ShareNote shareNote) {
+        header.setText(shareNote.getHeader());
+        lastModifiedDate.setText(String.valueOf(shareNote.getLastModifiedDate()));
+        author.setText(shareNote.getAuthor());
+        filtersOrShareType.setText(shareNote.getShareType().toString());
     }
 }

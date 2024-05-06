@@ -3,9 +3,9 @@ package model.datatransfer;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note
@@ -189,5 +189,88 @@ public class Note {
         note.setFilters(NoteFilterConverter.convertToList(strarr[6]));
         
         return note;      
+    }
+
+    /**
+     * Chuyển một text hiển thị trên GUI sang một text lưu trong CSDL và ngược lại
+     * @author Lê Minh Triết
+     * @since 30/03/2024
+     * @version 1.0
+     */
+    public static class NoteContentConverter {
+        private static final String ENDLINE_TAGS = "##endline##";
+
+        /**
+         * Chuyển một text ở GUI sang text lưu trong CSDL
+         * @param areaText text ở GUI
+         * @return text sau khi chuyển
+         */
+        public static String convertToDBText(String areaText) {
+            //Chia thành các dòng
+            String[] texts = areaText.split("\\n");
+            String dbText = "";
+            //Chuyển ký tự \n ở cuối dòng thành ##endline##
+            for (String text : texts) {
+                dbText += text + ENDLINE_TAGS;
+            }
+            return dbText;
+        }
+
+        /**
+         * Chuyển một text trong CSDL sang một text hiển thị trên GUI
+         * @param dbText text trong CSDL
+         * @return text sau khi chuyển
+         */
+        public static String convertToObjectText(String dbText) {
+            //Chia thành các phần ngăn cách bởi ##endline##, mỗi phần là một dòng trên text ở GUI
+            String[] texts = dbText.split(ENDLINE_TAGS);
+            String areaText = "";
+            //Thêm ký tự \n vào cuối mỗi phần tử
+            for (String text : texts) {
+                areaText += text + "\n";
+            }
+            return areaText;
+        }
+    }
+
+    /**
+     * Cung cấp các phương thức để convert một list các filter thành string và ngược lại
+     * @author Lê Minh Triết
+     * @since 30/03/2024
+     * @version 1.0
+     */
+    public static class NoteFilterConverter {
+        private static final String SPLIT_TAGS = "##";
+
+        /**
+         * Chuyển list các filter thành String
+         * @param filters list các filter
+         * @return String có gồm các filter string, ngăn cách bởi {@code ##}
+         */
+        public static String convertToString(List<String> filters) {
+            String result = "";
+            //Với mỗi filter string, thêm vào result filter string đó và dấu ##
+            for (String filter : filters) {
+                result += filter + SPLIT_TAGS;
+            }
+            return result;
+        }
+
+        /**
+         * Chuyển một String thành list các filter
+         * @param strFilter String có dạng gồm nhiều {@code .##}, mỗi thành phần là 1 filter string
+         * @return list filter thu được
+         */
+        public static List<String> convertToList(String strFilter) {
+            //Chuyển String thành các thành phần filter string (do được ngăn cách bởi ##)
+            if ("".equals(strFilter)) {
+                return new ArrayList<>();
+            }
+            String[] filters = strFilter.split(SPLIT_TAGS);
+            List<String> result = new ArrayList<>();
+            //Chuyển từ String[] thành list
+            result.addAll(Arrays.asList(filters));
+            return result;
+        }
     }
 }

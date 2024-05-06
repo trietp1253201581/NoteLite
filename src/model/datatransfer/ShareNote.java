@@ -2,7 +2,6 @@ package model.datatransfer;
 
 import java.sql.Date;
 import java.util.Objects;
-import model.datatransfer.attributeconverter.NoteFilterConverter;
 
 /**
  * Một transfer cho dữ liệu của các note để chia sẻ giữa các user

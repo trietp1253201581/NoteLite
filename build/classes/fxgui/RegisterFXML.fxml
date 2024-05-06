@@ -96,7 +96,7 @@
          <top>
             <AnchorPane prefHeight="25.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox prefHeight="25.0" prefWidth="400.0" styleClass="register-form" stylesheets="@anotherStyle.css">
+                  <HBox prefHeight="25.0" prefWidth="400.0" styleClass="top-form" stylesheets="@anotherStyle.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>

@@ -30,13 +30,17 @@
     -fx-background-color: linear-gradient(to bottom right, #ab74c7, #ce7292);
     -fx-background-radius: 10px;
 }
-.vbox-form{
+.hbox-form{
+    -fx-background-color: #eee;
     -fx-border-color: #000;
-    -fx-border-width: 1.5px 0px 1.5px 0px;
+    -fx-border-width: 0px 0px 1.5px 0px;
+}
+.hbox-form:hover{
+    -fx-background-color: #ddd;
 }
 .field-form{
     -fx-border-width: 0px 0px 1px 0px;
     -fx-background-color: transparent;
     -fx-border-color: #000;
-    -fx-text-fill: #000;
+    -fx-text-fill: #fff;
 }

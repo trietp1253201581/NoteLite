@@ -109,7 +109,7 @@ public class LoginFXMLController {
             Scene scene = new Scene(fXMLLoader.load());
             //Thiết lập dữ liệu user cho Dashboard
             DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
-            dashboardFXMLController.setUser(user);
+            dashboardFXMLController.setMyUser(user);
             //Hiển thị Dashboard
             dashboardFXMLController.init();
             
