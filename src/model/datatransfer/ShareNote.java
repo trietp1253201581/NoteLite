@@ -119,7 +119,7 @@ public class ShareNote extends Note {
         result += super.getContent() + SPLIT_ATTRIBUTE_TAGS;
         result += super.getLastModified() + SPLIT_ATTRIBUTE_TAGS;
         result += super.getLastModifiedDate() + SPLIT_ATTRIBUTE_TAGS;
-        result += NoteFilterConverter.convertToString(super.getFilters()) + SPLIT_ATTRIBUTE_TAGS;
+        result += FiltersConverter.convertToString(super.getFilters()) + SPLIT_ATTRIBUTE_TAGS;
         result += shareId + SPLIT_ATTRIBUTE_TAGS;
         result += receiver + SPLIT_ATTRIBUTE_TAGS;
         result += shareType + SPLIT_ATTRIBUTE_TAGS;
@@ -145,7 +145,7 @@ public class ShareNote extends Note {
         shareNote.setContent(strarr[3]);
         shareNote.setLastModified(Integer.parseInt(strarr[4]));
         shareNote.setLastModifiedDate(Date.valueOf(strarr[5]));
-        shareNote.setFilters(NoteFilterConverter.convertToList(strarr[6]));
+        shareNote.setFilters(FiltersConverter.convertToList(strarr[6]));
         shareNote.setShareId(Integer.parseInt(strarr[7]));
         shareNote.setReceiver(strarr[8]);
         shareNote.setShareType(ShareType.valueOf(strarr[9]));

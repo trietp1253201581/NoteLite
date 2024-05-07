@@ -172,7 +172,6 @@ public class RegisterFXMLController {
 
     @FXML
     void backLoginLabelClicked(MouseEvent event) {
-        //Quay trở lại trang Login
         openLogin();
     }   
     

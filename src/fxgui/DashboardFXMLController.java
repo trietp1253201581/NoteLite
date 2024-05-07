@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -28,6 +29,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -35,6 +37,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -76,6 +79,12 @@ public class DashboardFXMLController {
     private Button redoButton;
     @FXML 
     private Button addFilterButton;
+    @FXML
+    private ComboBox<String> fontTypeComboBox; 
+    @FXML
+    private ComboBox<String> fontSizeComboBox;
+    @FXML
+    private ColorPicker ColorPicker;
     //Các thuộc tính còn lại
     @FXML
     private TextArea contentArea;
@@ -207,6 +216,9 @@ public class DashboardFXMLController {
     
     @FXML
     void handleNoteHeaderLabel(MouseEvent event) {
+        if(event.getSource() != noteHeaderLabel) {
+            return;
+        }
         //Mở dialog
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setTitle("Change header for " + myNote.getHeader());
@@ -255,7 +267,7 @@ public class DashboardFXMLController {
         undoRedoService.saveText(contentArea.getText());
         //Set dữ liệu gần nhất cho myNote
         myNote.setHeader(noteHeaderLabel.getText());
-        myNote.setContent(Note.NoteContentConverter.convertToDBText(contentArea.getText()));
+        myNote.setContent(Note.ContentConverter.convertToDBText(contentArea.getText()));
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
@@ -341,7 +353,24 @@ public class DashboardFXMLController {
     }
     
     @FXML
+    void handleFontTypeComboBox(ActionEvent event) {
+        String fontType = fontTypeComboBox.getSelectionModel().getSelectedItem();
+        double fontSize = contentArea.getFont().getSize();
+        contentArea.setFont(Font.font(fontType, fontSize));
+    }
+    
+    @FXML
+    void handleFontSizeComboBox(ActionEvent event) {
+        double fontSize = Double.parseDouble(fontSizeComboBox.getSelectionModel().getSelectedItem());
+        String fontType = contentArea.getFont().getFamily();
+        contentArea.setFont(Font.font(fontType, fontSize));
+    }
+    
+    @FXML
     void changeTextArea(KeyEvent event) {  
+        if(event.getSource() != contentArea) {
+            return;
+        }
         //Lấy các thông số
         int nowLength = contentArea.getText().length();
         int lastLength = undoRedoService.getLastText().length();
@@ -438,7 +467,7 @@ public class DashboardFXMLController {
         //Thêm các note hợp lệ vào list
         for(Note newNote: myNotes) {
             if(newNote.getHeader().contains(searchText) 
-                    || Note.NoteFilterConverter.convertToString(newNote.getFilters()).contains(searchText)) { 
+                    || Note.FiltersConverter.convertToString(newNote.getFilters()).contains(searchText)) { 
                 notes.add(newNote);
             }     
         }
@@ -679,7 +708,7 @@ public class DashboardFXMLController {
             Note selectedNote = clientServerService.openNote(myUser.getUsername(), selectedNoteHeader);
             //Export file
             PdfService.export(selectedNoteHeader + ".pdf", 
-                    Note.NoteContentConverter.convertToObjectText(selectedNote.getContent()));
+                    Note.ContentConverter.convertToObjectText(selectedNote.getContent()));
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
         } catch (ClientServerServiceErrorException ex) {
@@ -873,7 +902,7 @@ public class DashboardFXMLController {
         mainScene.setVisible(true);
         extraServiceScene.setVisible(false);
         //Thiết lập content, header
-        contentArea.setText(Note.NoteContentConverter.convertToObjectText(myNote.getContent()));
+        contentArea.setText(Note.ContentConverter.convertToObjectText(myNote.getContent()));
         contentArea.setEditable(true);
         noteHeaderLabel.setText(myNote.getHeader());
         numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
@@ -882,6 +911,19 @@ public class DashboardFXMLController {
         undoRedoService.saveText(contentArea.getText()); 
         //Load lại Filter GUI
         loadFilter(myNote.getFilters(), 8);   
+        //Thiết lập font
+        fontTypeComboBox.getItems().clear();
+        for(String fontType: Font.getFontNames()) {
+            fontTypeComboBox.getItems().add(fontType);
+        }
+        //Thiết lập size
+        fontSizeComboBox.getItems().clear();
+        for(int i = 0; i <= 8; i++) {
+            fontSizeComboBox.getItems().add(String.valueOf(8 + 2 * i));
+        }
+        for(int i = 0; i <= 8; i++) {
+            fontSizeComboBox.getItems().add(String.valueOf(32 + 8 * i));
+        }
     }
     
     private void initAndChangeToExtraServiceScene() {
@@ -1094,7 +1136,7 @@ public class DashboardFXMLController {
             if(optional.get() == ButtonType.OK) {
                 //Set dữ liệu gần nhất cho myNote
                 myNote.setHeader(noteHeaderLabel.getText());
-                myNote.setContent(Note.NoteContentConverter.convertToDBText(contentArea.getText()));
+                myNote.setContent(Note.ContentConverter.convertToDBText(contentArea.getText()));
                 myNote.setLastModified(1);
                 myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
                 //Lưu note

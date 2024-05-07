@@ -30,6 +30,8 @@
 }
 .content-area{
     -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-font-family: ".VnArabia"; 
 }
 .close-button{
     -fx-background-color: transparent;

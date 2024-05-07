@@ -85,7 +85,7 @@ public class LoginFXMLController {
     }
     
     @FXML
-    void registerLabelClicked(MouseEvent event) {       
+    void registerLabelClicked(MouseEvent event) {    
         openRegister();
     }
     

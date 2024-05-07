@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"application"},{"l":"client.networking"},{"l":"client.service"},{"l":"dataaccess"},{"l":"dataaccess.connection"},{"l":"fxgui"},{"l":"model.command"},{"l":"model.datatransfer"},{"l":"model.datatransfer.attributeconverter"},{"l":"server.networking"},{"l":"server.service"}];updateSearchResults();

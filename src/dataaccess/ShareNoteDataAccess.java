@@ -73,7 +73,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
@@ -123,7 +123,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
@@ -171,7 +171,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 shareNote.setContent(resultSet.getString("CONTENT"));
                 shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.NoteFilterConverter.convertToList(resultSet.getString("FILTERS")));
+                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));

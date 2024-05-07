@@ -163,7 +163,7 @@ public class Note {
         result += content + SPLIT_ATTRIBUTE_TAGS;
         result += lastModified + SPLIT_ATTRIBUTE_TAGS;
         result += lastModifiedDate + SPLIT_ATTRIBUTE_TAGS;
-        result += NoteFilterConverter.convertToString(filters) + SPLIT_ATTRIBUTE_TAGS;
+        result += FiltersConverter.convertToString(filters) + SPLIT_ATTRIBUTE_TAGS;
         result += END_TAGS + END_TAGS;
         
         return result;    
@@ -186,7 +186,7 @@ public class Note {
         note.setContent(strarr[3]);
         note.setLastModified(Integer.parseInt(strarr[4]));
         note.setLastModifiedDate(Date.valueOf(strarr[5]));
-        note.setFilters(NoteFilterConverter.convertToList(strarr[6]));
+        note.setFilters(FiltersConverter.convertToList(strarr[6]));
         
         return note;      
     }
@@ -197,7 +197,7 @@ public class Note {
      * @since 30/03/2024
      * @version 1.0
      */
-    public static class NoteContentConverter {
+    public static class ContentConverter {
         private static final String ENDLINE_TAGS = "##endline##";
 
         /**
@@ -239,7 +239,7 @@ public class Note {
      * @since 30/03/2024
      * @version 1.0
      */
-    public static class NoteFilterConverter {
+    public static class FiltersConverter {
         private static final String SPLIT_TAGS = "##";
 
         /**
