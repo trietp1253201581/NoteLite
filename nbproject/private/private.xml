@@ -12,8 +12,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/NoteLite/src/fxgui/DashboardFXMLController.java</file>
-            <file>file:/F:/NoteLite/src/fxgui/dashboardStyle.css</file>
+            <file>file:/F:/NoteLite/src/com/noteliteserver/network/WorkerThread.java</file>
+            <file>file:/F:/NoteLite/src/com/notelite/gui/dashboardStyle.css</file>
+            <file>file:/F:/NoteLite/src/com/notelite/gui/DashboardFXMLController.java</file>
+            <file>file:/F:/NoteLite/src/com/notelite/application/NoteLiteApplication.java</file>
         </group>
     </open-files>
 </project-private>
