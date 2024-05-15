@@ -1,4 +1,4 @@
-package com.noteliteserver.application;
+package com.noteliteserver;
 
 import com.notelitemodel.NetworkProperty;
 import com.noteliteserver.network.MultiThreadServer;

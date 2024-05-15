@@ -21,6 +21,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
@@ -542,10 +543,13 @@
                               </HBox>
                               <HBox prefHeight="30.0" prefWidth="253.0">
                                  <children>
-                                    <ColorPicker fx:id="colorPicker" prefHeight="30.0" prefWidth="253.0" promptText="Color" styleClass="main-box" stylesheets="@dashboardStyle.css">
+                                    <ColorPicker fx:id="colorPicker" onAction="#handleColorPicker" prefHeight="30.0" prefWidth="253.0" promptText="Color" styleClass="main-box" stylesheets="@dashboardStyle.css">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
+                                       <value>
+                                          <Color />
+                                       </value>
                                     </ColorPicker>
                                  </children>
                                  <VBox.margin>

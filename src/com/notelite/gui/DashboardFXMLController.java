@@ -39,6 +39,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -83,7 +84,7 @@ public class DashboardFXMLController {
     @FXML
     private ComboBox<String> fontSizeComboBox;
     @FXML
-    private ColorPicker ColorPicker;
+    private ColorPicker colorPicker;
     //Các thuộc tính còn lại
     @FXML
     private TextArea contentArea;
@@ -354,15 +355,29 @@ public class DashboardFXMLController {
     @FXML
     void handleFontTypeComboBox(ActionEvent event) {
         String fontType = fontTypeComboBox.getSelectionModel().getSelectedItem();
-        double fontSize = contentArea.getFont().getSize();
-        contentArea.setFont(Font.font(fontType, fontSize));
+        String fontSize = fontSizeComboBox.getSelectionModel().getSelectedItem();
+        String style = "-fx-background-radius: 5px;";
+        style += "-fx-font-family: " + fontType + ";";
+        style += "-fx-font-size: " + fontSize + "px;";
+        contentArea.setStyle(style);
     }
     
     @FXML
     void handleFontSizeComboBox(ActionEvent event) {
-        double fontSize = Double.parseDouble(fontSizeComboBox.getSelectionModel().getSelectedItem());
-        String fontType = contentArea.getFont().getFamily();
-        contentArea.setFont(Font.font(fontType, fontSize));
+        String fontSize = fontSizeComboBox.getSelectionModel().getSelectedItem();
+        String fontType = fontTypeComboBox.getSelectionModel().getSelectedItem();
+        String style = "-fx-background-radius: 5px;";
+        style += "-fx-font-family: " + fontType + ";";
+        style += "-fx-font-size: " + fontSize + "px;";
+        contentArea.setStyle(style);
+    }
+    
+    @FXML
+    void handleColorPicker(ActionEvent event) {
+        Color selectedColor = colorPicker.getValue();
+        String style = "-fx-background-radius: 5px;";
+        style += "-fx-text-fill: " + "#" + selectedColor.toString().substring(2, 8) + ";";
+        contentArea.setStyle(style);
     }
     
     @FXML
@@ -385,12 +400,13 @@ public class DashboardFXMLController {
     
     @FXML
     void handleHomeMenuButton(ActionEvent event) {
-        initAndChangeToExtraServiceScene();
+        initExtraServiceScene();
+        changeToExtraServiceScene();
     }
     
     @FXML
     void handleBackMainSceneButton(ActionEvent event) {
-        initAndChangeToMainScene();
+        changeToMainScene();
     }
     
     @FXML
@@ -893,10 +909,11 @@ public class DashboardFXMLController {
             }
         }
         //Init lại Scene
-        initAndChangeToMainScene();
+        initMainScene();
+        changeToMainScene();
     }
 
-    private void initAndChangeToMainScene() { 
+    private void initMainScene() { 
         //Chuyển sang main scene
         mainScene.setVisible(true);
         extraServiceScene.setVisible(false);
@@ -915,6 +932,7 @@ public class DashboardFXMLController {
         for(String fontType: Font.getFontNames()) {
             fontTypeComboBox.getItems().add(fontType);
         }
+        fontTypeComboBox.getSelectionModel().select("Arial");
         //Thiết lập size
         fontSizeComboBox.getItems().clear();
         for(int i = 0; i <= 8; i++) {
@@ -923,9 +941,17 @@ public class DashboardFXMLController {
         for(int i = 0; i <= 8; i++) {
             fontSizeComboBox.getItems().add(String.valueOf(32 + 8 * i));
         }
+        fontSizeComboBox.getSelectionModel().select("18");
+        colorPicker.setValue(Color.BLACK);
+        String contentStyle = "";
+        contentStyle += "-fx-background-radius: 5px;";
+        contentStyle += "-fx-font-family: Arial;";
+        contentStyle += "-fx-font-size: 18px;";
+        contentArea.setStyle(contentStyle);
+        contentArea.setScrollLeft(5);
     }
     
-    private void initAndChangeToExtraServiceScene() {
+    private void initExtraServiceScene() {
         //Chuyển sang extra scene
         mainScene.setVisible(false);
         extraServiceScene.setVisible(true);
@@ -984,7 +1010,7 @@ public class DashboardFXMLController {
                             //Chỉnh trạng thái lưu Note 
                             savedNoteStatus = true;     
                             //Load lại Edit Scene và mở Edit Scene
-                            initAndChangeToMainScene();
+                            initMainScene();
                         } catch (ClientServerServiceException ex) {
                             //Xử lý các ngoại lệ
                             switch (ex.getErrorType()) {
@@ -1096,7 +1122,7 @@ public class DashboardFXMLController {
                             //Chỉnh trạng thái lưu Note 
                             savedNoteStatus = true;                                
                             //Load lại Edit Scene và mở Edit Scene
-                            initAndChangeToMainScene();
+                            initMainScene();
                             //Nếu là READ_ONLY thì không được sửa
                             if(noteCardFXMLController.getShareType() == ShareNote.ShareType.READ_ONLY) {
                                 contentArea.setEditable(false);
@@ -1200,6 +1226,16 @@ public class DashboardFXMLController {
         } catch (IOException e) {
             System.err.println(e);
         }
+    }
+    
+    private void changeToMainScene() {
+        mainScene.setVisible(true);
+        extraServiceScene.setVisible(false);
+    }
+    
+    private void changeToExtraServiceScene() {
+        mainScene.setVisible(false);
+        extraServiceScene.setVisible(true);
     }
     
     private void changeSceneInExtraScene(Button button) {

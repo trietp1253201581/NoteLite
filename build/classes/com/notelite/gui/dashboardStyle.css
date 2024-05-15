@@ -30,6 +30,8 @@
 }
 .content-area{
     -fx-background-radius: 5px;
+    -fx-font-family: Arial;
+    -fx-font-size: 18px;
 }
 .close-button{
     -fx-background-color: transparent;

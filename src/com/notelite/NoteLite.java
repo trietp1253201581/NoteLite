@@ -1,4 +1,4 @@
-package com.notelite.application;
+package com.notelite;
 
 import com.notelite.gui.LoginFXMLController;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import javafx.stage.StageStyle;
  * @since 30/03/2024
  * @version 1.0
  */
-public class NoteLiteApplication extends Application {
+public class NoteLite extends Application {
     private double x,y;
     
     /**
@@ -26,7 +26,7 @@ public class NoteLiteApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         //Mở GUI Login trước
         FXMLLoader fXMLLoader = new FXMLLoader();
-        String loginFXMLPath = "../gui/LoginFXML.fxml";
+        String loginFXMLPath = "gui/LoginFXML.fxml";
         fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Chuyển sang GUI Login
         Scene scene = new Scene(fXMLLoader.load());

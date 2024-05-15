@@ -47,7 +47,11 @@ public class NoteCardFXMLController {
         for(String filter: note.getFilters()) {
             filtersString += filter + ", ";
         }
-        filtersOrShareType.setText(filtersString.substring(0, filtersString.length() - 2));
+        if(filtersString.isEmpty()) {
+            filtersOrShareType.setText(filtersString);
+        } else {
+            filtersOrShareType.setText(filtersString.substring(0, filtersString.length() - 2));
+        }
     }
     
     /**

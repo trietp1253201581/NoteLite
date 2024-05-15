@@ -20,10 +20,12 @@ import java.util.List;
  */
 public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     private final Connection connection;
+    private final SpecialNoteDataAccess noteDataAccess;
 
     private ShareNoteDataAccess() {
         DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
         this.connection = connectSQLDatabase.getJDBCConnection();
+        noteDataAccess = NoteDataAccess.getInstance();
     }
     
     private static class SingletonHelper {
@@ -51,11 +53,9 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             return shareNotes;
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
-                + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
-                + "AND us2.USERNAME = ?";
+        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
+                + "SHARETYPE FROM sharenotes sh, users us "
+                + "WHERE sh.RECEIVERID = us.ID AND us.USERNAME = ?";
         
         try {
             //Set các tham số, thực thi truy vấn và lấy kết quả
@@ -67,16 +67,14 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             while (resultSet.next()) {
                 ShareNote shareNote = new ShareNote();
                 //Set dữ liệu từ hàng vào shareNote
-                shareNote.setId(resultSet.getInt("ID"));
-                shareNote.setAuthor(resultSet.getString("AUTHOR"));
-                shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(resultSet.getString("CONTENT"));
-                shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
-                shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
-                shareNote.setShareId(resultSet.getInt("SHAREID"));
-                shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                int noteId = resultSet.getInt("NOTEID");
+                Note note = noteDataAccess.get(noteId);
+                if(!note.isDefaultValue()) {
+                    shareNote.setNote(note);
+                    shareNote.setShareId(resultSet.getInt("SHAREID"));
+                    shareNote.setReceiver(resultSet.getString("RECEIVER"));
+                    shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                }
                 //Thêm shareNote vào list
                 shareNotes.add(shareNote);
             }
@@ -89,27 +87,25 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     
     /**
      * Lấy một ShareNote
-     * @param note Note được share
+     * @param noteId id của Note được share
      * @param receiver người nhận
      * @return ShareNote duy nhất được lấy
      */
     @Override
-    public ShareNote get(Note note, String receiver) {
+    public ShareNote get(int noteId, String receiver) {
         //Kiểm tra null
         if(connection == null) {
             return new ShareNote();
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
-                + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
-                + "AND nt.ID = ? AND us2.USERNAME = ?";
+        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
+                + "SHARETYPE FROM sharenotes sh, users us "
+                + "WHERE sh.RECEIVERID = us.ID AND NOTEID = ? AND us.USERNAME = ?";
 
         try {
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, note.getId());
+            preparedStatement.setInt(1, noteId);
             preparedStatement.setString(2, receiver);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -117,13 +113,11 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             while (resultSet.next()) {
                 ShareNote shareNote = new ShareNote();
                 //Set dữ liệu cho shareNote
-                shareNote.setId(resultSet.getInt("ID"));
-                shareNote.setAuthor(resultSet.getString("AUTHOR"));
-                shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(resultSet.getString("CONTENT"));
-                shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
-                shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                Note note = noteDataAccess.get(noteId);
+                if(note.isDefaultValue()) {
+                    return new ShareNote();
+                }
+                shareNote.setNote(note);
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
@@ -149,11 +143,9 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             return new ShareNote();
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, us1.USERNAME as AUTHOR, HEADER, CONTENT, "
-                + "LASTMODIFIED, LASTMODIFIEDDATE, FILTERS, sh.ID as SHAREID, us2.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM notes nt, sharenotes sh, users us1, users us2 "
-                + "WHERE nt.USERID = us1.ID AND sh.RECEIVERID = us2.ID AND nt.ID = sh.NOTEID "
-                + "AND sh.SHAREID = ?";
+        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
+                + "SHARETYPE FROM sharenotes sh, users us "
+                + "WHERE sh.RECEIVERID = us.ID AND sh.ID = ?";
 
         try {
             //Set tham số và thực thi truy vấn
@@ -165,13 +157,12 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             while (resultSet.next()) {
                 ShareNote shareNote = new ShareNote();
                 //Set dữ liệu cho shareNote
-                shareNote.setId(resultSet.getInt("ID"));
-                shareNote.setAuthor(resultSet.getString("AUTHOR"));
-                shareNote.setHeader(resultSet.getString("HEADER"));
-                shareNote.setContent(resultSet.getString("CONTENT"));
-                shareNote.setLastModified(resultSet.getInt("LASTMODIFIED"));
-                shareNote.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                shareNote.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                int noteId = resultSet.getInt("NOTEID");
+                Note note = noteDataAccess.get(noteId);
+                if(note.isDefaultValue()) {
+                    return new ShareNote();
+                }
+                shareNote.setNote(note);
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
@@ -232,7 +223,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             return -1;
         }
         //Câu truy vấn SQL
-        String query = "UPDATE SHARENOTES SET NOTEID = ?, RECEIVER = ?, "
+        String query = "UPDATE SHARENOTES SET NOTEID = ?, RECEIVERID = ?, "
                 + "SHARETYPE = ? WHERE ID = ?";
 
         try {
@@ -280,5 +271,10 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         }
 
         return -1;
+    }
+    public static void main(String[] args) {
+        ShareNoteDataAccess dataAccess = new ShareNoteDataAccess();
+        ShareNote shareNotes = dataAccess.get(2030, "phuongsc268");
+        System.out.println(shareNotes);
     }
 }

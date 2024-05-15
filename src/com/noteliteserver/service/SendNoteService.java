@@ -1,8 +1,9 @@
 package com.noteliteserver.service;
 
-import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;
+import com.noteliteserver.dataaccess.NoteDataAccess;
 import com.noteliteserver.dataaccess.ShareNoteDataAccess;
+import com.noteliteserver.dataaccess.SpecialNoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialShareNoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialUserDataAccess;
 import com.noteliteserver.dataaccess.UserDataAccess;
@@ -19,6 +20,7 @@ public class SendNoteService implements ServerService {
     private ShareNote shareNote;
     private SpecialShareNoteDataAccess shareNoteDataAccess;
     private SpecialUserDataAccess userDataAccess;
+    private SpecialNoteDataAccess noteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -49,15 +51,21 @@ public class SendNoteService implements ServerService {
             resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
             return resultMap;
         }
+        //Kiểm tra xem note đã tồn tại hay chưa
+        noteDataAccess = NoteDataAccess.getInstance();
+        if(noteDataAccess.get(shareNote.getId()).isDefaultValue()) {
+            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
+            return resultMap;
+        }
         //Kiểm tra ShareNote đã tồn tại hay chưa
-        ShareNote check = shareNoteDataAccess.get((Note) shareNote, shareNote.getReceiver());
+        ShareNote check = shareNoteDataAccess.get(shareNote.getId(), shareNote.getReceiver());
         //Nếu tồn tại thì chỉ cân update
         if(!check.isDefaultValue()) {
-            shareNote.setId(check.getId());
+            shareNote.setShareId(check.getShareId());
             int updateRs = shareNoteDataAccess.update(shareNote);
             if(updateRs > 0) {
                 //Lấy ShareNote vừa update
-                shareNote = shareNoteDataAccess.get((Note) shareNote, shareNote.getReceiver());
+                shareNote = shareNoteDataAccess.get(shareNote.getId(), shareNote.getReceiver());
                 //Trả về String biểu diễn ShareNote vừa tạo
                 resultMap.put("ShareNote", shareNote);
                 return resultMap;
@@ -70,7 +78,7 @@ public class SendNoteService implements ServerService {
         int addRs = shareNoteDataAccess.add(shareNote);
         if(addRs > 0) {
             //Lấy ShareNote vừa tạo
-            shareNote = shareNoteDataAccess.get((Note) shareNote, shareNote.getReceiver());
+            shareNote = shareNoteDataAccess.get(shareNote.getId(), shareNote.getReceiver());
             //Trả về ShareNote vừa tạo
             resultMap.put("ShareNote", shareNote);
             return resultMap;

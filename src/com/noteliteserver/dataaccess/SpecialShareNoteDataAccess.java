@@ -21,9 +21,9 @@ public interface SpecialShareNoteDataAccess extends BasicDataAccess<ShareNote> {
     
     /**
      * Lấy một ShareNote
-     * @param note Note được share
+     * @param noteId id của Note được share
      * @param receiver người nhận
      * @return ShareNote duy nhất được lấy
      */
-    ShareNote get(Note note, String receiver); 
+    ShareNote get(int noteId, String receiver); 
 }

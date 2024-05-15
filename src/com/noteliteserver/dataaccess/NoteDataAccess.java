@@ -53,7 +53,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             return notes;
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
                 + "FROM notes nt, users us "
                 + "WHERE nt.USERID = us.ID AND USERNAME = ?";
 
@@ -73,7 +73,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(getFiltersOfNote(note.getId()));
                 //Thêm note vào list
                 notes.add(note);
             }
@@ -119,7 +119,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(getFiltersOfNote(note.getId()));
 
                 return note;
             }
@@ -162,7 +162,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(getFiltersOfNote(note.getId()));
 
                 return note;
             }
@@ -205,7 +205,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setContent(resultSet.getString("CONTENT"));
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
-                note.setFilters(Note.FiltersConverter.convertToList(resultSet.getString("FILTERS")));
+                note.setFilters(getFiltersOfNote(note.getId()));
 
                 return note;
             }
@@ -230,7 +230,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "INSERT INTO NOTES(USERID, HEADER, CONTENT, LASTMODIFIED, " +
-            "LASTMODIFIEDDATE, FILTERS) VALUES(?,?,?,?,?,?)";
+            "LASTMODIFIEDDATE) VALUES(?,?,?,?,?)";
 
         try {
             //Lấy dữ liệu từ bảng khác
@@ -243,9 +243,21 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
-            preparedStatement.setString(6, Note.FiltersConverter.convertToString(note.getFilters()));
-
-            return preparedStatement.executeUpdate();
+            //Kiểm tra có add các thông tin vừa rồi được ko, nếu có thì add filter
+            int rs = preparedStatement.executeUpdate();
+            if(rs > 0 && (!note.getFilters().isEmpty())) {
+                //Lấy id của note vừa tạo
+                int newNoteId = get(note.getAuthor(), note.getHeader()).getId();
+                for(String filter: note.getFilters()) {
+                    int extraRs = addFiltersOfNote(newNoteId, filter);
+                    //Nếu ko thực hiện thêm một filter nào đó được thì xóa note vừa tạo và return
+                    if(extraRs <= 0) {
+                        delete(newNoteId);
+                        return -1;
+                    }
+                }
+            }
+            return rs;
         } catch (SQLException ex) {
             System.err.println(ex);
         }
@@ -267,7 +279,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
         }
         //Câu truy vấn SQL
         String query = "UPDATE NOTES SET USERID = ?, HEADER = ?, CONTENT = ?, LASTMODIFIED = ?, " +
-            "LASTMODIFIEDDATE = ?, FILTERS = ? WHERE ID = ?";
+            "LASTMODIFIEDDATE = ? WHERE ID = ?";
 
         try {
             //Lấy dữ liệu từ bảng khác
@@ -280,8 +292,19 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setString(3, note.getContent());
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
-            preparedStatement.setString(6, Note.FiltersConverter.convertToString(note.getFilters()));
-            preparedStatement.setInt(7, note.getId());
+            preparedStatement.setInt(6, note.getId());
+            //Xóa toàn bộ filter cũ     
+            int extraRs = deleteFiltersOfNote(note.getId());
+            if(extraRs < 0) {
+                return -1;
+            } 
+            //Thêm các filter mới
+            for(String filter: note.getFilters()) {
+                extraRs = addFiltersOfNote(note.getId(), filter);
+                if(extraRs <= 0) {
+                    return -1;
+                }
+            }
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -310,6 +333,73 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
+            //Xóa các filter
+            int extraRs = deleteFiltersOfNote(id);
+            if(extraRs < 0) {
+                return -1;
+            }
+
+            return preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println(ex);
+        }
+
+        return -1;
+    }
+    
+    private List<String> getFiltersOfNote(int id) {
+        List<String> filters = new ArrayList<>();
+        //Kiểm tra null
+        if(connection == null) {
+            return filters;
+        }
+        String query = "SELECT FILTER FROM NOTE_FILTERS WHERE NOTEID = ?";
+        
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            while(resultSet.next()) {
+                filters.add(resultSet.getString("FILTER"));
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex);
+        }
+        return filters;
+    }
+    
+    private int addFiltersOfNote(int noteId, String newFilter) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
+        String query = "INSERT INTO NOTE_FILTERS VALUES(?, ?)";
+        
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, noteId);
+            preparedStatement.setString(2, newFilter);
+            
+            return preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println(ex);
+        }
+        return -1;
+    }
+    
+    private int deleteFiltersOfNote(int noteId) {
+        //Kiểm tra null
+        if(connection == null) {
+            return -1;
+        }
+        //Câu truy vấn SQL
+        String query = "DELETE FROM NOTE_FILTERS WHERE NOTEID = ?";
+
+        try {
+            //Set tham số và thực thi truy vấn
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, noteId);
 
             return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
