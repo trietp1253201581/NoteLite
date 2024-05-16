@@ -1,11 +1,13 @@
 package com.notelitemodel.datatransfer;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * Một transfer cho dữ liệu của các note để chia sẻ giữa các user
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 06/04/2024
  * @version 1.0
  */
@@ -149,7 +151,39 @@ public class ShareNote extends Note {
         shareNote.setShareId(Integer.parseInt(strarr[7]));
         shareNote.setReceiver(strarr[8]);
         shareNote.setShareType(ShareType.valueOf(strarr[9]));
-        
         return shareNote;
+    }
+    
+    /**
+     * Cung cấp các phương thức chuyển từ string sang list các ShareNote
+     */
+    public static class ListOfShareNotesConverter {
+        private static final String SPLIT_TAGS = "<##>";
+        
+        /**
+         * Chuyển 1 List các ShareNote thành String
+         * @param notes list các ShareNote cần chuyển
+         * @return String thu được
+         */
+        public static String convertToString(List<? extends ShareNote> notes) {
+            return ListOfNotesConverter.convertToString(notes);
+        }
+        
+        /**
+         * Chuyển 1 string thành List các ShareNote
+         * @param strShareNotes String miêu tả list
+         * @return List thu được
+         */
+        public static List<ShareNote> convertToList(String strShareNotes) {
+            List<ShareNote> result = new ArrayList<>();
+            if("".equals(strShareNotes)) {
+                return result;
+            }
+            String[] strShareNoteArrays = strShareNotes.split(SPLIT_TAGS);
+            for(String strShareNote: strShareNoteArrays) {
+                result.add(valueOf(strShareNote));
+            }
+            return result;
+        }
     }
 }

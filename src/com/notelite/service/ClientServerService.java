@@ -8,14 +8,13 @@ import com.notelitemodel.datatransfer.User;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Cung cấp các service cần kết nối với server
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 05/04/2024
  * @version 1.0
  */
@@ -37,6 +36,20 @@ public class ClientServerService {
         UNSUPPORTED_SERVICE;
     }
     
+    public static enum ServerService {
+        CheckLogin,
+        UpdateUser,
+        CreateUser,
+        CreateNote,
+        SaveNote,
+        DeleteNote,
+        GetAllNotes,
+        OpenNote,
+        OpenLastNote,
+        SendNote,
+        GetAllReceivedNotes
+    }
+    
     /**
      * Kiểm tra thông tin đăng nhập
      * @param username username được nhập
@@ -46,17 +59,12 @@ public class ClientServerService {
      */
     public User checkLogin(String username, String password) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "CheckLogin";
+        serviceName = ServerService.CheckLogin.toString();
         paramMap = new HashMap<>();
         paramMap.put("username", username);
         paramMap.put("password", password);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Cuối cùng lấy User
         User user = User.valueOf(resultMap.get("User"));
         return user;
@@ -70,16 +78,11 @@ public class ClientServerService {
      */
     public User createUser(User user) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "CreateUser";
+        serviceName = ServerService.CreateUser.toString();
         paramMap = new HashMap<>();
         paramMap.put("user", user);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Cuối cùng lấy User
         User newUser = User.valueOf(resultMap.get("User"));
         return newUser;
@@ -93,16 +96,11 @@ public class ClientServerService {
      */
     public User updateUser(User user) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "UpdateUser";
+        serviceName = ServerService.UpdateUser.toString();
         paramMap = new HashMap<>();
         paramMap.put("user", user);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Cuối cùng lấy User
         User updatedUser = User.valueOf(resultMap.get("User"));
         return updatedUser;
@@ -116,16 +114,11 @@ public class ClientServerService {
      */
     public Note openLastNote(String author) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "OpenLastNote";
+        serviceName = ServerService.OpenLastNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("author", author);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về Note được mở
         Note note = Note.valueOf(resultMap.get("Note"));
         return note;
@@ -139,16 +132,11 @@ public class ClientServerService {
      */
     public Note createNote(Note note) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "CreateNote";
+        serviceName = ServerService.CreateNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("note", note);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về Note được mở
         Note newNote = Note.valueOf(resultMap.get("Note"));
         return newNote;
@@ -163,17 +151,12 @@ public class ClientServerService {
      */
     public Note openNote(String author, String header) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "OpenNote";
+        serviceName = ServerService.OpenNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("author", author);
         paramMap.put("header", header);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về Note được mở
         Note note = Note.valueOf(resultMap.get("Note"));
         return note;
@@ -188,18 +171,13 @@ public class ClientServerService {
      */
     public Note deleteNote(String author, String header) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "DeleteNote";
+        serviceName = ServerService.DeleteNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("author", author);
         paramMap.put("header", header);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
-        //Trả về Note được mở
+        //Trả về Note được xóa
         Note note = Note.valueOf(resultMap.get("Note"));
         return note;
     }
@@ -212,18 +190,12 @@ public class ClientServerService {
      */
     public Note saveNote(Note note) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "SaveNote";
+        serviceName = ServerService.SaveNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("note", note);
         //Gửi yêu cầu và nhận phản hồi
-        //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
-        //Trả về Note được mở
+        //Trả về Note được lưu
         Note savedNote = Note.valueOf(resultMap.get("Note"));
         return savedNote;
     }
@@ -236,24 +208,14 @@ public class ClientServerService {
      */
     public List<Note> getAllNotes(String author) throws ClientServerServiceException {
         //Tạo thông tin cho process
-        serviceName = "GetAllNotes";
+        serviceName = ServerService.GetAllNotes.toString();
         paramMap = new HashMap<>();
         paramMap.put("author", author);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về List các Note của author
         String listNoteString = resultMap.get("ListNote");
-        listNoteString = listNoteString.substring(1, listNoteString.length() - 1);
-        String[] listNoteArray = listNoteString.split(Note.END_TAGS + ", ");//Ký tự ngăn cách giữa các thành phần list
-        List<Note> notes = new ArrayList<>();
-        for(String noteString: listNoteArray) {
-            notes.add(Note.valueOf(noteString));
-        }
+        List<Note> notes = Note.ListOfNotesConverter.convertToList(listNoteString);
         return notes;
     }
     
@@ -265,16 +227,11 @@ public class ClientServerService {
      */
     public ShareNote sendNote(ShareNote shareNote) throws ClientServerServiceException {
         //Tạo thông tin
-        serviceName = "SendNote";
+        serviceName = ServerService.SendNote.toString();
         paramMap = new HashMap<>();
         paramMap.put("shareNote", shareNote);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về ShareNote được mở
         ShareNote newShareNote = ShareNote.valueOf(resultMap.get("ShareNote"));
         return newShareNote;
@@ -288,24 +245,14 @@ public class ClientServerService {
      */
     public List<ShareNote> getAllReceivedNotes(String receiver) throws ClientServerServiceException {
         //Tạo thông tin
-        serviceName = "GetAllReceivedNotes";
+        serviceName = ServerService.GetAllReceivedNotes.toString();
         paramMap = new HashMap<>();
         paramMap.put("receiver", receiver);
         //Gửi yêu cầu và nhận phản hồi
         requestAndGetReply();
-        //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
-        if(resultMap.containsKey("ServerServiceError")) {
-            throw new ClientServerServiceException(
-                    ErrorType.valueOf(resultMap.get("ServerServiceError")));
-        }
         //Trả về List các Note của author
         String listShareNoteString = resultMap.get("ListShareNote");
-        listShareNoteString = listShareNoteString.substring(1, listShareNoteString.length() - 1);
-        String[] listShareNoteArray = listShareNoteString.split(ShareNote.END_TAGS + ", ");//Ký tự ngăn cách giữa các thành phần list
-        List<ShareNote> shareNotes = new ArrayList<>();
-        for(String shareNoteString: listShareNoteArray) {
-            shareNotes.add(ShareNote.valueOf(shareNoteString));
-        }
+        List<ShareNote> shareNotes = ShareNote.ListOfShareNotesConverter.convertToList(listShareNoteString);
         return shareNotes;
     }
     
@@ -314,23 +261,42 @@ public class ClientServerService {
      */
     private void requestAndGetReply() throws ClientServerServiceException {
         try {
-            //Tạo 1 client để truyền dữ liệu
-            String host = "localhost";
-            int port = 2222;
-            client = new Client(InetAddress.getByName(host), port);
             //Truyền message vào client và chạy client
             String message = Command.encode(serviceName, paramMap);
             client.setMessage(message);
             client.runClient();
-            client.closeClient();
             //Lấy reply từ server
             resultMap = new HashMap<>();
             String resultString = client.getResult();
             resultMap = Command.decode(resultString);
+            //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
+            if(resultMap.containsKey("ServerServiceError")) {
+                throw new ClientServerServiceException(
+                        ErrorType.valueOf(resultMap.get("ServerServiceError")));
+            }
         } catch (UnknownHostException ex) {
             throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
         } catch (IOException ex) {
             throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
         }
+    }
+    
+    public void createConnectToServer() throws ClientServerServiceException {
+        //Tạo 1 client để truyền dữ liệu
+        String host = "localhost";
+        int port = 2222;
+        try {
+            client = new Client(InetAddress.getByName(host), port);
+        } catch (UnknownHostException ex) {
+            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+        } catch (IOException ex) {
+            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+        }
+    }
+    
+    public void removeConnectToServer() {
+        if(client != null) {
+            client.closeClient();
+        }    
     }
 }

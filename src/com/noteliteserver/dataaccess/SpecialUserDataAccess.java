@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Cung cấp các phương thức thao tác đặc biệt với dữ liệu User
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

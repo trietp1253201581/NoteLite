@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Định nghĩa các phương thức thao tác đặc biệt với dữ liệu Note
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

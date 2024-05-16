@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Cập nhật User
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

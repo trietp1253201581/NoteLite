@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * Class cung cấp các phương tức dể chuyển Note sang PDF
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

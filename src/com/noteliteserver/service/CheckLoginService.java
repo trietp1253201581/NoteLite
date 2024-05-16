@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Kiểm tra thông tin đăng nhập
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

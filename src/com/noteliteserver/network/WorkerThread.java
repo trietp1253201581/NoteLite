@@ -9,7 +9,7 @@ import java.net.Socket;
 
 /**
  * Cung cấp các phương thức để xử lý luồng truy cập
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

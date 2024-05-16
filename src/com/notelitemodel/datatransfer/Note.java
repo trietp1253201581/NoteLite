@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Một transfer cho dữ liệu của các note
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */
@@ -22,8 +22,11 @@ public class Note {
     private Date lastModifiedDate;
     private List<String> filters;
 
-    public static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
-    public static final String END_TAGS = "<///>";
+    //Ký tự chia giữa hai thuộc tính
+    protected static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
+
+    //Ký tự đánh dấu là kết thúc một Note
+    protected static final String END_TAGS = "<///>";
     
     /**
      * Constructor và cài đặt dữ liệu default cho Note
@@ -193,9 +196,6 @@ public class Note {
 
     /**
      * Chuyển một text hiển thị trên GUI sang một text lưu trong CSDL và ngược lại
-     * @author Lê Minh Triết
-     * @since 30/03/2024
-     * @version 1.0
      */
     public static class ContentConverter {
         private static final String ENDLINE_TAGS = "##endline##";
@@ -235,9 +235,6 @@ public class Note {
 
     /**
      * Cung cấp các phương thức để convert một list các filter thành string và ngược lại
-     * @author Lê Minh Triết
-     * @since 30/03/2024
-     * @version 1.0
      */
     public static class FiltersConverter {
         private static final String SPLIT_TAGS = "##";
@@ -245,7 +242,7 @@ public class Note {
         /**
          * Chuyển list các filter thành String
          * @param filters list các filter
-         * @return String có gồm các filter string, ngăn cách bởi {@code ##}
+         * @return String có gồm các filter string, ngăn cách bởi ký tự đặc biệt
          */
         public static String convertToString(List<String> filters) {
             String result = "";
@@ -258,7 +255,8 @@ public class Note {
 
         /**
          * Chuyển một String thành list các filter
-         * @param strFilter String có dạng gồm nhiều {@code .##}, mỗi thành phần là 1 filter string
+         * @param strFilter String gồm mỗi thành phần là 1 filter string, 
+         * các thành phần ngăn cách bởi dấu chia đặc biệt
          * @return list filter thu được
          */
         public static List<String> convertToList(String strFilter) {
@@ -270,6 +268,43 @@ public class Note {
             List<String> result = new ArrayList<>();
             //Chuyển từ String[] thành list
             result.addAll(Arrays.asList(filters));
+            return result;
+        }
+    }
+    
+    /**
+     * Class cung cấp các phương thức để chuyển 1 list các note thành string và ngược lại
+     */
+    public static class ListOfNotesConverter {
+        private static final String SPLIT_TAGS = "<##>";
+        
+        /**
+         * Chuyển 1 list các note thành string
+         * @param notes list cần chuyển
+         * @return string thu được, gồm các string biểu diễn Note và các dấu ngăn cách
+         */
+        public static String convertToString(List<? extends Note> notes) {
+            String result = "";
+            for(Note note: notes) {
+                result += note.toString() + SPLIT_TAGS;
+            }
+            return result;
+        }
+        
+        /**
+         * Chuyển 1 string thành list các Note
+         * @param strNotes string miêu tả list các Note
+         * @return List các Note thu được
+         */
+        public static List<Note> convertToList(String strNotes) {
+            List<Note> result = new ArrayList<>();
+            if("".equals(strNotes)) {
+                return result;
+            }
+            String[] strNoteArrays = strNotes.split(SPLIT_TAGS);
+            for(String strNote: strNoteArrays) {
+                result.add(valueOf(strNote));
+            }
             return result;
         }
     }

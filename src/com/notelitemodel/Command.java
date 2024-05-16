@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 /**
  * Định nghĩa một đối tượng Command để mã hóa, giải mã phục vụ truyền dữ liệu trong network
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 16/04/2024
  * @version 1.0
  */
@@ -48,7 +48,7 @@ public class Command {
         //Match encode với pattern
         Matcher matcher = pattern.matcher(encodeString);
         matcher.find();
-        //Lấy dữ liệu
+        //Lấy dữ liệu, group 2 tương ứng phần data còn group 1 tương ứng là tên phần thẻ
         String[] datas = matcher.group(2).split(SPLIT_DATA_TAGS);
         Map<String, String> decodeMap = new HashMap<>();
         decodeMap.put("serviceName", matcher.group(1));

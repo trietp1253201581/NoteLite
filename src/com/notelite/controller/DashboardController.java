@@ -1,4 +1,4 @@
-package com.notelite.gui;
+package com.notelite.controller;
 
 import com.notelite.service.ClientServerService;
 import com.notelite.service.ClientServerServiceException;
@@ -48,11 +48,11 @@ import javafx.stage.StageStyle;
 /**
  * FXML Controller class cho Dashboard GUI
  * 
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 07/04/2024
  * @version 1.0
  */
-public class DashboardFXMLController {
+public class DashboardController {
     //Các thuộc tính FXML của form dashboard chung
     @FXML 
     private BorderPane extraServiceScene;
@@ -210,6 +210,7 @@ public class DashboardFXMLController {
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
+            clientServerService.removeConnectToServer();
             System.exit(0);
         }
     }
@@ -419,13 +420,13 @@ public class DashboardFXMLController {
         logoutButton.getScene().getWindow().hide();
         //Load Login GUI
         FXMLLoader fXMLLoader = new FXMLLoader();
-        String loginFXMLPath = "LoginFXML.fxml";
+        String loginFXMLPath = "../view/LoginFXML.fxml";
         fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Mở Login GUI
         Stage stage = new Stage();
         try {
             Scene scene = new Scene(fXMLLoader.load());
-            LoginFXMLController loginFXMLController = fXMLLoader.getController();
+            LoginController loginFXMLController = fXMLLoader.getController();
             loginFXMLController.init();
             
             x = 0;
@@ -876,6 +877,11 @@ public class DashboardFXMLController {
     public void init() {  
         //Mở Client Server Service
         clientServerService = new ClientServerService();
+        try {
+            clientServerService.createConnectToServer();
+        } catch (ClientServerServiceException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+        }
         //Thiết lập các thông tin myUser
         userLabel.setText(myUser.getName());
         //Mở Note thao tác gần nhất
@@ -989,12 +995,12 @@ public class DashboardFXMLController {
         for(int i=0; i < notes.size(); i++) {
             //Load Note Card Layout
             FXMLLoader fXMLLoader = new FXMLLoader();
-            String noteCardFXMLPath = "NoteCardFXML.fxml";
+            String noteCardFXMLPath = "../view/NoteCardView.fxml";
             fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
             try {
                 HBox box = fXMLLoader.load();
                 //Thiết lập dữ liệu cho Note Card
-                NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
+                NoteCardController noteCardFXMLController = fXMLLoader.getController();
                 noteCardFXMLController.setData(notes.get(i));
                 //Xử lý khi nhấn vào note card
                 box.setOnMouseClicked((MouseEvent event) -> {
@@ -1101,12 +1107,12 @@ public class DashboardFXMLController {
         for(int i=0; i < shareNotes.size(); i++) {
             //Load Note Card Layout
             FXMLLoader fXMLLoader = new FXMLLoader();
-            String noteCardFXMLPath = "NoteCardFXML.fxml";
+            String noteCardFXMLPath = "../view/NoteCardView.fxml";
             fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
             try {
                 HBox box = fXMLLoader.load();
                 //Thiết lập dữ liệu cho Note Card
-                NoteCardFXMLController noteCardFXMLController = fXMLLoader.getController();
+                NoteCardController noteCardFXMLController = fXMLLoader.getController();
                 noteCardFXMLController.setData(shareNotes.get(i));
                 //Xử lý khi nhấn vào note card
                 box.setOnMouseClicked((MouseEvent event) -> {
@@ -1205,11 +1211,11 @@ public class DashboardFXMLController {
             for(int i = 0; i < filters.size(); i++) {
                 //Load filter FXML
                 FXMLLoader fXMLLoader = new FXMLLoader();
-                String filterFXMLPath = "FilterFXML.fxml";
+                String filterFXMLPath = "../view/NoteFiltersView.fxml";
                 fXMLLoader.setLocation(getClass().getResource(filterFXMLPath));
                 HBox hbox = fXMLLoader.load();
                 //Thiết lập dữ liệu cho filter
-                FilterFXMLController filterFXMLController = fXMLLoader.getController();
+                NoteFiltersController filterFXMLController = fXMLLoader.getController();
                 filterFXMLController.setData(filters.get(i));
                 filterFXMLController.getRemoveFilterView().setOnMouseClicked(event -> {
                     myNote.getFilters().remove(filterFXMLController.getFilter());

@@ -3,7 +3,7 @@ package com.notelite.service;
 /**
  * Exception cho các clientserver service
  * 
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 17/04/2024
  * @version 1.0
  */

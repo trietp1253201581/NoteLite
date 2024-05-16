@@ -1,4 +1,4 @@
-package com.notelite.gui;
+package com.notelite.controller;
 
 import com.notelite.service.ClientServerService;
 import com.notelite.service.ClientServerServiceException;
@@ -25,11 +25,11 @@ import javafx.stage.StageStyle;
 /**
  * FXML Controller class cho Register GUI
  * 
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 31/03/2024
  * @version 1.0
  */
-public class RegisterFXMLController {
+public class RegisterController {
     //Các thuộc tính FXML    
     @FXML
     private TextField nameField;
@@ -74,6 +74,7 @@ public class RegisterFXMLController {
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
+            clientServerService.removeConnectToServer();
             System.exit(0);
         }
     }
@@ -181,6 +182,11 @@ public class RegisterFXMLController {
     public void init() {
         //Chạy ClientServerService
         clientServerService = new ClientServerService();
+        try {
+            clientServerService.createConnectToServer();
+        } catch (ClientServerServiceException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+        }
         //Ẩn các error label
         errorNameFieldLabel.setVisible(false);
         errorUsernameFieldLabel.setVisible(false);
@@ -196,12 +202,12 @@ public class RegisterFXMLController {
             registerButton.getScene().getWindow().hide();
             //Load Login GUI
             FXMLLoader fXMLLoader = new FXMLLoader();
-            String loginFXMLPath = "LoginFXML.fxml";
+            String loginFXMLPath = "../view/LoginView.fxml";
             fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
             //Chuyển sang GUI Login
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
-            LoginFXMLController loginFXMLController = fXMLLoader.getController();
+            LoginController loginFXMLController = fXMLLoader.getController();
             loginFXMLController.init();
             
             x = 0;

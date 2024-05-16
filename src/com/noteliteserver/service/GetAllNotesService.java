@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Lấy tất cả các note của một user
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */
@@ -43,7 +43,7 @@ public class GetAllNotesService implements ServerService {
         List<Note> notes = noteDataAccess.getAll(author);  
         //Tạo và trả về kết quả     
         if(!notes.isEmpty()) {
-            resultMap.put("ListNote", notes);
+            resultMap.put("ListNote", Note.ListOfNotesConverter.convertToString(notes));
             return resultMap;
         } else {
             resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);

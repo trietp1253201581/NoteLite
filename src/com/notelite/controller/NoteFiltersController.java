@@ -1,4 +1,4 @@
-package com.notelite.gui;
+package com.notelite.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -7,11 +7,11 @@ import javafx.scene.image.ImageView;
 /**
  * FXML Controller class cho filter
  *
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 31/03/2024
  * @version 1.0
  */
-public class FilterFXMLController {
+public class NoteFiltersController {
     //Thuộc tính FXML
     @FXML
     private Label filterLabel;

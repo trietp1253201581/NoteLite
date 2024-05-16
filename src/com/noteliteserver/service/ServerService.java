@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Định nghĩa các phương thức xử lý service bên server
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

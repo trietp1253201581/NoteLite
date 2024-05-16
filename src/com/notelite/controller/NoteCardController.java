@@ -1,4 +1,4 @@
-package com.notelite.gui;
+package com.notelite.controller;
 
 import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;
@@ -8,11 +8,11 @@ import javafx.scene.control.Label;
 /**
  * FXML Controller class cho các Note Card
  *
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 31/03/2024
  * @version 1.0
  */
-public class NoteCardFXMLController {  
+public class NoteCardController {  
     //Các thuộc tính FXML
     @FXML
     private Label header;

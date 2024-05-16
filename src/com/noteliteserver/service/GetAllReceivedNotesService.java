@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Lấy tất cả các ShareNote được share tới user
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 07/04/2024
  * @version 1.0
  */
@@ -43,7 +43,7 @@ public class GetAllReceivedNotesService implements ServerService {
         List<ShareNote> shareNotes = shareNoteDataAccess.getAllReceived(receiver);
         //Trả về kết quả
         if(!shareNotes.isEmpty()) {
-            resultMap.put("ListShareNote", shareNotes);
+            resultMap.put("ListShareNote", ShareNote.ListOfShareNotesConverter.convertToString(shareNotes));
             return resultMap;
         } else {
             resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);

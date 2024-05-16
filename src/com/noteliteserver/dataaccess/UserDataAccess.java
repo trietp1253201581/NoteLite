@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với User
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

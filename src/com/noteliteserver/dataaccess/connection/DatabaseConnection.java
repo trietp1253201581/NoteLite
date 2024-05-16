@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 /**
  * Định nghĩa phương thức để connect tới CSDL
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

@@ -5,7 +5,6 @@ import com.notelitemodel.datatransfer.ShareNote;
 import com.noteliteserver.dataaccess.connection.DatabaseConnection;
 import com.noteliteserver.dataaccess.connection.MySQLDatabaseConnection;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ import java.util.List;
 
 /**
  * Triển khai các phương thức thao tác dữ liệu với ShareNote
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 06/04/2024
  * @version 1.0
  */

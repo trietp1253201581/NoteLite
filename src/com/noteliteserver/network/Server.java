@@ -2,7 +2,7 @@ package com.noteliteserver.network;
 
 /**
  * Định nghĩa các phương thức điều khiển Server
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

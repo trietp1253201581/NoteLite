@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Send một Note tới user khác
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 07/04/2024
  * @version 1.0
  */

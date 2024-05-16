@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * Xử lý request được nhận
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

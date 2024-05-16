@@ -4,7 +4,7 @@ import java.util.Stack;
 
 /**
  * Cung cấp các phương thức để undo, redo văn bản
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */

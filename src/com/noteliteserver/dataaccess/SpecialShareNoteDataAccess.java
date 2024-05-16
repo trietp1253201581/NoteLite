@@ -1,12 +1,11 @@
 package com.noteliteserver.dataaccess;
 
-import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;
 import java.util.List;
 
 /**
  * Định nghĩa các phương thức thao tác đặc biệt với dữ liệu ShareNote
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 06/04/2024
  * @version 1.0
  */

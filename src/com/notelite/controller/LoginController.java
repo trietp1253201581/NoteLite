@@ -1,4 +1,4 @@
-package com.notelite.gui;
+package com.notelite.controller;
 
 import com.notelite.service.ClientServerService;
 import com.notelite.service.ClientServerServiceException;
@@ -22,11 +22,11 @@ import javafx.stage.StageStyle;
 /**
  * FXML Controller class cho Login GUI
  * 
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 31/03/2024
  * @version 1.0
  */
-public class LoginFXMLController {   
+public class LoginController {   
     //Các thuộc tính FXML
     @FXML
     private Button loginButton;
@@ -47,6 +47,7 @@ public class LoginFXMLController {
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
+            clientServerService.removeConnectToServer();
             System.exit(0);
         }
     }
@@ -94,6 +95,11 @@ public class LoginFXMLController {
      */
     public void init() {
         clientServerService = new ClientServerService();
+        try {
+            clientServerService.createConnectToServer();
+        } catch (ClientServerServiceException ex) {
+            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+        }
     }
 
     private void openDashBoard(User user) {
@@ -102,13 +108,13 @@ public class LoginFXMLController {
             loginButton.getScene().getWindow().hide();
             //Load GUI Dashboard
             FXMLLoader fXMLLoader = new FXMLLoader();
-            String dashboardFXMLPath = "DashboardFXML.fxml";
+            String dashboardFXMLPath = "../view/DashboardView.fxml";
             fXMLLoader.setLocation(getClass().getResource(dashboardFXMLPath));
             //Chuyển sang GUI Dashboard
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
             //Thiết lập dữ liệu user cho Dashboard
-            DashboardFXMLController dashboardFXMLController = fXMLLoader.getController();
+            DashboardController dashboardFXMLController = fXMLLoader.getController();
             dashboardFXMLController.setMyUser(user);
             //Hiển thị Dashboard
             dashboardFXMLController.init();
@@ -138,13 +144,13 @@ public class LoginFXMLController {
             registerLabel.getScene().getWindow().hide();
             //Load Register GUI
             FXMLLoader fXMLLoader = new FXMLLoader();
-            String registerFXMLPath = "RegisterFXML.fxml";
+            String registerFXMLPath = "../view/RegisterView.fxml";
             fXMLLoader.setLocation(getClass().getResource(registerFXMLPath));
             //Mở Register GUI
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
             //Khởi tạo và chạy
-            RegisterFXMLController registerFXMLController = fXMLLoader.getController();
+            RegisterController registerFXMLController = fXMLLoader.getController();
             registerFXMLController.init();
             
             x = 0;

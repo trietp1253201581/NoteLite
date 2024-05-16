@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="505.0" styleClass="hbox-form" stylesheets="@anotherStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.notelite.gui.NoteCardFXMLController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="505.0" styleClass="hbox-form" stylesheets="@anotherStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.notelite.controller.NoteCardController">
    <children>
       <ImageView fitHeight="65.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
          <image>

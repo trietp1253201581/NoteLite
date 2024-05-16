@@ -7,7 +7,7 @@ import java.io.IOException;
 
 /**
  * Class để chạy server phục vụ user
- * @author Lê Minh Triết
+ * @author Nhóm 23
  * @since 30/03/2024
  * @version 1.0
  */
