@@ -37,16 +37,12 @@ public class UserDataAccess implements SpecialUserDataAccess {
         return SingletonHelper.INSTANCE;
     }
 
-    /**
-     * Lấy tất cả các user
-     * @return một list chứa tất cả các user
-     */
     @Override
-    public List<User> getAll() {
+    public List<User> getAll() throws DataAccessException {
         List<User> users = new ArrayList<>();
         //Kiểm tra connection có phải null không
         if(connection == null) {
-            return users;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS";
@@ -66,26 +62,25 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
                 user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
-                
-                users.add(user);
-            }
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        }
 
-        return users;
+                users.add(user);
+            }    
+            //Nếu users rỗng thì ném ngoại lệ là danh sách trống
+            if(users.isEmpty()) {
+                throw new NotExistDataException("Empty users list!");
+            }   
+            return users;
+        } catch (SQLException ex) {
+            throw new FailedExecuteException();
+        }
     }
-    
-    /**
-     * Lấy user theo id
-     * @param id id của user cần lấy
-     * @return (1) user lấy được nếu id tồn tại, (2) giá trị default nếu id không tồn tại
-     */
+
     @Override
-    public User get(int id) {
+    public User get(int id) throws DataAccessException {
+        User user = new User();
         //Kiểm tra null 
         if(connection == null) {
-            return new User();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS WHERE ID = ?";
@@ -96,8 +91,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) {
-                User user = new User();
+            while (resultSet.next()) {              
                 //Set dữ liệu từ hàng vào user
                 user.setId(resultSet.getInt("ID"));
                 user.setName(resultSet.getString("NAME"));
@@ -106,26 +100,23 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
                 user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
-               
-                return user;
             }
+            //Nếu ko tồn tại thì ném ra ngoại lệ
+            if(user.isDefaultValue()) {
+                throw new NotExistDataException("User is not exist!");
+            }
+            return user;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về giá trị default nếu không tìm được id
-        return new User();
     }
 
-    /**
-     * Lấy user bằng username
-     * @param username username của user cần lấy
-     * @return (1) user lấy được nếu username tồn tại, (2) giá trị default nếu username không tồn tại
-     */
     @Override
-    public User get(String username) {
+    public User get(String username) throws DataAccessException {
+        User user = new User();
         //Kiểm tra null
         if(connection == null) {
-            return new User();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS WHERE USERNAME = ?";
@@ -137,7 +128,6 @@ public class UserDataAccess implements SpecialUserDataAccess {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                User user = new User();
                 //Set dữ liệu từ hàng nhận được
                 user.setId(resultSet.getInt("ID"));
                 user.setName(resultSet.getString("NAME"));
@@ -146,27 +136,22 @@ public class UserDataAccess implements SpecialUserDataAccess {
                 user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
                 user.setSchool(resultSet.getString("SCHOOL"));
                 user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
-                
-                return user;
             }
+            //Nếu ko tồn tại thì ném ra ngoại lệ
+            if(user.isDefaultValue()) {
+                throw new NotExistDataException("User is not exist!");
+            }
+            return user;
         } catch (SQLException ex) {
-            System.err.println(ex);
-        }
-        //Trả về default User nếu không tìm được
-        return new User();
+            throw new FailedExecuteException();
+        }       
     }
 
-    /**
-     * Thêm user vào CSDL
-     * @param user user cần thêm vào CSDL
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
     @Override
-    public int add(User user) {
+    public void add(User user) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "INSERT INTO USERS(NAME, USERNAME, PASSWORD, BIRTHDAY, SCHOOL, GENDER) "
@@ -182,25 +167,19 @@ public class UserDataAccess implements SpecialUserDataAccess {
             preparedStatement.setString(5, user.getSchool());
             preparedStatement.setString(6, user.getGender().toString());
             
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 
-    /**
-     * Chỉnh sửa một user trong CSDL
-     * @param user user cần chỉnh sửa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
     @Override
-    public int update(User user) {
+    public void update(User user) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "UPDATE USERS SET NAME = ?, USERNAME = ?, PASSWORD = ?, "
@@ -217,25 +196,19 @@ public class UserDataAccess implements SpecialUserDataAccess {
             preparedStatement.setString(6, user.getGender().toString());
             preparedStatement.setInt(7, user.getId());
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 
-    /**
-     * Xóa một user ra khỏi CSDL
-     * @param id id của user cần xóa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
     @Override
-    public int delete(int id) {
+    public void delete(int id) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "DELETE FROM USERS WHERE ID = ?";
@@ -245,11 +218,11 @@ public class UserDataAccess implements SpecialUserDataAccess {
             //Set các tham số cho truy vấn
             preparedStatement.setInt(1, id);
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 }

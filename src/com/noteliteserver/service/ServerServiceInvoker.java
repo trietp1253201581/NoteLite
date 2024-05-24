@@ -49,7 +49,7 @@ public class ServerServiceInvoker {
                 return new GetAllReceivedNotesService();
             }
             default -> //Thông báo service không tồn tại
-                throw new IllegalArgumentException("This service is unsupported");
+                throw new IllegalArgumentException("This service is unsupported!");
         }
     }   
 }

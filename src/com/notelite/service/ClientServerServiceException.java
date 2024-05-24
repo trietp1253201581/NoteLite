@@ -8,14 +8,7 @@ package com.notelite.service;
  * @version 1.0
  */
 public class ClientServerServiceException extends Exception {
-    private final ClientServerService.ErrorType errorType;
-    
-    public ClientServerServiceException(ClientServerService.ErrorType errorType) {
-        super("ClientServerServiceError");
-        this.errorType = errorType;
-    }
-    
-    public ClientServerService.ErrorType getErrorType() {
-        return errorType;
+    public ClientServerServiceException(String message) {
+        super(message);
     }
 }

@@ -1,6 +1,8 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.User;
+import com.noteliteserver.dataaccess.DataAccessException;
+import com.noteliteserver.dataaccess.FailedExecuteException;
 import com.noteliteserver.dataaccess.SpecialUserDataAccess;
 import com.noteliteserver.dataaccess.UserDataAccess;
 import java.util.HashMap;
@@ -29,10 +31,7 @@ public class CreateUserService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi, 
      * (1) {@link User} mới nếu tạo được,
-     * (2) {@link ServerService.ErrorType}.{@code ALREADY_EXISTS}
-     * nếu tài khoản đã tồn tại,
-     * (3) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
-     * nếu không thực hiện lệnh tạo được
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() {       
@@ -41,22 +40,27 @@ public class CreateUserService implements ServerService {
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra xem tài khoản đã tồn tại chưa
-        User check = userDataAccess.get(user.getUsername());
-        if(!check.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.ALREADY_EXISTS);
+        try {
+            userDataAccess.get(user.getUsername());
+            resultMap.put("ServerServiceError", "This user is already exist!");
             return resultMap;
+        } catch (DataAccessException ex) {
+            if(ex instanceof FailedExecuteException) {
+                resultMap.put("ServerServiceError", ex.getMessage());
+                return resultMap;
+            }
         }
         //Thực hiện lệnh thêm user
-        int rs = userDataAccess.add(user);
-        if(rs > 0) {
+        try {
+            userDataAccess.add(user);
             //Lấy User mới tạo được
             User newUser = userDataAccess.get(user.getUsername());
             //Trả về user
             resultMap.put("User", newUser);
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
-        }        
+        }    
     }    
 }

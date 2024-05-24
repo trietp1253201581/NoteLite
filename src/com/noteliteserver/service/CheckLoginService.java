@@ -1,6 +1,7 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.User;
+import com.noteliteserver.dataaccess.DataAccessException;
 import com.noteliteserver.dataaccess.SpecialUserDataAccess;
 import com.noteliteserver.dataaccess.UserDataAccess;
 import java.util.HashMap;
@@ -32,30 +33,26 @@ public class CheckLoginService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map với các value
      * (1) Một {@link User} nếu tài khoản tồn tại và mật khẩu đúng,
-     * (2) {@link ServerService.ErrorType}.{@code FALSE_INFORMATION} 
-     * nếu tài khoản tồn tại nhưng mật khẩu sai,
-     * (3) {@link ServerService.ErrorType}.{@code NOT_EXISTS} 
-     * nếu tài khoản không tồn tại
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() { 
         //Tạo một đối tượng để xử lý dữ liệu với Database
         userDataAccess = UserDataAccess.getInstance();   
-        //Lấy user có username cho trước
-        User user = userDataAccess.get(username);
         //Tạo một Map để miêu tả kết quả
         Map<String, Object> resultMap = new HashMap<>();
-        //Kiểm tra các điều kiện để thêm tương ứng vào resultMap
-        if(user.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
+        //Lấy user có username cho trước
+        try {
+            User user = userDataAccess.get(username);
+            if(user.getPassword().equals(password)) {
+                resultMap.put("User", user);
+            } else {
+                resultMap.put("ServerServiceError", "The password is false!");
+            }
             return resultMap;
-        }
-        if(user.getPassword().equals(password)) {
-            resultMap.put("User", user);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.FALSE_INFORMATION);
-            return resultMap;
-        }
+        }       
     }    
 }

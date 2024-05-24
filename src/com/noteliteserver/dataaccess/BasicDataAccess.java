@@ -11,31 +11,30 @@ public interface BasicDataAccess<T> {
     /**
      * Lấy object theo id
      * @param id id của object cần lấy
-     * @return (1) object lấy được nếu id tồn tại, (2) giá trị default nếu id không tồn tại
+     * @return object lấy được
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc không tồn tại object có id này
      */
-    T get(int id);
+    T get(int id) throws DataAccessException;
     
     /**
      * Thêm object element vào CSDL
      * @param element object cần thêm vào CSDL
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
      */
-    int add(T element);
+    void add(T element) throws DataAccessException;
     
     /**
      * Chỉnh sửa một object element trong CSDL
      * @param element object cần chỉnh sửa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
      */
-    int update(T element);
+    void update(T element) throws DataAccessException;
     
     /**
      * Xóa một object element ra khỏi CSDL
      * @param id id của object cần xóa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
      */
-    int delete(int id);
+    void delete(int id) throws DataAccessException;
 }

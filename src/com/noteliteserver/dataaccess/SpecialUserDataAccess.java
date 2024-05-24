@@ -14,13 +14,17 @@ public interface SpecialUserDataAccess extends BasicDataAccess<User> {
     /**
      * Lấy user bằng username
      * @param username username của user cần lấy
-     * @return (1) user lấy được nếu username tồn tại, (2) giá trị default nếu username không tồn tại
+     * @return object lấy được
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc không tồn tại User có username này
      */
-    User get(String username);
+    User get(String username) throws DataAccessException;
     
     /**
      * Lấy tất cả các user
      * @return một list chứa tất cả các user
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc đang chưa có user này
      */
-    List<User> getAll();
+    List<User> getAll() throws DataAccessException;
 }

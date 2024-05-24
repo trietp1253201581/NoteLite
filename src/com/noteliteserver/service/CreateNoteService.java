@@ -1,6 +1,8 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.Note;
+import com.noteliteserver.dataaccess.DataAccessException;
+import com.noteliteserver.dataaccess.FailedExecuteException;
 import com.noteliteserver.dataaccess.NoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialNoteDataAccess;
 import java.util.HashMap;
@@ -29,10 +31,7 @@ public class CreateNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value: 
      * (1) {@link Note} mới nếu tạo được,
-     * (2) {@link ServerService.ErrorType}.{@code ALREADY_EXISTS}
-     * nếu note đã tồn tại,
-     * (3) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
-     * nếu không thực hiện lệnh tạo được
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute(){        
@@ -41,22 +40,27 @@ public class CreateNoteService implements ServerService {
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note đã tồn tại hay chưa
-        Note check = noteDataAccess.get(note.getAuthor(), note.getHeader());       
-        if(!check.isDefaultValue()) {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.ALREADY_EXISTS);
+        try {
+            noteDataAccess.get(note.getAuthor(), note.getHeader()); 
+            resultMap.put("ServerServiceError", "This note is already exist!");
             return resultMap;
+        } catch (DataAccessException ex) {
+            if(ex instanceof FailedExecuteException) {
+                resultMap.put("ServerServiceError", ex.getMessage());
+                return resultMap;
+            }
         }
         //Thực hiện thêm note
-        int rs = noteDataAccess.add(note);        
-        if(rs > 0) {
+        try {
+            noteDataAccess.add(note);
             //Lấy Note vừa mới tạo
             Note newNote = noteDataAccess.get(note.getAuthor(), note.getHeader());
             //Trả về Note mới
             resultMap.put("Note", newNote);
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
-        }       
+        }    
     }    
 }

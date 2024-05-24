@@ -28,7 +28,6 @@ public class Client {
      */
     public Client(InetAddress host, int portNumber) throws IOException {
         this.clientSocket = new Socket(host, portNumber);
-        //Tạo các đối tượng để nhận và truyền dữ liệu qua Stream
         dataInputStream = new DataInputStream(clientSocket.getInputStream());
         dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
     }
@@ -68,6 +67,9 @@ public class Client {
      * @throws IOException
      */
     public void runClient() throws IOException {
+        //Tạo các đối tượng để nhận và truyền dữ liệu qua Stream
+        dataInputStream = new DataInputStream(clientSocket.getInputStream());
+        dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
         //Gửi dữ liệu về Server
         dataOutputStream.writeUTF(message);
         dataOutputStream.flush();

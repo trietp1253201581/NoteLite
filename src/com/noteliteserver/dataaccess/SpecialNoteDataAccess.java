@@ -15,22 +15,27 @@ public interface SpecialNoteDataAccess extends BasicDataAccess<Note> {
      * Lấy note của user với header cho trước
      * @param author user sở hữu note
      * @param header header của note
-     * @return (1) note lấy được nếu user này có note mang header đã cho, 
-     * (2) giá trị default của note nếu user không có note mang header này  
+     * @return note lấy được 
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc author đã cho không có note chứa header này
      */
-    Note get(String author, String header);
+    Note get(String author, String header) throws DataAccessException;
     
     /**
      * Lấy note được chỉnh sửa mới nhật của user
      * @param author user sở hữu note
-     * @return (1) note được chỉnh sửa mói nhất, (2) default note nếu user chưa có note nào
+     * @return note được chỉnh sửa mới nhất bởi author
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc author đã cho không có note nào
      */
-    Note getLast(String author);
+    Note getLast(String author) throws DataAccessException;
     
     /**
      * Lấy tất cả các note của một user
      * @param author user cần lấy note
      * @return một list chứa các note của user
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc author đã cho không có note nào
      */
-    List<Note> getAll(String author);
+    List<Note> getAll(String author) throws DataAccessException;
 }

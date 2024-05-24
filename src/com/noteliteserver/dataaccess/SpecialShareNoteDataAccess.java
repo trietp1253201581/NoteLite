@@ -15,14 +15,18 @@ public interface SpecialShareNoteDataAccess extends BasicDataAccess<ShareNote> {
      * Lấy tất cả các ShareNote được gửi tới người nhận
      * @param receiver username của người nhận
      * @return Một list chứa các ShareNote gửi tới người nhận
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc receiver không nhận được sharenote nào
      */
-    List<ShareNote> getAllReceived(String receiver);
+    List<ShareNote> getAllReceived(String receiver) throws DataAccessException;
     
     /**
      * Lấy một ShareNote
      * @param noteId id của Note được share
      * @param receiver người nhận
      * @return ShareNote duy nhất được lấy
+     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
+     * hoặc receiver không nhận được note có id là noteId
      */
-    ShareNote get(int noteId, String receiver); 
+    ShareNote get(int noteId, String receiver) throws DataAccessException; 
 }

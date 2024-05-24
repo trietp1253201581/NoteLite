@@ -40,17 +40,12 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
         return SingletonHelper.INSTANCE;
     }
     
-    /**
-     * Lấy tất cả các note của một user
-     * @param author user cần lấy note
-     * @return một list chứa các note của user
-     */
     @Override
-    public List<Note> getAll(String author) {
+    public List<Note> getAll(String author) throws DataAccessException {
         List<Note> notes = new ArrayList<>();
         //Kiểm tra null
         if(connection == null) {
-            return notes;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
@@ -77,28 +72,21 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 //Thêm note vào list
                 notes.add(note);
             }
+            return notes;
         } catch (SQLException ex) {
-            System.err.println(ex);
-        }
-
-        return notes;
+            throw new FailedExecuteException();
+        }       
     }
 
-    /**
-     * Lấy note của user với header cho trước
-     * @param author user sở hữu note
-     * @param header header của note
-     * @return (1) note lấy được nếu user này có note mang header đã cho, 
-     * (2) giá trị default của note nếu user không có note mang header này  
-     */
     @Override
-    public Note get(String author, String header) {
+    public Note get(String author, String header) throws DataAccessException {
+        Note note = new Note();
         //Kiểm tra null
         if(connection == null) {
-            return new Note();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
                 + "FROM notes nt, users us "
                 + "WHERE nt.USERID = us.ID AND USERNAME = ? AND HEADER = ?";
 
@@ -111,7 +99,6 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Note note = new Note();
                 //Set dữ liệu từ kết quả vào note
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
@@ -120,29 +107,25 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(getFiltersOfNote(note.getId()));
-
-                return note;
             }
+            if(note.isDefaultValue()) {
+                throw new NotExistDataException("This note is not exist!");
+            }
+            return note;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về giá trị default nếu không lấy được
-        return new Note();
     }
 
-    /**
-     * Lấy note được chỉnh sửa mới nhật của user
-     * @param author user sở hữu note
-     * @return (1) note được chỉnh sửa mói nhất, (2) default note nếu user chưa có note nào
-     */
     @Override
-    public Note getLast(String author) {
+    public Note getLast(String author) throws DataAccessException {
+        Note note = new Note();
         //Kiểm tra null
         if(connection == null) {
-            return new Note();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
                 + "FROM notes nt, users us "
                 + "WHERE nt.USERID = us.ID AND USERNAME = ? AND LASTMODIFIED = 1";
 
@@ -154,7 +137,6 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Note note = new Note();
                 //Set dữ liệu nhận được vào note
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
@@ -163,29 +145,25 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(getFiltersOfNote(note.getId()));
-
-                return note;
             }
+            if(note.isDefaultValue()) {
+                throw new NotExistDataException("This note is not exist!");
+            }
+            return note;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về default note nếu không tìm được
-        return new Note();
     }
 
-    /**
-     * Lấy note với id cho trước
-     * @param id id của note cần lấy 
-     * @return (1) note có id đã cho, (2) default note nếu id này không tồn tại
-     */
     @Override
-    public Note get(int id) {
+    public Note get(int id) throws DataAccessException {
+        Note note = new Note();
         //Kiểm tra null
         if(connection == null) {
-            return new Note();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE, FILTERS "
+        String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
                 + "FROM notes nt, users us "
                 + "WHERE nt.USERID = us.ID AND nt.ID = ?";
 
@@ -197,7 +175,6 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Note note = new Note();
                 //Set dữ liệu cho note
                 note.setId(resultSet.getInt("ID"));
                 note.setAuthor(resultSet.getString("AUTHOR"));
@@ -206,27 +183,21 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 note.setLastModified(resultSet.getInt("LASTMODIFIED"));
                 note.setLastModifiedDate(Date.valueOf(resultSet.getString("LASTMODIFIEDDATE")));
                 note.setFilters(getFiltersOfNote(note.getId()));
-
-                return note;
             }
+            if(note.isDefaultValue()) {
+                throw new NotExistDataException("This note is not exist!");
+            }
+            return note;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về default note nếu không tìm được
-        return new Note();
     }
-    
-    /**
-     * Thêm note vào CSDL
-     * @param note note cần thêm vào CSDL
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
+
     @Override
-    public int add(Note note) {
+    public void add(Note note) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "INSERT INTO NOTES(USERID, HEADER, CONTENT, LASTMODIFIED, " +
@@ -244,38 +215,33 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setInt(4, note.getLastModified());
             preparedStatement.setDate(5, note.getLastModifiedDate());
             //Kiểm tra có add các thông tin vừa rồi được ko, nếu có thì add filter
-            int rs = preparedStatement.executeUpdate();
-            if(rs > 0 && (!note.getFilters().isEmpty())) {
+            int addRs = preparedStatement.executeUpdate();
+            if(addRs > 0 && (!note.getFilters().isEmpty())) {
                 //Lấy id của note vừa tạo
                 int newNoteId = get(note.getAuthor(), note.getHeader()).getId();
                 for(String filter: note.getFilters()) {
-                    int extraRs = addFiltersOfNote(newNoteId, filter);
-                    //Nếu ko thực hiện thêm một filter nào đó được thì xóa note vừa tạo và return
-                    if(extraRs <= 0) {
+                    try {
+                        addFiltersOfNote(newNoteId, filter);
+                    } catch (DataAccessException ex) {
+                        deleteFiltersOfNote(newNoteId);
                         delete(newNoteId);
-                        return -1;
+                        throw new FailedExecuteException();
                     }
-                }
+                }             
             }
-            return rs;
+            if(addRs <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 
-    /**
-     * Sửa note trong CSDL
-     * @param note note cần chỉnh sửa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
     @Override
-    public int update(Note note) {
+    public void update(Note note) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "UPDATE NOTES SET USERID = ?, HEADER = ?, CONTENT = ?, LASTMODIFIED = ?, " +
@@ -294,37 +260,25 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             preparedStatement.setDate(5, note.getLastModifiedDate());
             preparedStatement.setInt(6, note.getId());
             //Xóa toàn bộ filter cũ     
-            int extraRs = deleteFiltersOfNote(note.getId());
-            if(extraRs < 0) {
-                return -1;
-            } 
+            deleteFiltersOfNote(note.getId());
             //Thêm các filter mới
             for(String filter: note.getFilters()) {
-                extraRs = addFiltersOfNote(note.getId(), filter);
-                if(extraRs <= 0) {
-                    return -1;
-                }
+                addFiltersOfNote(note.getId(), filter);
             }
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 
-    /**
-     * Xóa một note ra khỏi CSDL
-     * @param id id của note cần xóa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
     @Override
-    public int delete(int id) {
+    public void delete(int id) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "DELETE FROM NOTES WHERE ID = ?";
@@ -334,24 +288,21 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
             //Xóa các filter
-            int extraRs = deleteFiltersOfNote(id);
-            if(extraRs < 0) {
-                return -1;
+            deleteFiltersOfNote(id);
+            
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
             }
-
-            return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
     
-    private List<String> getFiltersOfNote(int id) {
+    private List<String> getFiltersOfNote(int id) throws DataAccessException {
         List<String> filters = new ArrayList<>();
         //Kiểm tra null
         if(connection == null) {
-            return filters;
+            throw new FailedExecuteException();
         }
         String query = "SELECT FILTER FROM NOTE_FILTERS WHERE NOTEID = ?";
         
@@ -364,15 +315,15 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
                 filters.add(resultSet.getString("FILTER"));
             }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
         return filters;
     }
     
-    private int addFiltersOfNote(int noteId, String newFilter) {
+    private void addFiltersOfNote(int noteId, String newFilter) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         String query = "INSERT INTO NOTE_FILTERS VALUES(?, ?)";
         
@@ -380,18 +331,22 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, noteId);
             preparedStatement.setString(2, newFilter);
+            if(newFilter.equals("ilo")) {
+                throw new FailedExecuteException();
+            }
             
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        return -1;
     }
     
-    private int deleteFiltersOfNote(int noteId) {
+    private void deleteFiltersOfNote(int noteId) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "DELETE FROM NOTE_FILTERS WHERE NOTEID = ?";
@@ -401,11 +356,11 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, noteId);
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() < 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
 }

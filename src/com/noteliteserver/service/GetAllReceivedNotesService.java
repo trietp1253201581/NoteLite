@@ -1,6 +1,7 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.ShareNote;
+import com.noteliteserver.dataaccess.DataAccessException;
 import com.noteliteserver.dataaccess.ShareNoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialShareNoteDataAccess;
 import java.util.HashMap;
@@ -29,9 +30,8 @@ public class GetAllReceivedNotesService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
-     * (1) List các ShareNote của user này, 
-     * (2) String biểu diễn {@link ServerService.ErrorType}.{@code NOT_EXISTS}
-     * nếu user này chưa có note nào được share bởi user khác
+     * (1) List các {@link ShareNote} của User này, 
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() {
@@ -39,14 +39,13 @@ public class GetAllReceivedNotesService implements ServerService {
         shareNoteDataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
-        //Lấy các note được share tới user này
-        List<ShareNote> shareNotes = shareNoteDataAccess.getAllReceived(receiver);
-        //Trả về kết quả
-        if(!shareNotes.isEmpty()) {
+        try {
+            //Lấy các note được share tới user này
+            List<ShareNote> shareNotes = shareNoteDataAccess.getAllReceived(receiver);
             resultMap.put("ListShareNote", ShareNote.ListOfShareNotesConverter.convertToString(shareNotes));
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
         }
     }

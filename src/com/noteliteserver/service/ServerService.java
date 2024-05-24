@@ -9,17 +9,6 @@ import java.util.Map;
  * @version 1.0
  */
 public interface ServerService {   
-
-    /**
-     * Các lỗi có thể có của Server Service
-     */
-    enum ErrorType {
-        ALREADY_EXISTS,
-        NOT_EXISTS,
-        CAN_NOT_EXECUTE, 
-        FALSE_INFORMATION,
-        UNSUPPORTED_SERVICE;
-    }
     
     /**
      * Set data cho các service qua một String

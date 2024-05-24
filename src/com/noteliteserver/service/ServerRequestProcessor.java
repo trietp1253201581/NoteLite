@@ -39,9 +39,9 @@ public class ServerRequestProcessor {
             serverService.setData(dataMap);
             //Thực thi service và lấy kết quả
             resultMap = serverService.execute();
-        } catch (IllegalArgumentException illegalArgumentException) {
+        } catch (IllegalArgumentException ex) {
             resultMap = new HashMap<>();
-            resultMap.put("ServerServiceError", ServerService.ErrorType.UNSUPPORTED_SERVICE);
+            resultMap.put("ServerServiceError", ex.getMessage());
         }   
         return Command.encode("Result", resultMap);
     }

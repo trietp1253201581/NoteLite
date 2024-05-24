@@ -34,7 +34,7 @@ public class NoteLite extends Application {
             //Chuyển sang GUI Login
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
-            loginFXMLController.init();
+            loginFXMLController.initAndGetConnect();
             //Thiết lập các hiệu ứng di chuyển
             x = 0;
             y = 0;

@@ -81,7 +81,7 @@ public class RegisterController {
     
     @FXML
     void handleRegisterButton(ActionEvent event) {
-        init();
+        initScene();
         //Thiết lập các thuộc tính cho new user
         User newUser = new User();
         //Láy thông tin name
@@ -153,21 +153,7 @@ public class RegisterController {
                 openLogin();
             }          
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't create user");
-                }
-                case ClientServerService.ErrorType.ALREADY_EXISTS -> {
-                    showAlert(Alert.AlertType.ERROR, "Exist user");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
 
@@ -179,7 +165,7 @@ public class RegisterController {
     /**
      * Khởi tạo
      */
-    public void init() {
+    public void initAndGetConnect() {
         //Chạy ClientServerService
         clientServerService = new ClientServerService();
         try {
@@ -187,6 +173,10 @@ public class RegisterController {
         } catch (ClientServerServiceException ex) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         }
+        initScene();
+    }
+    
+    private void initScene() {
         //Ẩn các error label
         errorNameFieldLabel.setVisible(false);
         errorUsernameFieldLabel.setVisible(false);
@@ -198,6 +188,8 @@ public class RegisterController {
     
     private void openLogin() {
         try {
+            //Xóa connect
+            clientServerService.removeConnectToServer();
             //Ẩn Register GUI
             registerButton.getScene().getWindow().hide();
             //Load Login GUI
@@ -208,7 +200,7 @@ public class RegisterController {
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
-            loginFXMLController.init();
+            loginFXMLController.initAndGetConnect();
             
             x = 0;
             y = 0;

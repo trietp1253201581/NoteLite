@@ -1,6 +1,8 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.Note;
+import com.noteliteserver.dataaccess.DataAccessException;
+import com.noteliteserver.dataaccess.NotExistDataException;
 import com.noteliteserver.dataaccess.NoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialNoteDataAccess;
 import java.util.HashMap;
@@ -28,9 +30,8 @@ public class SaveNoteService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
-     * (1) Note cần lưu nếu lưu được,
-     * (2) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
-     * nếu không thực hiện lệnh lưu được
+     * (1) {@link Note} cần lưu nếu lưu được,
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() {  
@@ -39,34 +40,36 @@ public class SaveNoteService implements ServerService {
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Nếu chưa có note thì tạo note mới và trả về
-        if(noteDataAccess.get(note.getId()).isDefaultValue()) {
-            //Tạo Note mới
-            int rs = noteDataAccess.add(note);    
-            //Trả về
-            if(rs > 0) {
-                resultMap.put("Note", note);
-                return resultMap;
-            } else {
-                resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
-                return resultMap;
+        try {
+            noteDataAccess.get(note.getId());
+        } catch (DataAccessException ex) {
+            if(ex instanceof NotExistDataException) {
+                //Thêm note mới và trả về
+                try {
+                    noteDataAccess.add(note);
+                    resultMap.put("Note", note);
+                    return resultMap;
+                } catch (DataAccessException ex1) {
+                    resultMap.put("ServerServiceError", ex1.getMessage());
+                    return resultMap;
+                }
             }
+            resultMap.put("ServerServiceError", ex.getMessage());
+            return resultMap;
         }
-        //Thiết lập note cần lưu là note được chỉnh sửa gần nhất
-        Note lastNote = noteDataAccess.getLast(note.getAuthor());
-        lastNote.setLastModified(0);
-        noteDataAccess.update(lastNote);
+        try {
+            //Thiết lập note cần lưu là note được chỉnh sửa gần nhất
+            Note lastNote = noteDataAccess.getLast(note.getAuthor());
+            lastNote.setLastModified(0);
+            noteDataAccess.update(lastNote);
+            noteDataAccess.update(note);
+            //Trả về Note vừa được lưu
+            resultMap.put("Note", note);
+            return resultMap;
         //Update note mới
-        int rs = noteDataAccess.update(note);
-        //Kiểm tra điều kiện thực hiện lệnh
-        if(rs > 0) {
-            //Lấy Note vừa được lưu
-            Note updatedNote = noteDataAccess.get(note.getAuthor(), note.getHeader());
-            //Trả về dưới dạng string
-            resultMap.put("Note", updatedNote);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
-            return resultMap;
-        }        
+        }
     }    
 }

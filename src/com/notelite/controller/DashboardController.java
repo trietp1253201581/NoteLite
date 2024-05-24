@@ -240,18 +240,7 @@ public class DashboardController {
                 //Thiết lập note name vừa nhập cho Label   
                 noteHeaderLabel.setText(newNoteHeader);
             } catch (ClientServerServiceException ex) {
-                //Xử lý các ngoại lệ
-                switch (ex.getErrorType()) {
-                    case ClientServerService.ErrorType.NOT_EXISTS -> {
-                        myNotes = new ArrayList<>();
-                    }
-                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                    }
-                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                    }
-                }
+                showAlert(Alert.AlertType.ERROR, ex.getMessage());
             }
         });
     }
@@ -279,18 +268,7 @@ public class DashboardController {
             //Chỉnh trạng thái lưu Note 
             savedNoteStatus = true;     
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't save this note");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
     
@@ -416,18 +394,20 @@ public class DashboardController {
         autoSave();
         //Set lại style của button
         logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
+        //Xóa connect
+        clientServerService.removeConnectToServer();
         //Ẩn Dashboard GUI
         logoutButton.getScene().getWindow().hide();
         //Load Login GUI
         FXMLLoader fXMLLoader = new FXMLLoader();
-        String loginFXMLPath = "../view/LoginFXML.fxml";
+        String loginFXMLPath = "../view/LoginView.fxml";
         fXMLLoader.setLocation(getClass().getResource(loginFXMLPath));
         //Mở Login GUI
         Stage stage = new Stage();
         try {
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
-            loginFXMLController.init();
+            loginFXMLController.initAndGetConnect();
             
             x = 0;
             y = 0;
@@ -457,18 +437,7 @@ public class DashboardController {
             //Lấy thành công
             myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         //Init lại Scene
         initMyNotesScene(myNotes);
@@ -518,21 +487,7 @@ public class DashboardController {
                 myNotes.add(newNote);
                 initMyNotesScene(myNotes);
             } catch (ClientServerServiceException ex) {
-                //Xử lý các ngoại lệ
-                switch (ex.getErrorType()) {
-                    case ClientServerService.ErrorType.ALREADY_EXISTS -> {
-                        showAlert(Alert.AlertType.ERROR, "This note already exists");
-                    }
-                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't create new note");
-                    }
-                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                    }
-                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                    }
-                }
+                showAlert(Alert.AlertType.ERROR, ex.getMessage());
             }
         });
     }
@@ -562,21 +517,7 @@ public class DashboardController {
                 //Load lại My Notes Scene
                 initMyNotesScene(myNotes);
             } catch (ClientServerServiceException ex) {
-                //Xử lý các ngoại lệ
-                switch (ex.getErrorType()) {
-                    case ClientServerService.ErrorType.ALREADY_EXISTS -> {
-                        showAlert(Alert.AlertType.ERROR, "This note already exists");
-                    }
-                    case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't create new note");
-                    }
-                    case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                        showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                    }
-                    case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                        showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                    }
-                }
+                showAlert(Alert.AlertType.ERROR, ex.getMessage());
             }
         });
     }
@@ -653,21 +594,7 @@ public class DashboardController {
             myUser = clientServerService.updateUser(myUser);
             showAlert(Alert.AlertType.INFORMATION, "Successfully update for " + myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    showAlert(Alert.AlertType.ERROR, "Not exist user");
-                }
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't update your user");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
 
@@ -697,18 +624,7 @@ public class DashboardController {
             //Lấy thành công
             myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         //Init lại Scene
         initImportExportScene(myNotes);
@@ -728,21 +644,7 @@ public class DashboardController {
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully export");
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    showAlert(Alert.AlertType.ERROR, "This note not exists");
-                }
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         } catch (FileNotFoundException | DocumentException ex) {
             showAlert(Alert.AlertType.ERROR, "Can't export this file");
         }
@@ -796,36 +698,14 @@ public class DashboardController {
             //Lấy thành công
             myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         //Lấy tất cả các note được share tới myUser này
         try { 
             //Lấy thành công
             mySharedNotes = clientServerService.getAllReceivedNotes(myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    mySharedNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         //Init lại Scene
         initShareNoteScene(myNotes, mySharedNotes);
@@ -853,28 +733,14 @@ public class DashboardController {
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Successfully share");
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    showAlert(Alert.AlertType.ERROR, "Not exists note or receiver");
-                }
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't send this note");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
     
     /**
      * Chạy Dashboard và thiết lập các thuộc tính ban đầu
      */
-    public void init() {  
+    public void initAndGetConnect() {  
         //Mở Client Server Service
         clientServerService = new ClientServerService();
         try {
@@ -891,28 +757,15 @@ public class DashboardController {
             //Chỉnh trạng thái lưu Note 
             savedNoteStatus = true;     
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNote = new Note();
-                    myNote.setAuthor(myUser.getUsername());
-                    myNote.setHeader("New Note");
-                    myNote.setContent("Edit here");
-                    List<String> filters = new ArrayList<>();
-                    myNote.setFilters(filters);
-                    //Chỉnh trạng thái lưu Note 
-                    savedNoteStatus = false;     
-                }
-                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't open your last note");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
+            myNote = new Note();
+            myNote.setAuthor(myUser.getUsername());
+            myNote.setHeader("New Note");
+            myNote.setContent("Edit here");
+            List<String> filters = new ArrayList<>();
+            myNote.setFilters(filters);
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = false;    
         }
         //Init lại Scene
         initMainScene();
@@ -968,18 +821,7 @@ public class DashboardController {
             //Lấy thành công
             myNotes = clientServerService.getAllNotes(myUser.getUsername());
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    myNotes = new ArrayList<>();
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         //Init lại Scene
         initMyNotesScene(myNotes);
@@ -1018,21 +860,7 @@ public class DashboardController {
                             //Load lại Edit Scene và mở Edit Scene
                             initMainScene();
                         } catch (ClientServerServiceException ex) {
-                            //Xử lý các ngoại lệ
-                            switch (ex.getErrorType()) {
-                                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                                    showAlert(Alert.AlertType.ERROR, "This note not exists");
-                                }
-                                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                                }
-                                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                                }
-                                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                                }
-                            } 
+                            showAlert(Alert.AlertType.ERROR, ex.getMessage());
                         }
                     }
                 });
@@ -1134,21 +962,7 @@ public class DashboardController {
                                 contentArea.setEditable(false);
                             }
                         } catch (ClientServerServiceException ex) {
-                            //Xử lý các ngoại lệ
-                            switch (ex.getErrorType()) {
-                                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                                    showAlert(Alert.AlertType.ERROR, "This note not exists");
-                                }
-                                case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                                    showAlert(Alert.AlertType.ERROR, "Can't open this note");
-                                }
-                                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                                }
-                                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                                }
-                            } 
+                            showAlert(Alert.AlertType.ERROR, ex.getMessage());
                         }
                     }
                 });
@@ -1178,18 +992,7 @@ public class DashboardController {
                     //Chỉnh trạng thái lưu Note 
                     savedNoteStatus = true;     
                 } catch (ClientServerServiceException ex) {
-                    //Xử lý các ngoại lệ
-                    switch (ex.getErrorType()) {
-                        case ClientServerService.ErrorType.CAN_NOT_EXECUTE -> {
-                            showAlert(Alert.AlertType.ERROR, "Can't save this note");
-                        }
-                        case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                        }
-                        case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                            showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                        }
-                    }
+                    showAlert(Alert.AlertType.ERROR, ex.getMessage());
                 }
             }           
         }

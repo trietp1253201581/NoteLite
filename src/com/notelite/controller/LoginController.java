@@ -67,21 +67,7 @@ public class LoginController {
             //Mở Dashboard của user này
             openDashBoard(user);
         } catch (ClientServerServiceException ex) {
-            //Xử lý các ngoại lệ
-            switch (ex.getErrorType()) {
-                case ClientServerService.ErrorType.NOT_EXISTS -> {
-                    showAlert(Alert.AlertType.ERROR, "Not exist user");
-                }
-                case ClientServerService.ErrorType.FALSE_INFORMATION -> {
-                    showAlert(Alert.AlertType.ERROR, "False password");
-                }
-                case ClientServerService.ErrorType.FAILED_CONNECT_TO_SERVER -> {
-                    showAlert(Alert.AlertType.ERROR, "Can't connect to server");
-                }
-                case ClientServerService.ErrorType.UNSUPPORTED_SERVICE -> {
-                    showAlert(Alert.AlertType.ERROR, "This service is unsupported");
-                }
-            }
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
     
@@ -93,17 +79,19 @@ public class LoginController {
     /**
      * Khởi tạo Login Controller
      */
-    public void init() {
+    public void initAndGetConnect() {
         clientServerService = new ClientServerService();
         try {
             clientServerService.createConnectToServer();
         } catch (ClientServerServiceException ex) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
 
     private void openDashBoard(User user) {
         try {
+            //Xóa connect
+            clientServerService.removeConnectToServer();
             //Ẩn Login GUI
             loginButton.getScene().getWindow().hide();
             //Load GUI Dashboard
@@ -117,7 +105,7 @@ public class LoginController {
             DashboardController dashboardFXMLController = fXMLLoader.getController();
             dashboardFXMLController.setMyUser(user);
             //Hiển thị Dashboard
-            dashboardFXMLController.init();
+            dashboardFXMLController.initAndGetConnect();
             
             x = 0;
             y = 0;
@@ -140,6 +128,8 @@ public class LoginController {
 
     private void openRegister() {
         try {
+            //Xóa connect
+            clientServerService.removeConnectToServer();
             //Ẩn Login GUI
             registerLabel.getScene().getWindow().hide();
             //Load Register GUI
@@ -151,7 +141,7 @@ public class LoginController {
             Scene scene = new Scene(fXMLLoader.load());
             //Khởi tạo và chạy
             RegisterController registerFXMLController = fXMLLoader.getController();
-            registerFXMLController.init();
+            registerFXMLController.initAndGetConnect();
             
             x = 0;
             y = 0;

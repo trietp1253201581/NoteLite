@@ -38,18 +38,13 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     public static ShareNoteDataAccess getInstance() {
         return SingletonHelper.INSTANCE;
     }
-    
-    /**
-     * Lấy tất cả các ShareNote được gửi tới người nhận
-     * @param receiver username của người nhận
-     * @return Một list chứa các ShareNote gửi tới người nhận
-     */
+
     @Override
-    public List<ShareNote> getAllReceived(String receiver) {
+    public List<ShareNote> getAllReceived(String receiver) throws DataAccessException {
         List<ShareNote> shareNotes = new ArrayList<>();
         //Kiểm tra null
         if(connection == null) {
-            return shareNotes;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
@@ -68,33 +63,25 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
                 //Set dữ liệu từ hàng vào shareNote
                 int noteId = resultSet.getInt("NOTEID");
                 Note note = noteDataAccess.get(noteId);
-                if(!note.isDefaultValue()) {
-                    shareNote.setNote(note);
-                    shareNote.setShareId(resultSet.getInt("SHAREID"));
-                    shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                    shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
-                }
+                shareNote.setNote(note);
+                shareNote.setShareId(resultSet.getInt("SHAREID"));
+                shareNote.setReceiver(resultSet.getString("RECEIVER"));
+                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
                 //Thêm shareNote vào list
                 shareNotes.add(shareNote);
             }
+            return shareNotes;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return shareNotes;
     }
-    
-    /**
-     * Lấy một ShareNote
-     * @param noteId id của Note được share
-     * @param receiver người nhận
-     * @return ShareNote duy nhất được lấy
-     */
+
     @Override
-    public ShareNote get(int noteId, String receiver) {
+    public ShareNote get(int noteId, String receiver) throws DataAccessException {
+        ShareNote shareNote = new ShareNote();
         //Kiểm tra null
         if(connection == null) {
-            return new ShareNote();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
@@ -109,37 +96,29 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) {
-                ShareNote shareNote = new ShareNote();
+            while (resultSet.next()) {                
                 //Set dữ liệu cho shareNote
                 Note note = noteDataAccess.get(noteId);
-                if(note.isDefaultValue()) {
-                    return new ShareNote();
-                }
                 shareNote.setNote(note);
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
-                
-                return shareNote;
             }
+            if(shareNote.isDefaultValue()) {
+                throw new NotExistDataException("This sharenote is not exist!");
+            }
+            return shareNote;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về default shareNote nếu không tìm được
-        return new ShareNote();
     }
-    
-    /**
-     * Lấy sharenoteinfo với id cho trước
-     * @param id id của ShareNote cần lấy 
-     * @return (1) ShareNote có id đã cho, (2) default ShareNote nếu id này không tồn tại
-     */
+
     @Override
-    public ShareNote get(int id) {
+    public ShareNote get(int id) throws DataAccessException {
+        ShareNote shareNote = new ShareNote();
         //Kiểm tra null
         if(connection == null) {
-            return new ShareNote();
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
@@ -154,38 +133,28 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                ShareNote shareNote = new ShareNote();
-                //Set dữ liệu cho shareNote
                 int noteId = resultSet.getInt("NOTEID");
+                //Set dữ liệu cho shareNote
                 Note note = noteDataAccess.get(noteId);
-                if(note.isDefaultValue()) {
-                    return new ShareNote();
-                }
                 shareNote.setNote(note);
                 shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
-                
-                return shareNote;
             }
+            if(shareNote.isDefaultValue()) {
+                throw new NotExistDataException("This sharenote is not exist!");
+            }
+            return shareNote;
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-        //Trả về default shareNote nếu không tìm được
-        return new ShareNote();
     }
-    
-    /**
-     * Thêm ShareNote vào CSDL
-     * @param shareNote ShareNote cần thêm vào CSDL
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
+
     @Override
-    public int add(ShareNote shareNote) {
+    public void add(ShareNote shareNote) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "INSERT INTO SHARENOTES(NOTEID, RECEIVERID, SHARETYPE)"
@@ -201,25 +170,19 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             preparedStatement.setInt(2, receiverId);
             preparedStatement.setString(3, shareNote.getShareType().toString());
             
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
-    
-    /**
-     * Sửa ShareNote trong CSDL
-     * @param shareNote ShareNote cần sửa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
+
     @Override
-    public int update(ShareNote shareNote) {
+    public void update(ShareNote shareNote) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "UPDATE SHARENOTES SET NOTEID = ?, RECEIVERID = ?, "
@@ -236,25 +199,19 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             preparedStatement.setString(3, shareNote.getShareType().toString());
             preparedStatement.setInt(4, shareNote.getShareId());
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
     }
-    
-    /**
-     * Xóa ShareNote trong CSDL
-     * @param id id của ShareNote cần xóa
-     * @return (1) một số tự nhiên biểu thị row count khi thực thi lệnh SQL này,
-     * (2) -1 nếu không thực hiện được
-     */
+
     @Override
-    public int delete(int id) {
+    public void delete(int id) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
-            return -1;
+            throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
         String query = "DELETE FROM SHARENOTES WHERE ID = ?";
@@ -264,16 +221,11 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
 
-            return preparedStatement.executeUpdate();
+            if(preparedStatement.executeUpdate() <= 0) {
+                throw new FailedExecuteException();
+            }
         } catch (SQLException ex) {
-            System.err.println(ex);
+            throw new FailedExecuteException();
         }
-
-        return -1;
-    }
-    public static void main(String[] args) {
-        ShareNoteDataAccess dataAccess = new ShareNoteDataAccess();
-        ShareNote shareNotes = dataAccess.get(2030, "phuongsc268");
-        System.out.println(shareNotes);
     }
 }

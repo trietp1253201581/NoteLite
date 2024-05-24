@@ -271,13 +271,12 @@ public class ClientServerService {
             resultMap = Command.decode(resultString);
             //Kiểm tra xem có lỗi gửi từ server không, nếu có thì ném ra ngoại lệ
             if(resultMap.containsKey("ServerServiceError")) {
-                throw new ClientServerServiceException(
-                        ErrorType.valueOf(resultMap.get("ServerServiceError")));
+                throw new ClientServerServiceException(resultMap.get("ServerServiceError"));
             }
         } catch (UnknownHostException ex) {
-            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+            throw new ClientServerServiceException("Failed connect to server");
         } catch (IOException ex) {
-            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+            throw new ClientServerServiceException("Failed connect to server");
         }
     }
     
@@ -288,9 +287,9 @@ public class ClientServerService {
         try {
             client = new Client(InetAddress.getByName(host), port);
         } catch (UnknownHostException ex) {
-            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+            throw new ClientServerServiceException("Failed connect to server");
         } catch (IOException ex) {
-            throw new ClientServerServiceException(ErrorType.FAILED_CONNECT_TO_SERVER);
+            throw new ClientServerServiceException("Failed connect to server");
         }
     }
     

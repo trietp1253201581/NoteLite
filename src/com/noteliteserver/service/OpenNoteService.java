@@ -1,6 +1,7 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.Note;
+import com.noteliteserver.dataaccess.DataAccessException;
 import com.noteliteserver.dataaccess.NoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialNoteDataAccess;
 import java.util.HashMap;
@@ -31,8 +32,7 @@ public class OpenNoteService implements ServerService {
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
      * (1) Note được mở nếu tìm được,
-     * (2) {@link ServerService.ErrorType}.{@code NOT_EXISTS}
-     * nếu user không có note nào
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() {        
@@ -40,15 +40,14 @@ public class OpenNoteService implements ServerService {
         noteDataAccess = NoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
-        //Lấy Note được chỉnh sửa gần nhất
-        Note note = noteDataAccess.get(author, header);
-        //Kiểm tra điều kiện và trả về
-        if(!note.isDefaultValue()) {
+        try {
+            //Lấy Note cần thiết
+            Note note = noteDataAccess.get(author, header);
             resultMap.put("Note", note);
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.NOT_EXISTS);
-            return resultMap;
-        }           
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
+            return resultMap;           
+        }         
     }    
 }

@@ -1,6 +1,7 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.User;
+import com.noteliteserver.dataaccess.DataAccessException;
 import com.noteliteserver.dataaccess.SpecialUserDataAccess;
 import com.noteliteserver.dataaccess.UserDataAccess;
 import java.util.HashMap;
@@ -28,28 +29,23 @@ public class UpdateUserService implements ServerService {
     /**
      * Thực thi service
      * @return Kết quả của việc thực thi là một Map miêu tả các value
-     * (1) User được cập nhật nếu cập nhật được,
-     * (2) {@link ServerService.ErrorType}.{@code CAN_NOT_EXECUTE}
-     * nếu không thực hiện lệnh cập nhật được
+     * (1) {@link User} được cập nhật nếu cập nhật được,
+     * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
     public Map<String, Object> execute() {        
         //Tạo đối tượng access dữ liệu
         userDataAccess = UserDataAccess.getInstance();
         //Tạo Map kết quả
-        Map<String, Object> resultMap = new HashMap<>();
-        //Thực hiện cập nhật user
-        int rs = userDataAccess.update(user);
-        //Kiểm tra điều kiện
-        if(rs > 0) {
-            //Lấy user vừa cập nhật
-            User updatedUser = userDataAccess.get(user.getUsername());
-            //Trả về dưới dạng string
-            resultMap.put("User", updatedUser);
+        Map<String, Object> resultMap = new HashMap<>();      
+        try {
+            //Thực hiện cập nhật user
+            userDataAccess.update(user);
+            resultMap.put("User", user);
             return resultMap;
-        } else {
-            resultMap.put("ServerServiceError", ServerService.ErrorType.CAN_NOT_EXECUTE);
+        } catch (DataAccessException ex) {
+            resultMap.put("ServerServiceError", ex.getMessage());
             return resultMap;
-        }        
+        }
     }    
 }
