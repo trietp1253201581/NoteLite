@@ -55,7 +55,8 @@ public class ClientServerService {
      * @param username username được nhập
      * @param password password được nhập
      * @return Kết quả thực thi service này từ server     
-     * @throws com.notelite.service.ClientServerServiceException     
+     * @throws ClientServerServiceException nếu không thể kết nối tới server
+     * hoặc không thực thi được câu lệnh, hoặc các thông tin bị sai.
      */
     public User checkLogin(String username, String password) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -74,7 +75,8 @@ public class ClientServerService {
      * Tạo một user mới
      * @param user user mới
      * @return Kết quả thực thi service này từ server     
-     * @throws com.notelite.service.ClientServerServiceException     
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc 
+     * không thực thi được lệnh, hoặc User này đã tồn tại.
      */
     public User createUser(User user) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -92,7 +94,8 @@ public class ClientServerService {
      * Cập nhật User
      * @param user user cần cập nhật
      * @return Kết quả thực thi service này từ server    
-     * @throws com.notelite.service.ClientServerServiceException    
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh.
      */
     public User updateUser(User user) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -110,7 +113,8 @@ public class ClientServerService {
      * Mở Note chỉnh sửa gần nhất
      * @param author user sở hữu note
      * @return Kết quả thực thi service này từ server    
-     * @throws com.notelite.service.ClientServerServiceException    
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh, hoặc author này chưa có note nào.  
      */
     public Note openLastNote(String author) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -128,7 +132,8 @@ public class ClientServerService {
      * Tạo một Note mới
      * @param note Note mới
      * @return Kết quả thực thi service này từ server     
-     * @throws com.notelite.service.ClientServerServiceException     
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh, hoặc note này đã tồn tại    
      */
     public Note createNote(Note note) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -147,7 +152,8 @@ public class ClientServerService {
      * @param author user sở hữu note
      * @param header header của note cần mở
      * @return Kết quả thực thi service này từ server     
-     * @throws com.notelite.service.ClientServerServiceException     
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh, hoặc note cần mở không tồn tại.     
      */
     public Note openNote(String author, String header) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -167,7 +173,8 @@ public class ClientServerService {
      * @param author user sở hữu note
      * @param header header của note cần xóa
      * @return Kết quả thực thi service này từ server     
-     * @throws com.notelite.service.ClientServerServiceException     
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh, hoặc note cần xóa không tồn tại    
      */
     public Note deleteNote(String author, String header) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -186,7 +193,8 @@ public class ClientServerService {
      * Lưu Note
      * @param note note cần lưu
      * @return Kết quả thực thi service này từ server
-     * @throws com.notelite.service.ClientServerServiceException
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh.
      */
     public Note saveNote(Note note) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -204,7 +212,8 @@ public class ClientServerService {
      * Lấy tất cả các note của user
      * @param author user sở hữu note
      * @return Kết quả thực thi service này từ server
-     * @throws com.notelite.service.ClientServerServiceException
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh.
      */
     public List<Note> getAllNotes(String author) throws ClientServerServiceException {
         //Tạo thông tin cho process
@@ -223,7 +232,8 @@ public class ClientServerService {
      * Send Note
      * @param shareNote ShareNote biểu diễn việc share note
      * @return Kết quả thực thi service này từ server 
-     * @throws com.notelite.service.ClientServerServiceException 
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh.
      */
     public ShareNote sendNote(ShareNote shareNote) throws ClientServerServiceException {
         //Tạo thông tin
@@ -241,7 +251,8 @@ public class ClientServerService {
      * Lấy tất cả các note được share
      * @param receiver người nhận
      * @return Kết quả thực thi service này từ server
-     * @throws com.notelite.service.ClientServerServiceException
+     * @throws ClientServerServiceException nếu không thể kết nối tới server, hoặc
+     * không thực thi được lệnh.
      */
     public List<ShareNote> getAllReceivedNotes(String receiver) throws ClientServerServiceException {
         //Tạo thông tin
@@ -280,6 +291,10 @@ public class ClientServerService {
         }
     }
     
+    /**
+     * Tạo kết nối tới server
+     * @throws ClientServerServiceException 
+     */
     public void createConnectToServer() throws ClientServerServiceException {
         //Tạo 1 client để truyền dữ liệu
         String host = "localhost";
@@ -293,6 +308,9 @@ public class ClientServerService {
         }
     }
     
+    /**
+     * Ngắt kết nối tới server
+     */
     public void removeConnectToServer() {
         if(client != null) {
             client.closeClient();

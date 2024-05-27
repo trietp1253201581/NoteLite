@@ -29,4 +29,11 @@ public interface SpecialShareNoteDataAccess extends BasicDataAccess<ShareNote> {
      * hoặc receiver không nhận được note có id là noteId
      */
     ShareNote get(int noteId, String receiver) throws DataAccessException; 
+    
+    /**
+     * Xóa tất cả các ShareNote có NoteId cho trước
+     * @param noteId id của note được share
+     * @throws DataAccessException nếu không thực thi được
+     */
+    void deleteAll(int noteId) throws DataAccessException;
 }

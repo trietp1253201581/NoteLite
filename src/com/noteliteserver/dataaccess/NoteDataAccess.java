@@ -127,7 +127,8 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
         //Câu truy vấn SQL
         String query = "SELECT nt.ID, USERNAME as AUTHOR, HEADER, CONTENT, LASTMODIFIED, LASTMODIFIEDDATE "
                 + "FROM notes nt, users us "
-                + "WHERE nt.USERID = us.ID AND USERNAME = ? AND LASTMODIFIED = 1";
+                + "WHERE nt.USERID = us.ID AND USERNAME = ? AND LASTMODIFIED >= 0 "
+                + "ORDER BY LASTMODIFIED DESC, LASTMODIFIEDDATE DESC LIMIT 1";
 
         try {
             //Set tham số và thực thi lệnh SQL
@@ -290,7 +291,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
             //Xóa các filter
             deleteFiltersOfNote(id);
             
-            if(preparedStatement.executeUpdate() <= 0) {
+            if(preparedStatement.executeUpdate() < 0) {
                 throw new FailedExecuteException();
             }
         } catch (SQLException ex) {

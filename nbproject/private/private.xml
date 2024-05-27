@@ -12,13 +12,7 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/NoteLite/src/com/noteliteserver/service/GetAllNotesService.java</file>
-            <file>file:/F:/NoteLite/src/com/noteliteserver/network/WorkerThread.java</file>
-            <file>file:/F:/NoteLite/src/com/notelite/service/ClientServerServiceException.java</file>
-            <file>file:/F:/NoteLite/src/com/notelite/controller/DashboardController.java</file>
             <file>file:/F:/NoteLite/src/com/notelite/service/ClientServerService.java</file>
-            <file>file:/F:/NoteLite/src/com/notelite/network/Client.java</file>
-            <file>file:/F:/NoteLite/src/com/notelite/controller/RegisterController.java</file>
         </group>
     </open-files>
 </project-private>

@@ -3,8 +3,11 @@ package com.noteliteserver.service;
 import com.notelitemodel.datatransfer.Note;
 import com.noteliteserver.dataaccess.DataAccessException;
 import com.noteliteserver.dataaccess.NoteDataAccess;
+import com.noteliteserver.dataaccess.ShareNoteDataAccess;
 import com.noteliteserver.dataaccess.SpecialNoteDataAccess;
+import com.noteliteserver.dataaccess.SpecialShareNoteDataAccess;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +20,7 @@ public class DeleteNoteService implements ServerService {
     private String author;
     private String header;
     private SpecialNoteDataAccess noteDataAccess;
+    private SpecialShareNoteDataAccess shareNoteDataAccess;
     
     /**
      * Set data cho các service qua một String
@@ -38,13 +42,25 @@ public class DeleteNoteService implements ServerService {
     public Map<String, Object> execute() {    
         //Tạo đối tượng access dữ liệu
         noteDataAccess = NoteDataAccess.getInstance(); 
+        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();      
         try {
             //Kiểm tra note có tồn tại khong
             Note note = noteDataAccess.get(author, header); 
+            //Nếu đây là last note của user thì phải chuyển giao sang note khác
+            if(note.getLastModified() == 1) {
+                List<Note> notes = noteDataAccess.getAll(author);
+                if(!notes.isEmpty()) {
+                    Note newLastNote = notes.get(0);
+                    newLastNote.setLastModified(1);
+                    noteDataAccess.update(newLastNote);
+                }
+            }
+            //Xóa các sharenote được sinh ra từ Note này
+            shareNoteDataAccess.deleteAll(note.getId());
             //Thực hiện lệnh xóa 
-            noteDataAccess.delete(note.getId());
+            noteDataAccess.delete(note.getId());        
             //Trả về note được xóa
             resultMap.put("Note", note);
             return resultMap;

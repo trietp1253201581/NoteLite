@@ -221,7 +221,29 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
 
-            if(preparedStatement.executeUpdate() <= 0) {
+            if(preparedStatement.executeUpdate() < 0) {
+                throw new FailedExecuteException();
+            }
+        } catch (SQLException ex) {
+            throw new FailedExecuteException();
+        }
+    }
+    
+    @Override
+    public void deleteAll(int noteId) throws DataAccessException {
+        //Kiểm tra null
+        if(connection == null) {
+            throw new FailedExecuteException();
+        }
+        //Câu truy vấn SQL
+        String query = "DELETE FROM SHARENOTES WHERE NOTEID = ?";
+
+        try {
+            //Set tham số và thực thi truy vấn
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, noteId);
+
+            if(preparedStatement.executeUpdate() < 0) {
                 throw new FailedExecuteException();
             }
         } catch (SQLException ex) {

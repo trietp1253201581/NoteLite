@@ -56,7 +56,6 @@ public class Client {
             dataOutputStream.close();
             //đóng socket
             clientSocket.close();
-            System.out.println("hello");
         } catch (IOException ex) {
             System.err.println(ex);
         }
