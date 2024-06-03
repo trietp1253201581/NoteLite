@@ -1,4 +1,4 @@
-package com.notelite.controller;
+package com.noteliteclient.controller;
 
 import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;

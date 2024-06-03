@@ -1,4 +1,4 @@
-package com.notelite.controller;
+package com.noteliteclient.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

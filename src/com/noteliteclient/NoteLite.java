@@ -1,6 +1,6 @@
-package com.notelite;
+package com.noteliteclient;
 
-import com.notelite.controller.LoginController;
+import com.noteliteclient.controller.LoginController;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Application;

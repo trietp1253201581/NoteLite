@@ -1,4 +1,4 @@
-package com.notelite.service;
+package com.noteliteclient.service;
 
 import java.util.Stack;
 

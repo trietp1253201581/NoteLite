@@ -1,4 +1,4 @@
-package com.notelite.network;
+package com.noteliteclient.network;
 
 import com.notelitemodel.NetworkProperty;
 import java.io.DataInputStream;

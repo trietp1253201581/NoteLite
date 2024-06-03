@@ -1,4 +1,4 @@
-package com.notelite.service;
+package com.noteliteclient.service;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;

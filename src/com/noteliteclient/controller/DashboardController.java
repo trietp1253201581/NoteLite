@@ -1,9 +1,9 @@
-package com.notelite.controller;
+package com.noteliteclient.controller;
 
-import com.notelite.service.ClientServerService;
-import com.notelite.service.ClientServerServiceException;
-import com.notelite.service.PdfService;
-import com.notelite.service.UndoRedoService;
+import com.noteliteclient.service.ClientServerService;
+import com.noteliteclient.service.ClientServerServiceException;
+import com.noteliteclient.service.PdfService;
+import com.noteliteclient.service.UndoRedoService;
 import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;
 import com.notelitemodel.datatransfer.User;

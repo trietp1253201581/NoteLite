@@ -1,6 +1,6 @@
-package com.notelite.service;
+package com.noteliteclient.service;
 
-import com.notelite.network.Client;
+import com.noteliteclient.network.Client;
 import com.notelitemodel.Command;
 import com.notelitemodel.datatransfer.Note;
 import com.notelitemodel.datatransfer.ShareNote;

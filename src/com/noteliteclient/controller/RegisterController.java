@@ -1,7 +1,7 @@
-package com.notelite.controller;
+package com.noteliteclient.controller;
 
-import com.notelite.service.ClientServerService;
-import com.notelite.service.ClientServerServiceException;
+import com.noteliteclient.service.ClientServerService;
+import com.noteliteclient.service.ClientServerServiceException;
 import com.notelitemodel.datatransfer.User;
 import java.io.IOException;
 import java.sql.Date;

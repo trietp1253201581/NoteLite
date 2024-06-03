@@ -1,0 +1,8 @@
+[{"ID":1011, "NAME":"Le Minh Triet", "USERNAME":"trietkd1475369", "PASSWORD":"1234Ab@", "BIRTHDAY":"2004-06-03", "SCHOOL":"HUST", "GENDER":"MALE"},
+ {"ID":1012, "NAME":"Ph\u1ea1m Th\u1ecb B\u00edch Ph\u01b0\u01a1ng", "USERNAME":"phuongsc268", "PASSWORD":"cu30giay", "BIRTHDAY":"2024-03-23", "SCHOOL":"Chuy\u00ean Tuy\u00ean Quang", "GENDER":"FEMALE"},
+ {"ID":1013, "NAME":"Alexx", "USERNAME":"alex123", "PASSWORD":"123456", "BIRTHDAY":"2005-03-08", "SCHOOL":"", "GENDER":"OTHER"},
+ {"ID":1014, "NAME":"Ng\u00f4 \u0110\u1ee9c Anh", "USERNAME":"ducanhngo123", "PASSWORD":"ducanhngo", "BIRTHDAY":"2024-03-16", "SCHOOL":"HUST", "GENDER":"MALE"},
+ {"ID":1016, "NAME":"Tr\u1ea7n H\u1eefu \u0110\u1ea1t", "USERNAME":"huudatbenhvl", "PASSWORD":"huudat123", "BIRTHDAY":"2024-12-23", "SCHOOL":"HUST", "GENDER":"OTHER"},
+ {"ID":1018, "NAME":"\u0110\u1ed7 Huy \u0110\u1ea1t", "USERNAME":"huydathaynghihoc", "PASSWORD":"huydat", "BIRTHDAY":"2024-03-17", "SCHOOL":"HUST", "GENDER":"MALE"},
+ {"ID":1019, "NAME":"", "USERNAME":"admin", "PASSWORD":"123", "BIRTHDAY":"2024-03-18", "SCHOOL":"", "GENDER":"FEMALE"},
+ {"ID":1020, "NAME":"Admin", "USERNAME":"admin2024", "PASSWORD":"admin2024", "BIRTHDAY":"2024-04-28", "SCHOOL":"HUST", "GENDER":"OTHER"}]
