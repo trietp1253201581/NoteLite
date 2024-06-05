@@ -19,13 +19,15 @@ import java.util.List;
  */
 public class NoteDataAccess implements SpecialNoteDataAccess {
     private final Connection connection;
+    private final DatabaseConnection databaseConnection;
 
     /**
      * Khởi tạo và lấy connection tới Database
      */
     private NoteDataAccess() {
-        DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
-        this.connection = connectSQLDatabase.getJDBCConnection();
+        databaseConnection = new MySQLDatabaseConnection
+            ("localhost", 3306, "notelitedb", "root", "Asensio1234@");
+        this.connection = databaseConnection.getJDBCConnection();
     }
 
     private static class SingletonHelper {

@@ -19,11 +19,13 @@ import java.util.List;
  */
 public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     private final Connection connection;
+    private final DatabaseConnection databaseConnection;
     private final SpecialNoteDataAccess noteDataAccess;
 
     private ShareNoteDataAccess() {
-        DatabaseConnection connectSQLDatabase = new MySQLDatabaseConnection();
-        this.connection = connectSQLDatabase.getJDBCConnection();
+        databaseConnection = new MySQLDatabaseConnection
+            ("localhost", 3306, "notelitedb", "root", "Asensio1234@");
+        this.connection = databaseConnection.getJDBCConnection();
         noteDataAccess = NoteDataAccess.getInstance();
     }
     
