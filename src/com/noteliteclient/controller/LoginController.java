@@ -40,6 +40,9 @@ public class LoginController {
     private Button closeButton;
 
     private ClientServerService clientServerService;   
+    private String host;
+    private int port;
+    
     private double x,y;
             
     @FXML
@@ -82,10 +85,15 @@ public class LoginController {
     public void initAndGetConnect() {
         clientServerService = new ClientServerService();
         try {
-            clientServerService.createConnectToServer();
+            clientServerService.createConnectToServer(host, port);
         } catch (ClientServerServiceException ex) {
             showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
+    }
+    
+    public void setOnConnect(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
 
     private void openDashBoard(User user) {
@@ -105,6 +113,7 @@ public class LoginController {
             DashboardController dashboardFXMLController = fXMLLoader.getController();
             dashboardFXMLController.setMyUser(user);
             //Hiển thị Dashboard
+            dashboardFXMLController.setConnectTo(host, port);
             dashboardFXMLController.initAndGetConnect();
             
             x = 0;

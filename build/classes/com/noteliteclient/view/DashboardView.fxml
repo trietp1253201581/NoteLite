@@ -468,7 +468,7 @@
                               <Insets top="3.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="openNoteButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleMyNotesButton" prefHeight="70.0" prefWidth="70.0" styleClass="main-button" stylesheets="@dashboardStyle.css" textOverrun="CLIP">
+                        <Button fx:id="openNoteButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleHomeMenuButton" prefHeight="70.0" prefWidth="70.0" styleClass="main-button" stylesheets="@dashboardStyle.css" textOverrun="CLIP">
                            <graphic>
                               <VBox alignment="CENTER" prefHeight="60.0" prefWidth="50.0">
                                  <children>

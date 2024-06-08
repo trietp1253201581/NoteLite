@@ -1,6 +1,7 @@
 package com.noteliteclient;
 
 import com.noteliteclient.controller.LoginController;
+import com.notelitemodel.NetworkProperty;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Application;
@@ -34,6 +35,7 @@ public class NoteLite extends Application {
             //Chuyển sang GUI Login
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.setOnConnect(NetworkProperty.SERVER_ADDRESS, NetworkProperty.PORT_NUMBER);
             loginFXMLController.initAndGetConnect();
             //Thiết lập các hiệu ứng di chuyển
             x = 0;

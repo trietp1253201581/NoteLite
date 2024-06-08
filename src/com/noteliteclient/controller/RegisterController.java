@@ -67,6 +67,9 @@ public class RegisterController {
     private Button closeButton;
     
     private ClientServerService clientServerService;
+    private String host;
+    private int port;
+    
     private double x,y;
     
     @FXML
@@ -169,11 +172,16 @@ public class RegisterController {
         //Chạy ClientServerService
         clientServerService = new ClientServerService();
         try {
-            clientServerService.createConnectToServer();
+            clientServerService.createConnectToServer(host, port);
         } catch (ClientServerServiceException ex) {
-            showAlert(Alert.AlertType.ERROR, "Can't connect to server");
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
         initScene();
+    }
+    
+    public void setOnConnect(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
     
     private void initScene() {
@@ -200,6 +208,7 @@ public class RegisterController {
             Stage stage = new Stage();
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.setOnConnect(host, port);
             loginFXMLController.initAndGetConnect();
             
             x = 0;

@@ -17,4 +17,9 @@ public class NetworkProperty {
      * Cổng kết nối bên server
      */
     public static final int PORT_NUMBER = 2222;
+    
+    /**
+     * Địa chỉ của máy chứa Application Server
+     */
+    public static final String SERVER_ADDRESS = "localhost";
 }

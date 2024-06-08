@@ -199,6 +199,9 @@ public class DashboardController {
 
     private double x,y;
     
+    private String host;
+    private int port;
+    
     public void setMyUser(User myUser) {
         this.myUser = myUser;
     }
@@ -407,6 +410,7 @@ public class DashboardController {
         try {
             Scene scene = new Scene(fXMLLoader.load());
             LoginController loginFXMLController = fXMLLoader.getController();
+            loginFXMLController.setOnConnect(host, port);
             loginFXMLController.initAndGetConnect();
             
             x = 0;
@@ -744,7 +748,7 @@ public class DashboardController {
         //Mở Client Server Service
         clientServerService = new ClientServerService();
         try {
-            clientServerService.createConnectToServer();
+            clientServerService.createConnectToServer(host, port);
         } catch (ClientServerServiceException ex) {
             showAlert(Alert.AlertType.ERROR, "Can't connect to server");
         }
@@ -770,6 +774,11 @@ public class DashboardController {
         //Init lại Scene
         initMainScene();
         changeToMainScene();
+    }
+    
+    public void setConnectTo(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
 
     private void initMainScene() { 

@@ -24,18 +24,6 @@ public class ClientServerService {
     private Map<String, Object> paramMap;
     private Map<String, String> resultMap;
     
-    /**
-     * Các lỗi có thể gặp đối với service
-     */
-    public static enum ErrorType {
-        ALREADY_EXISTS,
-        NOT_EXISTS,
-        CAN_NOT_EXECUTE, 
-        FALSE_INFORMATION,
-        FAILED_CONNECT_TO_SERVER,
-        UNSUPPORTED_SERVICE;
-    }
-    
     public static enum ServerService {
         CheckLogin,
         UpdateUser,
@@ -48,6 +36,10 @@ public class ClientServerService {
         OpenLastNote,
         SendNote,
         GetAllReceivedNotes
+    }
+    
+    public void setClient(Client client) {
+        this.client = client;
     }
     
     /**
@@ -293,12 +285,11 @@ public class ClientServerService {
     
     /**
      * Tạo kết nối tới server
+     * @param host định danh của host
+     * @param port số hiệu cổng
      * @throws ClientServerServiceException 
      */
-    public void createConnectToServer() throws ClientServerServiceException {
-        //Tạo 1 client để truyền dữ liệu
-        String host = "localhost";
-        int port = 2222;
+    public void createConnectToServer(String host, int port) throws ClientServerServiceException {
         try {
             client = new Client(InetAddress.getByName(host), port);
         } catch (UnknownHostException ex) {
