@@ -32,7 +32,7 @@ public class MySQLDatabaseConnection implements DatabaseConnection {
      * @return Đối tượng {@code Connection} connect tới cơ sở dữ liệu MySQL
      */
     @Override
-    public Connection getJDBCConnection() {
+    public Connection getConnection() {
         //Gọi đối tượng Driver để kết nối
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class NoteDataAccess implements SpecialNoteDataAccess {
     private final Connection connection;
-    private final DatabaseConnection databaseConnection;
+    protected DatabaseConnection databaseConnection;
 
     /**
      * Khởi tạo và lấy connection tới Database
@@ -27,7 +27,7 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
     private NoteDataAccess() {
         databaseConnection = new MySQLDatabaseConnection
             ("localhost", 3306, "notelitedb", "root", "Asensio1234@");
-        this.connection = databaseConnection.getJDBCConnection();
+        this.connection = databaseConnection.getConnection();
     }
 
     private static class SingletonHelper {

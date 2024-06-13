@@ -16,7 +16,11 @@ import java.util.Map;
  */
 public class CreateNoteService implements ServerService {   
     private Note note;
-    private SpecialNoteDataAccess noteDataAccess;
+    protected SpecialNoteDataAccess noteDataAccess;
+
+    public CreateNoteService() {
+        noteDataAccess = NoteDataAccess.getInstance();  
+    }
     
     /**
      * Set data cho các service qua một String
@@ -34,9 +38,7 @@ public class CreateNoteService implements ServerService {
      * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
-    public Map<String, Object> execute(){        
-        //Tạo đối tượng access
-        noteDataAccess = NoteDataAccess.getInstance();  
+    public Map<String, Object> execute(){               
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Kiểm tra note đã tồn tại hay chưa

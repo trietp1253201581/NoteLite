@@ -16,7 +16,11 @@ import java.util.Map;
  */
 public class SendNoteService implements ServerService {
     private ShareNote shareNote;
-    private SpecialShareNoteDataAccess shareNoteDataAccess;
+    protected SpecialShareNoteDataAccess shareNoteDataAccess;
+    
+    public SendNoteService() {
+        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
+    }
     
     /**
      * Set data cho các service qua một String
@@ -34,8 +38,6 @@ public class SendNoteService implements ServerService {
      */
     @Override
     public Map<String, Object> execute() {
-        //Tạo đối tượng access
-        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();
         try {

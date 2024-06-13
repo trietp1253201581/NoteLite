@@ -15,7 +15,11 @@ import java.util.Map;
  */
 public class UpdateUserService implements ServerService {    
     private User user;
-    private SpecialUserDataAccess userDataAccess;
+    protected SpecialUserDataAccess userDataAccess;
+    
+    public UpdateUserService() {
+        userDataAccess = UserDataAccess.getInstance();
+    }
     
     /**
      * Set data cho các service qua một String
@@ -33,9 +37,7 @@ public class UpdateUserService implements ServerService {
      * (2) {@link DataAccessException} miêu tả lỗi nếu ngược lại
      */
     @Override
-    public Map<String, Object> execute() {        
-        //Tạo đối tượng access dữ liệu
-        userDataAccess = UserDataAccess.getInstance();
+    public Map<String, Object> execute() {
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();      
         try {

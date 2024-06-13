@@ -19,8 +19,13 @@ import java.util.Map;
 public class DeleteNoteService implements ServerService {    
     private String author;
     private String header;
-    private SpecialNoteDataAccess noteDataAccess;
-    private SpecialShareNoteDataAccess shareNoteDataAccess;
+    protected SpecialNoteDataAccess noteDataAccess;
+    protected SpecialShareNoteDataAccess shareNoteDataAccess;
+    
+    public DeleteNoteService() {
+        noteDataAccess = NoteDataAccess.getInstance(); 
+        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
+    }
     
     /**
      * Set data cho các service qua một String
@@ -40,9 +45,6 @@ public class DeleteNoteService implements ServerService {
      */
     @Override
     public Map<String, Object> execute() {    
-        //Tạo đối tượng access dữ liệu
-        noteDataAccess = NoteDataAccess.getInstance(); 
-        shareNoteDataAccess = ShareNoteDataAccess.getInstance();
         //Tạo Map kết quả
         Map<String, Object> resultMap = new HashMap<>();      
         try {

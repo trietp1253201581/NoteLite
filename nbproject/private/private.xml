@@ -12,9 +12,7 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/NoteLite/src/com/noteliteclient/NoteLite.java</file>
-            <file>file:/F:/NoteLite/src/com/noteliteclient/view/dashboardStyle.css</file>
-            <file>file:/F:/NoteLite/src/com/noteliteclient/view/anotherStyle.css</file>
+            <file>file:/F:/NoteLite/src/com/noteliteserver/dataaccess/NoteDataAccess.java</file>
         </group>
     </open-files>
 </project-private>

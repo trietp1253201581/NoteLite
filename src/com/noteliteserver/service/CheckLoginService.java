@@ -17,7 +17,11 @@ import java.util.Map;
 public class CheckLoginService implements ServerService {  
     private String username;
     private String password;
-    private SpecialUserDataAccess userDataAccess;
+    protected SpecialUserDataAccess userDataAccess;
+    
+    public CheckLoginService() {
+        userDataAccess = UserDataAccess.getInstance();
+    }
 
     /**
      * Set data cho các service qua một String
@@ -37,8 +41,6 @@ public class CheckLoginService implements ServerService {
      */
     @Override
     public Map<String, Object> execute() { 
-        //Tạo một đối tượng để xử lý dữ liệu với Database
-        userDataAccess = UserDataAccess.getInstance();   
         //Tạo một Map để miêu tả kết quả
         Map<String, Object> resultMap = new HashMap<>();
         //Lấy user có username cho trước

@@ -16,7 +16,11 @@ import java.util.Map;
  */
 public class CreateUserService implements ServerService {    
     private User user;
-    private SpecialUserDataAccess userDataAccess;
+    protected SpecialUserDataAccess userDataAccess;
+    
+    public CreateUserService() {
+        userDataAccess = UserDataAccess.getInstance();
+    }
     
     /**
      * Set data cho các service qua một String

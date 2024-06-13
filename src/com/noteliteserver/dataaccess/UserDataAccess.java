@@ -19,12 +19,12 @@ import java.util.List;
  */
 public class UserDataAccess implements SpecialUserDataAccess {
     private final Connection connection;
-    private final DatabaseConnection databaseConnection;
+    protected DatabaseConnection databaseConnection;
 
     private UserDataAccess() {
         databaseConnection = new MySQLDatabaseConnection
             ("localhost", 3306, "notelitedb", "root", "Asensio1234@");
-        this.connection = databaseConnection.getJDBCConnection();
+        this.connection = databaseConnection.getConnection();
     }
     
     private static class SingletonHelper {

@@ -14,5 +14,5 @@ public interface DatabaseConnection {
      * Lấy kết nối JDBC
      * @return Đối tượng {@code Connection} connect tới cơ sở dữ liệu
      */
-    Connection getJDBCConnection();
+    Connection getConnection();
 }
