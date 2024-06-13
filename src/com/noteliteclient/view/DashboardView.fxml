@@ -27,16 +27,16 @@
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="630.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.noteliteclient.controller.DashboardController">
    <children>
-      <BorderPane fx:id="extraServiceScene" prefHeight="630.0" prefWidth="810.0" visible="false">
+      <BorderPane fx:id="extraServiceScene" prefHeight="630.0" prefWidth="810.0">
          <left>
             <AnchorPane prefHeight="600.0" prefWidth="250.0" styleClass="extra-left-form" stylesheets="@dashboardStyle.css" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="70.0" layoutY="13.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                  <Label layoutX="70.0" layoutY="13.0" text="Welcome" textAlignment="CENTER">
                      <font>
                         <Font name="Corbel Bold" size="26.0" />
                      </font>
                   </Label>
-                  <Label fx:id="userLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="178.0" prefHeight="31.0" prefWidth="221.0" text="Welcome" textAlignment="CENTER" textFill="WHITE">
+                  <Label fx:id="userLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="178.0" prefHeight="31.0" prefWidth="221.0" text="Welcome" textAlignment="CENTER">
                      <font>
                         <Font name="Corbel Bold" size="19.0" />
                      </font>
@@ -56,7 +56,7 @@
                   </Button>
                   <ImageView fitHeight="125.0" fitWidth="150.0" layoutX="60.0" layoutY="45.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../image/user.png" />
+                        <Image url="@../image/user-white.png" />
                      </image>
                   </ImageView>
                   <VBox layoutX="10.0" layoutY="228.0" prefHeight="200.0" prefWidth="227.0">
@@ -400,7 +400,7 @@
             </AnchorPane>
          </top>
       </BorderPane>
-      <VBox fx:id="mainScene" prefHeight="630.0" prefWidth="810.0">
+      <VBox fx:id="mainScene" prefHeight="630.0" prefWidth="810.0" visible="false">
          <children>
             <HBox prefHeight="25.0" prefWidth="810.0" styleClass="top-form" stylesheets="@anotherStyle.css">
                <children>

@@ -113,7 +113,7 @@ public class LoginController {
             DashboardController dashboardFXMLController = fXMLLoader.getController();
             dashboardFXMLController.setMyUser(user);
             //Hiển thị Dashboard
-            dashboardFXMLController.setConnectTo(host, port);
+            dashboardFXMLController.setOnConnect(host, port);
             dashboardFXMLController.initAndGetConnect();
             
             x = 0;
@@ -150,6 +150,7 @@ public class LoginController {
             Scene scene = new Scene(fXMLLoader.load());
             //Khởi tạo và chạy
             RegisterController registerFXMLController = fXMLLoader.getController();
+            registerFXMLController.setOnConnect(host, port);
             registerFXMLController.initAndGetConnect();
             
             x = 0;

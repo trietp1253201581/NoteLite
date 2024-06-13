@@ -776,7 +776,7 @@ public class DashboardController {
         changeToMainScene();
     }
     
-    public void setConnectTo(String host, int port) {
+    public void setOnConnect(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -1057,7 +1057,7 @@ public class DashboardController {
     }
     
     private void changeSceneInExtraScene(Button button) {
-        String pressedStyle = "-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)";
+        String pressedStyle = "-fx-background-color: #1a91b8";
         String unPressedStyle = "-fx-background-color: transparent";
         //init lại
         myNotesButton.setStyle(unPressedStyle);
