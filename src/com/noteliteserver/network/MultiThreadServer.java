@@ -23,11 +23,11 @@ public class MultiThreadServer implements Server {
      * Khởi tạo một Server phục vụ đa luồng
      * @param port cổng phục vụ
      * @throws IOException
-     */
+     */     
     public MultiThreadServer(int port) throws IOException {       
         this.port = port;
         this.status = ServerStatus.SUCCESS;
-        serverSocket = new ServerSocket(port);        
+        serverSocket = new ServerSocket(this.port);        
     }
     
     /**

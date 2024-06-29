@@ -1,5 +1,6 @@
 package com.noteliteserver.dataaccess;
 
+import com.notelitemodel.NetworkProperty;
 import com.notelitemodel.datatransfer.Note;
 import com.noteliteserver.dataaccess.connection.DatabaseConnection;
 import com.noteliteserver.dataaccess.connection.MySQLDatabaseConnection;
@@ -25,8 +26,13 @@ public class NoteDataAccess implements SpecialNoteDataAccess {
      * Khởi tạo và lấy connection tới Database
      */
     private NoteDataAccess() {
+        String host = NetworkProperty.DATABASE_HOST;
+        int port = NetworkProperty.DATABASE_PORT;
+        String dbName = NetworkProperty.DATABASE_NAME;
+        String username = NetworkProperty.DATABASE_USERNAME;
+        String password = NetworkProperty.DATABASE_PASSWORD;
         databaseConnection = new MySQLDatabaseConnection
-            ("localhost", 3306, "notelitedb", "root", "Asensio1234@");
+            (host, port, dbName, username, password);
         this.connection = databaseConnection.getConnection();
     }
 
