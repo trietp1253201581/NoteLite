@@ -11,9 +11,9 @@
 3. Chia sẻ Note của mình với các tài khoản khác.
 4. Giao diện đơn giản, thân thiện, cung cấp trải nghiệm cho người dùng
 ## Một số thông tin cài đặt về ứng dụng khi phát triển
-1. Ngôn ngữ lập trình: Java (JDK 21).
+1. Ngôn ngữ lập trình: Java (JDK 21), CSS.
 2. IDE: Apache NetBeans IDE 21.
-3. Cơ sở dữ liệu: MySQL.
+3. Hệ quản trị Cơ sở dữ liệu: MySQL Workbench 8.0 CE.
 4. Hỗ trợ thiết kế GUI: JavaFX (SDK 21), Scene Builder.
 5. Thiết lập server tạm thời để thử nghiệm: localhost.
 ## Hướng dẫn chạy thử
