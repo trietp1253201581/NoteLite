@@ -9,7 +9,6 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -27,7 +26,7 @@
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="630.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.noteliteclient.controller.DashboardController">
    <children>
-      <BorderPane fx:id="extraServiceScene" prefHeight="630.0" prefWidth="810.0">
+      <BorderPane fx:id="extraServiceScene" prefHeight="630.0" prefWidth="810.0" visible="false">
          <left>
             <AnchorPane prefHeight="600.0" prefWidth="250.0" styleClass="extra-left-form" stylesheets="@dashboardStyle.css" BorderPane.alignment="CENTER">
                <children>
@@ -400,7 +399,7 @@
             </AnchorPane>
          </top>
       </BorderPane>
-      <VBox fx:id="mainScene" prefHeight="630.0" prefWidth="810.0" visible="false">
+      <VBox fx:id="mainScene" prefHeight="630.0" prefWidth="810.0">
          <children>
             <HBox prefHeight="25.0" prefWidth="810.0" styleClass="top-form" stylesheets="@anotherStyle.css">
                <children>
@@ -582,6 +581,23 @@
                               <Insets top="3.0" />
                            </HBox.margin>
                         </Button>
+                        <Button fx:id="addTextBlockButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleAddTextBlockButton" prefHeight="70.0" prefWidth="70.0" styleClass="main-button" stylesheets="@dashboardStyle.css" textOverrun="CLIP">
+                           <graphic>
+                              <VBox alignment="CENTER" prefHeight="60.0" prefWidth="50.0">
+                                 <children>
+                                    <ImageView fitHeight="30.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../image/plus.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="Add text block" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                           <HBox.margin>
+                              <Insets top="3.0" />
+                           </HBox.margin>
+                        </Button>
                      </children>
                   </HBox>
                </children>
@@ -597,14 +613,11 @@
             </HBox>
             <HBox prefHeight="370.0" prefWidth="200.0">
                <children>
-                  <TextArea fx:id="contentArea" onKeyTyped="#changeTextArea" prefHeight="320.0" prefWidth="800.0" styleClass="content-area" stylesheets="@dashboardStyle.css" text="ad&#10;bc&#10;ef&#10;">
-                     <font>
-                        <Font name=".VnArabia" size="14.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
-                  </TextArea>
+                  <ScrollPane prefHeight="200.0" prefWidth="807.0">
+                     <content>
+                        <VBox fx:id="blocksLayout" prefHeight="370.0" prefWidth="800.0" />
+                     </content>
+                  </ScrollPane>
                </children>
             </HBox>
             <HBox prefHeight="105.0" prefWidth="810.0">

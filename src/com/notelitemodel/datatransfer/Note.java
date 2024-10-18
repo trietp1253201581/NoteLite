@@ -1,10 +1,12 @@
 package com.notelitemodel.datatransfer;
 
+import com.notelitemodel.Command;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -13,20 +15,14 @@ import java.util.Objects;
  * @since 30/03/2024
  * @version 1.0
  */
-public class Note {
+public class Note extends BaseDataTransferModel {
     private int id;
     private String author;
     private String header;
-    private String content;
+    private List<Block> blocks;
     private int lastModified;
     private Date lastModifiedDate;
-    private List<String> filters;
-
-    //Ký tự chia giữa hai thuộc tính
-    protected static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
-
-    //Ký tự đánh dấu là kết thúc một Note
-    protected static final String END_TAGS = "<///>";
+    private List<Filter> filters;
     
     /**
      * Constructor và cài đặt dữ liệu default cho Note
@@ -35,65 +31,75 @@ public class Note {
         this.id = -1;
         this.author = "";
         this.header = "";
-        this.content = "";
+        this.blocks = new ArrayList<>();
         this.lastModified = 0;
         this.lastModifiedDate = Date.valueOf(LocalDate.MIN);
         this.filters = new ArrayList<>();
+    }
+
+    public Note(int id, String author, String header, List<Block> blocks, int lastModified, Date lastModifiedDate, List<Filter> filters) {
+        this.id = id;
+        this.author = author;
+        this.header = header;
+        this.blocks = blocks;
+        this.lastModified = lastModified;
+        this.lastModifiedDate = lastModifiedDate;
+        this.filters = filters;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getHeader() {
-        return header;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public int getLastModified() {
-        return lastModified;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public List<String> getFilters() {
-        return filters;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    public String getHeader() {
+        return header;
+    }
+
     public void setHeader(String header) {
         this.header = header;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(List<Block> blocks) {
+        this.blocks = blocks;
+    }
+
+    public int getLastModified() {
+        return lastModified;
     }
 
     public void setLastModified(int lastModified) {
         this.lastModified = lastModified;
     }
 
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public void setFilters(List<String> filters) {
+    public List<Filter> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(List<Filter> filters) {
         this.filters = filters;
     }
     
@@ -101,54 +107,68 @@ public class Note {
      * Kiểm tra xem một thể hiện Note có mang giá trị default không
      * @return (1) {@code true} nếu đây là default Note, (2) {@code false} nếu ngược lại
      */
+    @Override
     public boolean isDefaultValue() {
         return id == -1;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 29 * hash + this.id;
-        hash = 29 * hash + Objects.hashCode(this.author);
-        hash = 29 * hash + Objects.hashCode(this.header);
-        hash = 29 * hash + Objects.hashCode(this.content);
-        hash = 29 * hash + this.lastModified;
-        hash = 29 * hash + Objects.hashCode(this.lastModifiedDate);
-        hash = 29 * hash + Objects.hashCode(this.filters);
+        int hash = 7;
+        hash = 73 * hash + this.id;
+        hash = 73 * hash + Objects.hashCode(this.author);
+        hash = 73 * hash + Objects.hashCode(this.header);
+        hash = 73 * hash + Objects.hashCode(this.blocks);
+        hash = 73 * hash + this.lastModified;
+        hash = 73 * hash + Objects.hashCode(this.lastModifiedDate);
+        hash = 73 * hash + Objects.hashCode(this.filters);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final Note other = (Note) obj;
-        if(this.id != other.id) {
+        if (this.id != other.id) {
             return false;
         }
-        if(this.lastModified != other.lastModified) {
+        if (this.lastModified != other.lastModified) {
             return false;
         }
-        if(!Objects.equals(this.author, other.author)) {
+        if (!Objects.equals(this.author, other.author)) {
             return false;
         }
-        if(!Objects.equals(this.header, other.header)) {
+        if (!Objects.equals(this.header, other.header)) {
             return false;
         }
-        if(!Objects.equals(this.content, other.content)) {
+        if (!Objects.equals(this.blocks, other.blocks)) {
             return false;
         }
-        if(!Objects.equals(this.lastModifiedDate, other.lastModifiedDate)) {
+        if (!Objects.equals(this.lastModifiedDate, other.lastModifiedDate)) {
             return false;
         }
         return Objects.equals(this.filters, other.filters);
+    }
+    
+    @Override
+    public Map<String, Object> getAttributeMap() {
+        Map<String, Object> attributeMap = new HashMap<>();
+        attributeMap.put("id", this.id);
+        attributeMap.put("author", this.author);
+        attributeMap.put("header", this.header);
+        attributeMap.put("lastModified", this.lastModified);
+        attributeMap.put("lastModifiedDate", this.lastModifiedDate);
+        attributeMap.put("blocks", Block.ListConverter.convertToString(blocks));
+        attributeMap.put("filters", Filter.ListConverter.convertToString(filters));
+        return attributeMap;
     }
 
     /**
@@ -158,18 +178,8 @@ public class Note {
      */
     @Override
     public String toString() {
-        String result = "";
-        //Tạo ra một String biểu diễn cho note
-        result += id + SPLIT_ATTRIBUTE_TAGS;
-        result += author + SPLIT_ATTRIBUTE_TAGS;
-        result += header + SPLIT_ATTRIBUTE_TAGS;
-        result += content + SPLIT_ATTRIBUTE_TAGS;
-        result += lastModified + SPLIT_ATTRIBUTE_TAGS;
-        result += lastModifiedDate + SPLIT_ATTRIBUTE_TAGS;
-        result += FiltersConverter.convertToString(filters) + SPLIT_ATTRIBUTE_TAGS;
-        result += END_TAGS + END_TAGS;
-        
-        return result;    
+        String objectName = "Note";
+        return super.toString(objectName);
     }
     
     /**
@@ -179,133 +189,38 @@ public class Note {
      * @return Note thu được
      */
     public static Note valueOf(String str) {       
+        Map<String, String> attributeStrMap = Command.decode(str).get(0);
+        return valueOf(attributeStrMap);
+    }
+    
+    public static Note valueOf(Map<String, String> attributeStrMap) {
         Note note = new Note();
-        //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
-        //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
-        note.setId(Integer.parseInt(strarr[0]));
-        note.setAuthor(strarr[1]);
-        note.setHeader(strarr[2]);
-        note.setContent(strarr[3]);
-        note.setLastModified(Integer.parseInt(strarr[4]));
-        note.setLastModifiedDate(Date.valueOf(strarr[5]));
-        note.setFilters(FiltersConverter.convertToList(strarr[6]));
-        
-        return note;      
-    }
-
-    /**
-     * Chuyển một text hiển thị trên GUI sang một text lưu trong CSDL và ngược lại
-     */
-    public static class ContentConverter {
-        private static final String ENDLINE_TAGS = "##endline##";
-
-        /**
-         * Chuyển một text ở GUI sang text lưu trong CSDL
-         * @param areaText text ở GUI
-         * @return text sau khi chuyển
-         */
-        public static String convertToDBText(String areaText) {
-            //Chia thành các dòng
-            String[] texts = areaText.split("\\n");
-            String dbText = "";
-            //Chuyển ký tự \n ở cuối dòng thành ##endline##
-            for (String text : texts) {
-                dbText += text + ENDLINE_TAGS;
-            }
-            return dbText;
-        }
-
-        /**
-         * Chuyển một text trong CSDL sang một text hiển thị trên GUI
-         * @param dbText text trong CSDL
-         * @return text sau khi chuyển
-         */
-        public static String convertToObjectText(String dbText) {
-            //Chia thành các phần ngăn cách bởi ##endline##, mỗi phần là một dòng trên text ở GUI
-            String[] texts = dbText.split(ENDLINE_TAGS);
-            String areaText = "";
-            //Thêm ký tự \n vào cuối mỗi phần tử
-            for (String text : texts) {
-                areaText += text + "\n";
-            }
-            return areaText;
-        }
-    }
-
-    /**
-     * Cung cấp các phương thức để convert một list các filter thành string và ngược lại
-     */
-    public static class FiltersConverter {
-        private static final String SPLIT_TAGS = "##";
-
-        /**
-         * Chuyển list các filter thành String
-         * @param filters list các filter
-         * @return String có gồm các filter string, ngăn cách bởi ký tự đặc biệt
-         */
-        public static String convertToString(List<String> filters) {
-            String result = "";
-            //Với mỗi filter string, thêm vào result filter string đó và dấu ##
-            for (String filter : filters) {
-                result += filter + SPLIT_TAGS;
-            }
-            return result;
-        }
-
-        /**
-         * Chuyển một String thành list các filter
-         * @param strFilter String gồm mỗi thành phần là 1 filter string, 
-         * các thành phần ngăn cách bởi dấu chia đặc biệt
-         * @return list filter thu được
-         */
-        public static List<String> convertToList(String strFilter) {
-            //Chuyển String thành các thành phần filter string (do được ngăn cách bởi ##)
-            if ("".equals(strFilter)) {
-                return new ArrayList<>();
-            }
-            String[] filters = strFilter.split(SPLIT_TAGS);
-            List<String> result = new ArrayList<>();
-            //Chuyển từ String[] thành list
-            result.addAll(Arrays.asList(filters));
-            return result;
-        }
+        note.setId(Integer.parseInt(attributeStrMap.get("id")));
+        note.setAuthor(attributeStrMap.get("author"));
+        note.setHeader(attributeStrMap.get("header"));
+        note.setLastModified(Integer.parseInt(attributeStrMap.get("lastModified")));
+        note.setLastModifiedDate(Date.valueOf(attributeStrMap.get("lastModifiedDate")));
+        note.setBlocks(Block.ListConverter.convertToList(attributeStrMap.get("blocks")));
+        note.setFilters(Filter.ListConverter.convertToList(attributeStrMap.get("filters")));
+        return note;
     }
     
     /**
      * Class cung cấp các phương thức để chuyển 1 list các note thành string và ngược lại
      */
-    public static class ListOfNotesConverter {
-        private static final String SPLIT_TAGS = "<##>";
-        
-        /**
-         * Chuyển 1 list các note thành string
-         * @param notes list cần chuyển
-         * @return string thu được, gồm các string biểu diễn Note và các dấu ngăn cách
-         */
-        public static String convertToString(List<? extends Note> notes) {
-            String result = "";
-            for(Note note: notes) {
-                result += note.toString() + SPLIT_TAGS;
-            }
-            return result;
+    public static class ListConverter {
+        public static String convertToString(List<? extends Note> models) {
+            return BaseDataTransferModel.ListConverter.convertToString(models);
         }
         
-        /**
-         * Chuyển 1 string thành list các Note
-         * @param strNotes string miêu tả list các Note
-         * @return List các Note thu được
-         */
-        public static List<Note> convertToList(String strNotes) {
-            List<Note> result = new ArrayList<>();
-            if("".equals(strNotes)) {
-                return result;
+        public static List<Note> convertToList(String listOfNoteStr) {
+            List<Map<String, String>> listOfNoteMaps = Command.decode(listOfNoteStr);
+            List<Note> notes = new ArrayList<>();
+            for(Map<String, String> noteMap: listOfNoteMaps) {
+                Note newNote = Note.valueOf(noteMap);
+                notes.add(newNote);
             }
-            String[] strNoteArrays = strNotes.split(SPLIT_TAGS);
-            for(String strNote: strNoteArrays) {
-                result.add(valueOf(strNote));
-            }
-            return result;
+            return notes;
         }
     }
 }

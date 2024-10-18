@@ -1,7 +1,13 @@
 package com.notelitemodel.datatransfer;
 
+import com.notelitemodel.Command;
+import static com.notelitemodel.datatransfer.Note.valueOf;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -10,7 +16,7 @@ import java.util.Objects;
  * @since 30/03/2024
  * @version 1.0
  */
-public class User {
+public class User extends BaseDataTransferModel {
     private int id;
     private String name;
     private String username;
@@ -18,9 +24,6 @@ public class User {
     private Date birthday;
     private String school;
     private Gender gender;
-    
-    public static final String SPLIT_ATTRIBUTE_TAGS = "<;>";
-    public static final String END_TAGS = "<///>";
     
     /**
      * Các giới tính
@@ -40,6 +43,16 @@ public class User {
         this.birthday = Date.valueOf(LocalDate.MIN);
         this.school = "";
         this.gender = Gender.MALE;
+    }
+
+    public User(int id, String name, String username, String password, Date birthday, String school, Gender gender) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.birthday = birthday;
+        this.school = school;
+        this.gender = gender;
     }
     
     public int getId() {
@@ -102,6 +115,7 @@ public class User {
      * Kiểm tra xem một thể hiện User có mang giá trị default không
      * @return (1) {@code true} nếu đây là default User, (2) {@code false} nếu ngược lại
      */
+    @Override
     public boolean isDefaultValue() {
         return id == -1;
     }
@@ -151,6 +165,19 @@ public class User {
         }
         return this.gender == other.gender;
     }
+    
+    @Override
+    public Map<String, Object> getAttributeMap() {
+        Map<String, Object> attributeMap = new HashMap<>();
+        attributeMap.put("id", this.id);
+        attributeMap.put("name", this.name);
+        attributeMap.put("username", this.username);
+        attributeMap.put("password", this.password);
+        attributeMap.put("birthday", this.birthday);
+        attributeMap.put("school", this.school);
+        attributeMap.put("gender", this.gender);
+        return attributeMap;
+    }
 
     /**
      * Chuyển một User thành String
@@ -159,18 +186,8 @@ public class User {
      */
     @Override
     public String toString() {        
-        String result = "";
-        //Tạo ra một String biểu diễn cho User
-        result += id + SPLIT_ATTRIBUTE_TAGS;
-        result += name + SPLIT_ATTRIBUTE_TAGS;
-        result += username + SPLIT_ATTRIBUTE_TAGS;
-        result += password + SPLIT_ATTRIBUTE_TAGS;
-        result += birthday + SPLIT_ATTRIBUTE_TAGS;
-        result += school + SPLIT_ATTRIBUTE_TAGS;
-        result += gender + SPLIT_ATTRIBUTE_TAGS;
-        result += END_TAGS + END_TAGS;
-        
-        return result;        
+        String objectName = "User";
+        return super.toString(objectName);
     }
     
     /**
@@ -180,18 +197,37 @@ public class User {
      * @return User thu được
      */
     public static User valueOf(String str) {       
-        User user = new User();
-        //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
-        //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của user
-        user.setId(Integer.parseInt(strarr[0]));
-        user.setName(strarr[1]);
-        user.setUsername(strarr[2]);
-        user.setPassword(strarr[3]);
-        user.setBirthday(Date.valueOf(strarr[4]));
-        user.setSchool(strarr[5]);
-        user.setGender(Gender.valueOf(strarr[6]));
-        
-        return user;       
+        Map<String, String> attributeStrMap = Command.decode(str).get(0);
+        return valueOf(attributeStrMap);
     }
+    
+    public static User valueOf(Map<String, String> attributeStrMap) {
+        User user = new User();
+        user.setId(Integer.parseInt(attributeStrMap.get("id")));
+        user.setName(attributeStrMap.get("name"));
+        user.setUsername(attributeStrMap.get("username"));
+        user.setPassword(attributeStrMap.get("password"));
+        user.setBirthday(Date.valueOf(attributeStrMap.get("birthday")));
+        user.setSchool(attributeStrMap.get("school"));
+        user.setGender(Gender.valueOf(attributeStrMap.get("gender")));
+        
+        return user;   
+    }
+    
+    public static class ListConverter {
+        public static String convertToString(List<? extends User> models) {
+            return BaseDataTransferModel.ListConverter.convertToString(models);
+        }
+        
+        public static List<User> convertToList(String listOfUserStr) {
+            List<Map<String, String>> listOfUserMaps = Command.decode(listOfUserStr);
+            List<User> users = new ArrayList<>();
+            for(Map<String, String> userMap: listOfUserMaps) {
+                User newUser = User.valueOf(userMap);
+                users.add(newUser);
+            }
+            return users;
+        }
+    }
+
 }

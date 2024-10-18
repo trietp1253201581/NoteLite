@@ -1,8 +1,12 @@
 package com.notelitemodel.datatransfer;
 
+import com.notelitemodel.Command;
+import static com.notelitemodel.datatransfer.Note.valueOf;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -32,6 +36,20 @@ public class ShareNote extends Note {
         this.shareId = -1;
         this.receiver = "";
         this.shareType = ShareType.READ_ONLY;
+    }
+
+    public ShareNote(int shareId, String receiver, ShareType shareType) {
+        super();
+        this.shareId = shareId;
+        this.receiver = receiver;
+        this.shareType = shareType;
+    }
+
+    public ShareNote(int shareId, String receiver, ShareType shareType, int id, String author, String header, List<Block> blocks, int lastModified, Date lastModifiedDate, List<Filter> filters) {
+        super(id, author, header, blocks, lastModified, lastModifiedDate, filters);
+        this.shareId = shareId;
+        this.receiver = receiver;
+        this.shareType = shareType;
     }
     
     public int getShareId() {
@@ -100,10 +118,19 @@ public class ShareNote extends Note {
         super.setId(note.getId());
         super.setAuthor(note.getAuthor());
         super.setHeader(note.getHeader());
-        super.setContent(note.getContent());
+        super.setBlocks(note.getBlocks());
         super.setLastModified(note.getLastModified());
         super.setLastModifiedDate(note.getLastModifiedDate());
         super.setFilters(note.getFilters());
+    }
+    
+    @Override
+    public Map<String, Object> getAttributeMap() {
+        Map<String, Object> attributeMap = super.getAttributeMap();
+        attributeMap.put("shareId", this.shareId);
+        attributeMap.put("receiver", this.receiver);
+        attributeMap.put("shareType", this.shareType);
+        return attributeMap;
     }
     
     /**
@@ -113,21 +140,8 @@ public class ShareNote extends Note {
      */
     @Override
     public String toString() {
-        String result = "";
-        //Tạo ra một String biểu diễn cho note
-        result += super.getId() + SPLIT_ATTRIBUTE_TAGS;
-        result += super.getAuthor() + SPLIT_ATTRIBUTE_TAGS;
-        result += super.getHeader() + SPLIT_ATTRIBUTE_TAGS;
-        result += super.getContent() + SPLIT_ATTRIBUTE_TAGS;
-        result += super.getLastModified() + SPLIT_ATTRIBUTE_TAGS;
-        result += super.getLastModifiedDate() + SPLIT_ATTRIBUTE_TAGS;
-        result += FiltersConverter.convertToString(super.getFilters()) + SPLIT_ATTRIBUTE_TAGS;
-        result += shareId + SPLIT_ATTRIBUTE_TAGS;
-        result += receiver + SPLIT_ATTRIBUTE_TAGS;
-        result += shareType + SPLIT_ATTRIBUTE_TAGS;
-        result += END_TAGS + END_TAGS;
-        
-        return result;
+        String objectName = "ShareNote";
+        return super.toString(objectName);
     }
     
     /**
@@ -137,53 +151,36 @@ public class ShareNote extends Note {
      * @return ShareNote thu được
      */
     public static ShareNote valueOf(String str) {
+        Map<String, String> attributeStrMap = Command.decode(str).get(0);
+        return valueOf(attributeStrMap);
+    }
+    
+    public static ShareNote valueOf(Map<String, String> attributeStrMap) {
+        Note note = Note.valueOf(attributeStrMap);
         ShareNote shareNote = new ShareNote();
-        //Chia chuỗi thành các phần để xử lý
-        String[] strarr = str.split(SPLIT_ATTRIBUTE_TAGS);
-        //Dựa vào dữ liệu từng phần dể set cho các thuộc tính của note
-        shareNote.setId(Integer.parseInt(strarr[0]));
-        shareNote.setAuthor(strarr[1]);
-        shareNote.setHeader(strarr[2]);
-        shareNote.setContent(strarr[3]);
-        shareNote.setLastModified(Integer.parseInt(strarr[4]));
-        shareNote.setLastModifiedDate(Date.valueOf(strarr[5]));
-        shareNote.setFilters(FiltersConverter.convertToList(strarr[6]));
-        shareNote.setShareId(Integer.parseInt(strarr[7]));
-        shareNote.setReceiver(strarr[8]);
-        shareNote.setShareType(ShareType.valueOf(strarr[9]));
+        shareNote.setNote(note);
+        shareNote.setShareId(Integer.parseInt(attributeStrMap.get("shareId")));
+        shareNote.setReceiver(attributeStrMap.get("receiver"));
+        shareNote.setShareType(ShareType.valueOf(attributeStrMap.get("shareType")));
         return shareNote;
     }
     
     /**
      * Cung cấp các phương thức chuyển từ string sang list các ShareNote
      */
-    public static class ListOfShareNotesConverter {
-        private static final String SPLIT_TAGS = "<##>";
-        
-        /**
-         * Chuyển 1 List các ShareNote thành String
-         * @param notes list các ShareNote cần chuyển
-         * @return String thu được
-         */
-        public static String convertToString(List<? extends ShareNote> notes) {
-            return ListOfNotesConverter.convertToString(notes);
+    public static class ListConverter {
+        public static String convertToString(List<? extends ShareNote> models) {
+            return BaseDataTransferModel.ListConverter.convertToString(models);
         }
         
-        /**
-         * Chuyển 1 string thành List các ShareNote
-         * @param strShareNotes String miêu tả list
-         * @return List thu được
-         */
-        public static List<ShareNote> convertToList(String strShareNotes) {
-            List<ShareNote> result = new ArrayList<>();
-            if("".equals(strShareNotes)) {
-                return result;
+        public static List<ShareNote> convertToList(String listOfShareNoteStr) {
+            List<Map<String, String>> listOfShareNoteMaps = Command.decode(listOfShareNoteStr);
+            List<ShareNote> shareNotes = new ArrayList<>();
+            for(Map<String, String> shareNoteMap: listOfShareNoteMaps) {
+                ShareNote newShareNote = ShareNote.valueOf(shareNoteMap);
+                shareNotes.add(newShareNote);
             }
-            String[] strShareNoteArrays = strShareNotes.split(SPLIT_TAGS);
-            for(String strShareNote: strShareNoteArrays) {
-                result.add(valueOf(strShareNote));
-            }
-            return result;
+            return shareNotes;
         }
     }
 }

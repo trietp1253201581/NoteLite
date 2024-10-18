@@ -16,6 +16,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,10 +32,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -80,6 +81,8 @@ public class DashboardController {
     @FXML 
     private Button addFilterButton;
     @FXML
+    private Button addTextBlockButton;
+    @FXML
     private ComboBox<String> fontTypeComboBox; 
     @FXML
     private ComboBox<String> fontSizeComboBox;
@@ -87,9 +90,7 @@ public class DashboardController {
     private ColorPicker colorPicker;
     //Các thuộc tính còn lại
     @FXML
-    private TextArea contentArea;
-    @FXML
-    private Label numCharLabel;
+    private VBox blocksLayout;
     @FXML
     private GridPane filterGridLayout;
     //Các thuộc tính của extra scene
@@ -196,11 +197,16 @@ public class DashboardController {
     private List<Note> myNotes;   
     private List<ShareNote> mySharedNotes;
     private boolean savedNoteStatus;
+    
+    private List<String> noteBlocks;
+    private int modifingBlockId;
 
     private double x,y;
     
     private String host;
     private int port;
+    
+    long time = 0;
     
     public void setMyUser(User myUser) {
         this.myUser = myUser;
@@ -209,7 +215,13 @@ public class DashboardController {
     @FXML
     void handleCloseButton(ActionEvent event) {
         //Kiểm tra Note hiện hành đã được lưu chưa?
-        autoSave();
+        if(!savedNoteStatus) {
+            Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
+                    myNote.getHeader() + " is unsaved. Do you want to save?");
+            if(optional.get() == ButtonType.OK) {
+                autoSave();
+            }           
+        }
         Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION,
                 "Close NoteLite?");
         if(optional.get() == ButtonType.OK) {
@@ -255,12 +267,13 @@ public class DashboardController {
     
     @FXML
     void handleSaveNoteButton(ActionEvent event) {
-        //Thiết lập lại undoRedoService
-        undoRedoService = new UndoRedoService();    
-        undoRedoService.saveText(contentArea.getText());
+        String content = "";
+        for(String block: noteBlocks) {
+            content += block;
+        }
         //Set dữ liệu gần nhất cho myNote
         myNote.setHeader(noteHeaderLabel.getText());
-        myNote.setContent(Note.ContentConverter.convertToDBText(contentArea.getText()));
+        myNote.setContent(Note.ContentConverter.convertToDBText(content));
         myNote.setLastModified(1);
         myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
         //Lưu note
@@ -277,36 +290,11 @@ public class DashboardController {
     
     @FXML
     void handleUndoButton(ActionEvent event) {      
-        //Lấy text thu được khi undo
-        String text = undoRedoService.undo();
-        //Nhận và thông báo
-        if("Can't undo".equals(text)) {
-            //Không có text để undo
-            showAlert(Alert.AlertType.ERROR, text);
-        } else {
-            //Thiết lập content là text vừa undo
-            contentArea.setText(text);
-            numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
-        }
-        //Chỉnh trạng thái lưu Note 
-        savedNoteStatus = false;        
+             
     }
 
     @FXML
-    void handleRedoButton(ActionEvent event) {    
-        //Lấy text thu được khi undo
-        String text = undoRedoService.redo();
-        //Nhận và thông báo
-        if(text.equals("Can't redo")) {
-            //Không có text để redo
-            showAlert(Alert.AlertType.ERROR, text);
-        } else {
-            //Thiết lập content là text vừa redo
-            contentArea.setText(text);       
-            numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
-        }
-        //Chỉnh trạng thái lưu Note 
-        savedNoteStatus = false;        
+    void handleRedoButton(ActionEvent event) {         
     }
 
     @FXML
@@ -335,50 +323,24 @@ public class DashboardController {
     }
     
     @FXML
+    void handleAddTextBlockButton(ActionEvent event) {
+        noteBlocks.add("Edit here");
+        initBlocks(noteBlocks);
+    }
+    
+    @FXML
     void handleFontTypeComboBox(ActionEvent event) {
-        String fontType = fontTypeComboBox.getSelectionModel().getSelectedItem();
-        String fontSize = fontSizeComboBox.getSelectionModel().getSelectedItem();
-        String style = "-fx-background-radius: 5px;";
-        style += "-fx-font-family: " + fontType + ";";
-        style += "-fx-font-size: " + fontSize + "px;";
-        contentArea.setStyle(style);
     }
     
     @FXML
     void handleFontSizeComboBox(ActionEvent event) {
-        String fontSize = fontSizeComboBox.getSelectionModel().getSelectedItem();
-        String fontType = fontTypeComboBox.getSelectionModel().getSelectedItem();
-        String style = "-fx-background-radius: 5px;";
-        style += "-fx-font-family: " + fontType + ";";
-        style += "-fx-font-size: " + fontSize + "px;";
-        contentArea.setStyle(style);
     }
     
     @FXML
     void handleColorPicker(ActionEvent event) {
-        Color selectedColor = colorPicker.getValue();
-        String style = "-fx-background-radius: 5px;";
-        style += "-fx-text-fill: " + "#" + selectedColor.toString().substring(2, 8) + ";";
-        contentArea.setStyle(style);
+        
     }
-    
-    @FXML
-    void changeTextArea(KeyEvent event) {  
-        if(event.getSource() != contentArea) {
-            return;
-        }
-        //Lấy các thông số
-        int nowLength = contentArea.getText().length();
-        int lastLength = undoRedoService.getLastText().length();
-        //Kiểm tra đã vượt quá số ký tự quy định
-        numCharLabel.setText(String.valueOf(nowLength) + "/10000");
-        //Tự động lưu văn bản vào undoRedoService
-        if(nowLength < lastLength || nowLength > lastLength + 3) {
-            undoRedoService.saveText(contentArea.getText());
-        }
-        //Chỉnh trạng thái lưu Note 
-        savedNoteStatus = false;
-    }
+ 
     
     @FXML
     void handleHomeMenuButton(ActionEvent event) {
@@ -394,7 +356,13 @@ public class DashboardController {
     @FXML
     void handleLogoutButton(ActionEvent event) { 
         //Kiểm tra và lưu
-        autoSave();
+        if(!savedNoteStatus) {
+            Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
+                    myNote.getHeader() + " is unsaved. Do you want to save?");
+            if(optional.get() == ButtonType.OK) {
+                autoSave();
+            }           
+        }
         //Set lại style của button
         logoutButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #0e544e, #0e2f52)");
         //Xóa connect
@@ -665,8 +633,7 @@ public class DashboardController {
                 contents += PdfService.read(importFileName.getText(), i);
                 contents += "\n----------------------\n";
             }
-            contentArea.setText(contents);
-            numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
+            
             //Thông báo
             showAlert(Alert.AlertType.INFORMATION, "Succesfully import");
             //Chuyển sang main
@@ -771,6 +738,9 @@ public class DashboardController {
             //Chỉnh trạng thái lưu Note 
             savedNoteStatus = false;    
         }
+        modifingBlockId = -1;
+        //Cài đặt tự động update
+        setOnAutoUpdate();
         //Init lại Scene
         initMainScene();
         changeToMainScene();
@@ -780,19 +750,41 @@ public class DashboardController {
         this.host = host;
         this.port = port;
     }
+    
+    private void setOnAutoUpdate() {
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(()->{
+                    System.out.println(modifingBlockId);
+                    try { 
+                        //Lấy thành công
+                        myNote = clientServerService.openNote(myUser.getUsername(), myNote.getHeader());
+                        //Chỉnh trạng thái lưu Note 
+                        savedNoteStatus = true;     
+                    } catch (ClientServerServiceException ex) {
+                        showAlert(Alert.AlertType.ERROR, ex.getMessage());
+                    }
+                    //Init lại Scene
+                    initBlocks(noteBlocks);
+                });
+            }
+        };
+        long delay = 2000;
+        long period = 5000;
+        timer.scheduleAtFixedRate(timerTask, delay, period);
+    }
 
     private void initMainScene() { 
         //Chuyển sang main scene
         mainScene.setVisible(true);
         extraServiceScene.setVisible(false);
         //Thiết lập content, header
-        contentArea.setText(Note.ContentConverter.convertToObjectText(myNote.getContent()));
-        contentArea.setEditable(true);
+        noteBlocks = new ArrayList<>();
+        noteBlocks.add(Note.ContentConverter.convertToObjectText(myNote.getContent()));
+        initBlocks(noteBlocks);
         noteHeaderLabel.setText(myNote.getHeader());
-        numCharLabel.setText(String.valueOf(contentArea.getText().length()) + "/10000");
-        //Thiết lập undoRedoService và lưu vào văn bản đầu tiên
-        undoRedoService = new UndoRedoService();
-        undoRedoService.saveText(contentArea.getText()); 
         //Load lại Filter GUI
         loadFilter(myNote.getFilters(), 8);   
         //Thiết lập font
@@ -811,12 +803,43 @@ public class DashboardController {
         }
         fontSizeComboBox.getSelectionModel().select("18");
         colorPicker.setValue(Color.BLACK);
-        String contentStyle = "";
-        contentStyle += "-fx-background-radius: 5px;";
-        contentStyle += "-fx-font-family: Arial;";
-        contentStyle += "-fx-font-size: 18px;";
-        contentArea.setStyle(contentStyle);
-        contentArea.setScrollLeft(5);
+    }
+    
+    private void initBlocks(List<String> texts) {
+        blocksLayout.getChildren().clear();
+        for(int i=0; i<texts.size(); i++) {
+            FXMLLoader fXMLLoader = new FXMLLoader();
+            String noteCardFXMLPath = "../view/Block.fxml";
+            fXMLLoader.setLocation(getClass().getResource(noteCardFXMLPath));
+            try {
+                VBox blockView = fXMLLoader.load();
+                //Thiết lập dữ liệu cho Note Card
+                BlockController block = fXMLLoader.getController();
+                block.setText(texts.get(i));
+                block.getSaveButton().setOnAction((ActionEvent event) -> {
+                    String txt = block.getTextFromTextArea();
+                    block.setText(txt);
+                    block.changeEditableStatus(false);
+                    modifingBlockId = -1;
+                });
+                block.getEditButton().setOnAction((ActionEvent event) -> {
+                    String txt = block.getText();
+                    block.setTextForTextArea(txt);
+                    block.changeEditableStatus(true);
+                    modifingBlockId = block.getBlockId();
+                });
+                block.setBlockId(i);
+                if(modifingBlockId == i) {
+                    String txt = block.getText();
+                    block.setTextForTextArea(txt);
+                    block.changeEditableStatus(true);
+                }
+                //Thêm Note Card vào layout
+                blocksLayout.getChildren().add(blockView);
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
+        }
     }
     
     private void initExtraServiceScene() {
@@ -859,7 +882,13 @@ public class DashboardController {
                     Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                             "Open " + noteCardFXMLController.getHeader());
                     if(optional.get() == ButtonType.OK) {
-                        autoSave();
+                        if(!savedNoteStatus) {
+                            Optional<ButtonType> optional1 = showAlert(Alert.AlertType.CONFIRMATION, 
+                                    myNote.getHeader() + " is unsaved. Do you want to save?");
+                            if(optional1.get() == ButtonType.OK) {
+                                autoSave();
+                            }           
+                        }
                         try {
                             //Lấy thành công
                             myNote = clientServerService.openNote(noteCardFXMLController.getAuthor(),
@@ -957,7 +986,13 @@ public class DashboardController {
                     Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
                             "Open " + noteCardFXMLController.getHeader());
                     if(optional.get() == ButtonType.OK) {
-                        autoSave();
+                        if(!savedNoteStatus) {
+                            Optional<ButtonType> optional1 = showAlert(Alert.AlertType.CONFIRMATION, 
+                                    myNote.getHeader() + " is unsaved. Do you want to save?");
+                            if(optional1.get() == ButtonType.OK) {
+                                autoSave();
+                            }           
+                        }
                         try {
                             //Lấy thành công
                             myNote = clientServerService.openNote(noteCardFXMLController.getAuthor(),
@@ -968,7 +1003,7 @@ public class DashboardController {
                             initMainScene();
                             //Nếu là READ_ONLY thì không được sửa
                             if(noteCardFXMLController.getShareType() == ShareNote.ShareType.READ_ONLY) {
-                                contentArea.setEditable(false);
+                                
                             }
                         } catch (ClientServerServiceException ex) {
                             showAlert(Alert.AlertType.ERROR, ex.getMessage());
@@ -984,26 +1019,23 @@ public class DashboardController {
     }
     
     private void autoSave() {
-        if(!savedNoteStatus) {
-            Optional<ButtonType> optional = showAlert(Alert.AlertType.CONFIRMATION, 
-                    myNote.getHeader() + " is unsaved. Do you want to save?");
-            if(optional.get() == ButtonType.OK) {
-                //Set dữ liệu gần nhất cho myNote
-                myNote.setHeader(noteHeaderLabel.getText());
-                myNote.setContent(Note.ContentConverter.convertToDBText(contentArea.getText()));
-                myNote.setLastModified(1);
-                myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
-                //Lưu note
-                try { 
-                    //Lưu thành công
-                    myNote = clientServerService.saveNote(myNote);
-                    showAlert(Alert.AlertType.INFORMATION, "Successfully save for " + myNote.getHeader());
-                    //Chỉnh trạng thái lưu Note 
-                    savedNoteStatus = true;     
-                } catch (ClientServerServiceException ex) {
-                    showAlert(Alert.AlertType.ERROR, ex.getMessage());
-                }
-            }           
+        String content = "";
+        for(String block: noteBlocks) {
+            content += block;
+        }
+        //Set dữ liệu gần nhất cho myNote
+        myNote.setHeader(noteHeaderLabel.getText());
+        myNote.setContent(Note.ContentConverter.convertToDBText(content));
+        myNote.setLastModified(1);
+        myNote.setLastModifiedDate(Date.valueOf(LocalDate.now()));
+        //Lưu note
+        try { 
+            //Lưu thành công
+            myNote = clientServerService.saveNote(myNote);
+            //Chỉnh trạng thái lưu Note 
+            savedNoteStatus = true;     
+        } catch (ClientServerServiceException ex) {
+            showAlert(Alert.AlertType.ERROR, ex.getMessage());
         }
     }
 
