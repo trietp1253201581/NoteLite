@@ -18,10 +18,11 @@ import java.util.List;
  * @since 06/04/2024
  * @version 1.0
  */
-public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
+public class ShareNoteDataAccess implements BasicDataAccess<ShareNote, ShareNoteKey, ShareNoteKey> {
     private final Connection connection;
     protected DatabaseConnection databaseConnection;
-    private final SpecialNoteDataAccess noteDataAccess;
+    
+    protected BasicDataAccess<Note, NoteKey, UserKey> noteDataAccess;
 
     private ShareNoteDataAccess() {
         String host = NetworkProperty.DATABASE_HOST;
@@ -48,104 +49,99 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     }
 
     @Override
-    public List<ShareNote> getAllReceived(String receiver) throws DataAccessException {
+    public List<ShareNote> getAll() throws DataAccessException {
         List<ShareNote> shareNotes = new ArrayList<>();
         //Kiểm tra null
         if(connection == null) {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM sharenotes sh, users us "
-                + "WHERE sh.RECEIVERID = us.ID AND us.USERNAME = ?";
-        
+        String query = "SELECT NOTEID, RECEIVER, SHARETYPE "
+                + "FROM sharenotes sh, users us, notes nt "
+                + "WHERE sh.RECEIVER = us.USERNAME AND NOTEID = nt.Id";
+
         try {
             //Set các tham số, thực thi truy vấn và lấy kết quả
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, receiver);
             
             ResultSet resultSet = preparedStatement.executeQuery();
             //Duyệt các hàng kết quả
             while (resultSet.next()) {
                 ShareNote shareNote = new ShareNote();
-                //Set dữ liệu từ hàng vào shareNote
                 int noteId = resultSet.getInt("NOTEID");
-                Note note = noteDataAccess.get(noteId);
+                Note note = noteDataAccess.get(new NoteKey(noteId));
                 shareNote.setNote(note);
-                shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
-                //Thêm shareNote vào list
+                //Thêm note vào list
                 shareNotes.add(shareNote);
             }
             return shareNotes;
         } catch (SQLException ex) {
             throw new FailedExecuteException();
+        }       
+    }
+    
+    @Override
+    public List<ShareNote> getAll(ShareNoteKey referKey) throws DataAccessException {
+        List<ShareNote> shareNotes = new ArrayList<>();
+        //Kiểm tra null
+        if(connection == null) {
+            throw new FailedExecuteException();
         }
+        //Câu truy vấn SQL
+        String query = "SELECT NOTEID, RECEIVER, SHARETYPE "
+                + "FROM sharenotes sh, users us, notes nt "
+                + "WHERE sh.RECEIVER = us.USERNAME AND NOTEID = nt.Id"
+                + "AND RECEIVER = ?";
+
+        try {
+            //Set các tham số, thực thi truy vấn và lấy kết quả
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, referKey.getReceiver());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            //Duyệt các hàng kết quả
+            while (resultSet.next()) {
+                ShareNote shareNote = new ShareNote();
+                int noteId = resultSet.getInt("NOTEID");
+                Note note = noteDataAccess.get(new NoteKey(noteId));
+                shareNote.setNote(note);
+                shareNote.setReceiver(resultSet.getString("RECEIVER"));
+                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
+                //Thêm note vào list
+                shareNotes.add(shareNote);
+            }
+            return shareNotes;
+        } catch (SQLException ex) {
+            throw new FailedExecuteException();
+        }       
     }
 
     @Override
-    public ShareNote get(int noteId, String receiver) throws DataAccessException {
+    public ShareNote get(ShareNoteKey key) throws DataAccessException {
         ShareNote shareNote = new ShareNote();
         //Kiểm tra null
         if(connection == null) {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM sharenotes sh, users us "
-                + "WHERE sh.RECEIVERID = us.ID AND NOTEID = ? AND us.USERNAME = ?";
+        String query = "SELECT NOTEID, RECEIVER, SHARETYPE "
+                + "FROM sharenotes sh, users us, notes nt "
+                + "WHERE sh.RECEIVER = us.USERNAME AND NOTEID = nt.Id"
+                + "AND NOTEID = ? AND RECEIVER = ?";
 
         try {
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, noteId);
-            preparedStatement.setString(2, receiver);
+            preparedStatement.setInt(1, key.getNoteId());
+            preparedStatement.setString(2, key.getReceiver());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {                
-                //Set dữ liệu cho shareNote
-                Note note = noteDataAccess.get(noteId);
-                shareNote.setNote(note);
-                shareNote.setShareId(resultSet.getInt("SHAREID"));
-                shareNote.setReceiver(resultSet.getString("RECEIVER"));
-                shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
-            }
-            if(shareNote.isDefaultValue()) {
-                throw new NotExistDataException("This sharenote is not exist!");
-            }
-            return shareNote;
-        } catch (SQLException ex) {
-            throw new FailedExecuteException();
-        }
-    }
-
-    @Override
-    public ShareNote get(int id) throws DataAccessException {
-        ShareNote shareNote = new ShareNote();
-        //Kiểm tra null
-        if(connection == null) {
-            throw new FailedExecuteException();
-        }
-        //Câu truy vấn SQL
-        String query = "SELECT sh.ID as SHAREID, NOTEID, us.USERNAME as RECEIVER, "
-                + "SHARETYPE FROM sharenotes sh, users us "
-                + "WHERE sh.RECEIVERID = us.ID AND sh.ID = ?";
-
-        try {
-            //Set tham số và thực thi truy vấn
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
                 int noteId = resultSet.getInt("NOTEID");
-                //Set dữ liệu cho shareNote
-                Note note = noteDataAccess.get(noteId);
+                Note note = noteDataAccess.get(new NoteKey(noteId));
                 shareNote.setNote(note);
-                shareNote.setShareId(resultSet.getInt("SHAREID"));
                 shareNote.setReceiver(resultSet.getString("RECEIVER"));
                 shareNote.setShareType(ShareNote.ShareType.valueOf(resultSet.getString("SHARETYPE")));
             }
@@ -165,17 +161,13 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "INSERT INTO SHARENOTES(NOTEID, RECEIVERID, SHARETYPE)"
+        String query = "INSERT INTO SHARENOTES(NOTEID, RECEIVER, SHARETYPE)"
                 + "VALUES(?, ?, ?)";
         
         try {
-            //Lấy các dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
-            int receiverId = userDataAccess.get(shareNote.getReceiver()).getId();
-            //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, shareNote.getId());
-            preparedStatement.setInt(2, receiverId);
+            preparedStatement.setString(2, shareNote.getReceiver());
             preparedStatement.setString(3, shareNote.getShareType().toString());
             
             if(preparedStatement.executeUpdate() <= 0) {
@@ -185,6 +177,11 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             throw new FailedExecuteException();
         }
     }
+    
+    @Override
+    public void add(ShareNote shareNote, ShareNoteKey key) throws DataAccessException {
+        this.add(shareNote);
+    }
 
     @Override
     public void update(ShareNote shareNote) throws DataAccessException {
@@ -193,19 +190,14 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "UPDATE SHARENOTES SET NOTEID = ?, RECEIVERID = ?, "
-                + "SHARETYPE = ? WHERE ID = ?";
+        String query = "UPDATE SHARENOTES SET SHARETYPE = ? "
+                + "WHERE NOTEID = ? AND RECEIVER = ?";
 
         try {
-            //Lấy các dữ liệu từ bảng khác
-            SpecialUserDataAccess userDataAccess = UserDataAccess.getInstance();
-            int receiverId = userDataAccess.get(shareNote.getReceiver()).getId();
-            //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, shareNote.getId());
-            preparedStatement.setInt(2, receiverId);
-            preparedStatement.setString(3, shareNote.getShareType().toString());
-            preparedStatement.setInt(4, shareNote.getShareId());
+            preparedStatement.setString(1, shareNote.getShareType().toString());
+            preparedStatement.setInt(2, shareNote.getId());
+            preparedStatement.setString(3, shareNote.getReceiver());
 
             if(preparedStatement.executeUpdate() <= 0) {
                 throw new FailedExecuteException();
@@ -214,20 +206,26 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
             throw new FailedExecuteException();
         }
     }
+    
+    @Override
+    public void update(ShareNote shareNote, ShareNoteKey key) throws DataAccessException {
+        this.update(shareNote);
+    }
 
     @Override
-    public void delete(int id) throws DataAccessException {
+    public void delete(ShareNoteKey key) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "DELETE FROM SHARENOTES WHERE ID = ?";
+        String query = "DELETE FROM SHARENOTES WHERE NOTEID = ? AND RECEIVER = ?";
 
         try {
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, key.getNoteId());
+            preparedStatement.setString(2, key.getReceiver());
 
             if(preparedStatement.executeUpdate() < 0) {
                 throw new FailedExecuteException();
@@ -238,7 +236,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
     }
     
     @Override
-    public void deleteAll(int noteId) throws DataAccessException {
+    public void deleteAll(ShareNoteKey referKey) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
             throw new FailedExecuteException();
@@ -249,7 +247,7 @@ public class ShareNoteDataAccess implements SpecialShareNoteDataAccess {
         try {
             //Set tham số và thực thi truy vấn
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, noteId);
+            preparedStatement.setInt(1, referKey.getNoteId());
 
             if(preparedStatement.executeUpdate() < 0) {
                 throw new FailedExecuteException();

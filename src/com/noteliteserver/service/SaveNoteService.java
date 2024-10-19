@@ -43,7 +43,7 @@ public class SaveNoteService implements ServerService {
         Map<String, Object> resultMap = new HashMap<>();
         //Nếu chưa có note thì tạo note mới và trả về
         try {
-            noteDataAccess.get(note.getId());
+            noteDataAccess.get(note.getId(), null);
         } catch (DataAccessException ex) {
             if(ex instanceof NotExistDataException) {
                 //Thêm note mới và trả về

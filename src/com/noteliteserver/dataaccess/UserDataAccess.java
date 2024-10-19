@@ -18,7 +18,7 @@ import java.util.List;
  * @since 30/03/2024
  * @version 1.0
  */
-public class UserDataAccess implements SpecialUserDataAccess {
+public class UserDataAccess implements BasicDataAccess<User, UserKey, NullKey> {
     private final Connection connection;
     protected DatabaseConnection databaseConnection;
 
@@ -44,7 +44,7 @@ public class UserDataAccess implements SpecialUserDataAccess {
     public static UserDataAccess getInstance() {
         return SingletonHelper.INSTANCE;
     }
-
+    
     @Override
     public List<User> getAll() throws DataAccessException {
         List<User> users = new ArrayList<>();
@@ -63,7 +63,6 @@ public class UserDataAccess implements SpecialUserDataAccess {
             while (resultSet.next()) {
                 User user = new User();
                 //Set dữ liệu cho user
-                user.setId(resultSet.getInt("ID"));
                 user.setName(resultSet.getString("NAME"));
                 user.setUsername(resultSet.getString("USERNAME"));
                 user.setPassword(resultSet.getString("PASSWORD"));
@@ -84,43 +83,12 @@ public class UserDataAccess implements SpecialUserDataAccess {
     }
 
     @Override
-    public User get(int id) throws DataAccessException {
-        User user = new User();
-        //Kiểm tra null 
-        if(connection == null) {
-            throw new FailedExecuteException();
-        }
-        //Câu truy vấn SQL
-        String query = "SELECT * FROM USERS WHERE ID = ?";
-
-        try {
-            //Thực thi truy vấn SQL, gán tham số cho ID và lấy kết quả là một bộ dữ liệu
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {              
-                //Set dữ liệu từ hàng vào user
-                user.setId(resultSet.getInt("ID"));
-                user.setName(resultSet.getString("NAME"));
-                user.setUsername(resultSet.getString("USERNAME"));
-                user.setPassword(resultSet.getString("PASSWORD"));
-                user.setBirthday(Date.valueOf(resultSet.getString("BIRTHDAY")));
-                user.setSchool(resultSet.getString("SCHOOL"));
-                user.setGender(User.Gender.valueOf(resultSet.getString("GENDER")));
-            }
-            //Nếu ko tồn tại thì ném ra ngoại lệ
-            if(user.isDefaultValue()) {
-                throw new NotExistDataException("User is not exist!");
-            }
-            return user;
-        } catch (SQLException ex) {
-            throw new FailedExecuteException();
-        }
+    public List<User> getAll(NullKey referKey) throws DataAccessException {
+        return this.getAll();
     }
 
     @Override
-    public User get(String username) throws DataAccessException {
+    public User get(UserKey key) throws DataAccessException {
         User user = new User();
         //Kiểm tra null
         if(connection == null) {
@@ -128,16 +96,14 @@ public class UserDataAccess implements SpecialUserDataAccess {
         }
         //Câu truy vấn SQL
         String query = "SELECT * FROM USERS WHERE USERNAME = ?";
-
         try {
             //Thực thi truy vấn SQL, gán tham số cho USERNAME và lấy kết quả là một bộ dữ liệu
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, key.getUsername());
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 //Set dữ liệu từ hàng nhận được
-                user.setId(resultSet.getInt("ID"));
                 user.setName(resultSet.getString("NAME"));
                 user.setUsername(resultSet.getString("USERNAME"));
                 user.setPassword(resultSet.getString("PASSWORD"));
@@ -182,6 +148,11 @@ public class UserDataAccess implements SpecialUserDataAccess {
             throw new FailedExecuteException();
         }
     }
+    
+    @Override
+    public void add(User user, UserKey key) throws DataAccessException {
+        this.add(user);
+    }
 
     @Override
     public void update(User user) throws DataAccessException {
@@ -190,19 +161,18 @@ public class UserDataAccess implements SpecialUserDataAccess {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "UPDATE USERS SET NAME = ?, USERNAME = ?, PASSWORD = ?, "
-                + "BIRTHDAY = ?, SCHOOL = ?, GENDER = ? WHERE ID = ?";
+        String query = "UPDATE USERS SET NAME = ?, PASSWORD = ?, "
+                + "BIRTHDAY = ?, SCHOOL = ?, GENDER = ? WHERE USERNAME = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             //Set các tham số cho truy vấn
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getUsername());
-            preparedStatement.setString(3, user.getPassword());
-            preparedStatement.setDate(4, user.getBirthday());
-            preparedStatement.setString(5, user.getSchool());
-            preparedStatement.setString(6, user.getGender().toString());
-            preparedStatement.setInt(7, user.getId());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setDate(3, user.getBirthday());
+            preparedStatement.setString(4, user.getSchool());
+            preparedStatement.setString(5, user.getGender().toString());
+            preparedStatement.setString(6, user.getUsername());
 
             if(preparedStatement.executeUpdate() <= 0) {
                 throw new FailedExecuteException();
@@ -211,20 +181,25 @@ public class UserDataAccess implements SpecialUserDataAccess {
             throw new FailedExecuteException();
         }
     }
+    
+    @Override
+    public void update(User user, UserKey userKey) throws DataAccessException {
+        this.update(user);
+    }
 
     @Override
-    public void delete(int id) throws DataAccessException {
+    public void delete(UserKey key) throws DataAccessException {
         //Kiểm tra null
         if(connection == null) {
             throw new FailedExecuteException();
         }
         //Câu truy vấn SQL
-        String query = "DELETE FROM USERS WHERE ID = ?";
+        String query = "DELETE FROM USERS WHERE USERNAME = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             //Set các tham số cho truy vấn
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, key.getUsername());
 
             if(preparedStatement.executeUpdate() <= 0) {
                 throw new FailedExecuteException();
@@ -232,5 +207,10 @@ public class UserDataAccess implements SpecialUserDataAccess {
         } catch (SQLException ex) {
             throw new FailedExecuteException();
         }
+    }
+    
+    @Override 
+    public void deleteAll(NullKey referKey) throws DataAccessException {
+        throw new FailedExecuteException();
     }
 }

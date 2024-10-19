@@ -19,10 +19,10 @@ public class Note extends BaseDataTransferModel {
     private int id;
     private String author;
     private String header;
-    private List<Block> blocks;
+    private List<NoteBlock> blocks;
     private int lastModified;
     private Date lastModifiedDate;
-    private List<Filter> filters;
+    private List<NoteFilter> filters;
     
     /**
      * Constructor và cài đặt dữ liệu default cho Note
@@ -37,7 +37,7 @@ public class Note extends BaseDataTransferModel {
         this.filters = new ArrayList<>();
     }
 
-    public Note(int id, String author, String header, List<Block> blocks, int lastModified, Date lastModifiedDate, List<Filter> filters) {
+    public Note(int id, String author, String header, List<NoteBlock> blocks, int lastModified, Date lastModifiedDate, List<NoteFilter> filters) {
         this.id = id;
         this.author = author;
         this.header = header;
@@ -71,11 +71,11 @@ public class Note extends BaseDataTransferModel {
         this.header = header;
     }
 
-    public List<Block> getBlocks() {
+    public List<NoteBlock> getBlocks() {
         return blocks;
     }
 
-    public void setBlocks(List<Block> blocks) {
+    public void setBlocks(List<NoteBlock> blocks) {
         this.blocks = blocks;
     }
 
@@ -95,11 +95,11 @@ public class Note extends BaseDataTransferModel {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public List<Filter> getFilters() {
+    public List<NoteFilter> getFilters() {
         return filters;
     }
 
-    public void setFilters(List<Filter> filters) {
+    public void setFilters(List<NoteFilter> filters) {
         this.filters = filters;
     }
     
@@ -166,8 +166,8 @@ public class Note extends BaseDataTransferModel {
         attributeMap.put("header", this.header);
         attributeMap.put("lastModified", this.lastModified);
         attributeMap.put("lastModifiedDate", this.lastModifiedDate);
-        attributeMap.put("blocks", Block.ListConverter.convertToString(blocks));
-        attributeMap.put("filters", Filter.ListConverter.convertToString(filters));
+        attributeMap.put("blocks", NoteBlock.ListConverter.convertToString(blocks));
+        attributeMap.put("filters", NoteFilter.ListConverter.convertToString(filters));
         return attributeMap;
     }
 
@@ -200,8 +200,8 @@ public class Note extends BaseDataTransferModel {
         note.setHeader(attributeStrMap.get("header"));
         note.setLastModified(Integer.parseInt(attributeStrMap.get("lastModified")));
         note.setLastModifiedDate(Date.valueOf(attributeStrMap.get("lastModifiedDate")));
-        note.setBlocks(Block.ListConverter.convertToList(attributeStrMap.get("blocks")));
-        note.setFilters(Filter.ListConverter.convertToList(attributeStrMap.get("filters")));
+        note.setBlocks(NoteBlock.ListConverter.convertToList(attributeStrMap.get("blocks")));
+        note.setFilters(NoteFilter.ListConverter.convertToList(attributeStrMap.get("filters")));
         return note;
     }
     

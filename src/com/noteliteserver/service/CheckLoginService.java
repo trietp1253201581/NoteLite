@@ -1,9 +1,11 @@
 package com.noteliteserver.service;
 
 import com.notelitemodel.datatransfer.User;
+import com.noteliteserver.dataaccess.BasicDataAccess;
 import com.noteliteserver.dataaccess.DataAccessException;
-import com.noteliteserver.dataaccess.SpecialUserDataAccess;
+import com.noteliteserver.dataaccess.NullKey;
 import com.noteliteserver.dataaccess.UserDataAccess;
+import com.noteliteserver.dataaccess.UserKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ import java.util.Map;
 public class CheckLoginService implements ServerService {  
     private String username;
     private String password;
-    protected SpecialUserDataAccess userDataAccess;
+    protected BasicDataAccess<User, UserKey, NullKey> userDataAccess;
     
     public CheckLoginService() {
         userDataAccess = UserDataAccess.getInstance();

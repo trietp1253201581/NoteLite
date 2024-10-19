@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author admin
  */
-public class Block extends BaseDataTransferModel {
+public class NoteBlock extends BaseDataTransferModel {
     private int id;
     private String content;
     private BlockType blockType;
@@ -20,13 +20,13 @@ public class Block extends BaseDataTransferModel {
         TEXT, IMAGE, SURVEY
     }
     
-    public Block() {
+    public NoteBlock() {
         this.id = -1;
         this.content = "";
         this.blockType = BlockType.TEXT;
     }
 
-    public Block(int id, String content, BlockType blockType) {
+    public NoteBlock(int id, String content, BlockType blockType) {
         this.id = id;
         this.content = content;
         this.blockType = blockType;
@@ -85,7 +85,7 @@ public class Block extends BaseDataTransferModel {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Block other = (Block) obj;
+        final NoteBlock other = (NoteBlock) obj;
         if (this.id != other.id) {
             return false;
         }
@@ -110,13 +110,13 @@ public class Block extends BaseDataTransferModel {
         return super.toString(objectName);
     }
     
-    public static Block valueOf(String str) {
+    public static NoteBlock valueOf(String str) {
         Map<String, String> attributeStrMap = Command.decode(str).get(0);
         return valueOf(attributeStrMap);
     }
     
-    public static Block valueOf(Map<String, String> attributeStrMap) {
-        Block block = new Block();
+    public static NoteBlock valueOf(Map<String, String> attributeStrMap) {
+        NoteBlock block = new NoteBlock();
         block.setId(Integer.parseInt(attributeStrMap.get("id")));
         block.setContent(attributeStrMap.get("content"));
         block.setBlockType(BlockType.valueOf(attributeStrMap.get("blockType")));
@@ -124,15 +124,15 @@ public class Block extends BaseDataTransferModel {
     }
     
     public static class ListConverter {
-        public static String convertToString(List<? extends Block> models) {
+        public static String convertToString(List<? extends NoteBlock> models) {
             return BaseDataTransferModel.ListConverter.convertToString(models);
         }
         
-        public static List<Block> convertToList(String listOfBlockStr) {
+        public static List<NoteBlock> convertToList(String listOfBlockStr) {
             List<Map<String, String>> listOfBlockMaps = Command.decode(listOfBlockStr);
-            List<Block> blocks = new ArrayList<>();
+            List<NoteBlock> blocks = new ArrayList<>();
             for(Map<String, String> blockMap: listOfBlockMaps) {
-                Block newBlock = Block.valueOf(blockMap);
+                NoteBlock newBlock = NoteBlock.valueOf(blockMap);
                 blocks.add(newBlock);
             }
             return blocks;

@@ -1,7 +1,6 @@
 package com.notelitemodel.datatransfer;
 
 import com.notelitemodel.Command;
-import static com.notelitemodel.datatransfer.Note.valueOf;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.Objects;
  * @version 1.0
  */
 public class User extends BaseDataTransferModel {
-    private int id;
     private String name;
     private String username;
     private String password;
@@ -36,7 +34,6 @@ public class User extends BaseDataTransferModel {
      * Constructor và cài đặt dữ liệu default cho User
      */
     public User() {
-        this.id = -1;
         this.name = "";
         this.username = "";
         this.password = "";
@@ -46,17 +43,12 @@ public class User extends BaseDataTransferModel {
     }
 
     public User(int id, String name, String username, String password, Date birthday, String school, Gender gender) {
-        this.id = id;
         this.name = name;
         this.username = username;
         this.password = password;
         this.birthday = birthday;
         this.school = school;
         this.gender = gender;
-    }
-    
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -81,10 +73,6 @@ public class User extends BaseDataTransferModel {
 
     public Gender getGender() {
         return gender;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setName(String name) {
@@ -117,19 +105,18 @@ public class User extends BaseDataTransferModel {
      */
     @Override
     public boolean isDefaultValue() {
-        return id == -1;
+        return "".equals(username);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + this.id;
-        hash = 67 * hash + Objects.hashCode(this.name);
-        hash = 67 * hash + Objects.hashCode(this.username);
-        hash = 67 * hash + Objects.hashCode(this.password);
-        hash = 67 * hash + Objects.hashCode(this.birthday);
-        hash = 67 * hash + Objects.hashCode(this.school);
-        hash = 67 * hash + Objects.hashCode(this.gender);
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + Objects.hashCode(this.username);
+        hash = 53 * hash + Objects.hashCode(this.password);
+        hash = 53 * hash + Objects.hashCode(this.birthday);
+        hash = 53 * hash + Objects.hashCode(this.school);
+        hash = 53 * hash + Objects.hashCode(this.gender);
         return hash;
     }
 
@@ -145,9 +132,6 @@ public class User extends BaseDataTransferModel {
             return false;
         }
         final User other = (User) obj;
-        if (this.id != other.id) {
-            return false;
-        }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -169,7 +153,6 @@ public class User extends BaseDataTransferModel {
     @Override
     public Map<String, Object> getAttributeMap() {
         Map<String, Object> attributeMap = new HashMap<>();
-        attributeMap.put("id", this.id);
         attributeMap.put("name", this.name);
         attributeMap.put("username", this.username);
         attributeMap.put("password", this.password);
@@ -203,7 +186,6 @@ public class User extends BaseDataTransferModel {
     
     public static User valueOf(Map<String, String> attributeStrMap) {
         User user = new User();
-        user.setId(Integer.parseInt(attributeStrMap.get("id")));
         user.setName(attributeStrMap.get("name"));
         user.setUsername(attributeStrMap.get("username"));
         user.setPassword(attributeStrMap.get("password"));

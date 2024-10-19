@@ -785,7 +785,7 @@ public class DashboardController {
         noteBlocks.add(Note.ContentConverter.convertToObjectText(myNote.getContent()));
         initBlocks(noteBlocks);
         noteHeaderLabel.setText(myNote.getHeader());
-        //Load lại Filter GUI
+        //Load lại NoteFilter GUI
         loadFilter(myNote.getFilters(), 8);   
         //Thiết lập font
         fontTypeComboBox.getItems().clear();

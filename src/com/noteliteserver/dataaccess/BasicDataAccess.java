@@ -1,5 +1,7 @@
 package com.noteliteserver.dataaccess;
 
+import java.util.List;
+
 /**
  * Định nghĩa các phương thức thao tác cơ bản với CSDL
  * @author Nhóm 23
@@ -7,34 +9,18 @@ package com.noteliteserver.dataaccess;
  * @since 30/03/2024
  * @version 1.0
  */
-public interface BasicDataAccess<T> {
-    /**
-     * Lấy object theo id
-     * @param id id của object cần lấy
-     * @return object lấy được
-     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
-     * hoặc không tồn tại object có id này
-     */
-    T get(int id) throws DataAccessException;
+public interface BasicDataAccess<T, K, R> {
+    T get(K key) throws DataAccessException;
     
-    /**
-     * Thêm object element vào CSDL
-     * @param element object cần thêm vào CSDL
-     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
-     */
     void add(T element) throws DataAccessException;
+    void add(T element, K key) throws DataAccessException;
     
-    /**
-     * Chỉnh sửa một object element trong CSDL
-     * @param element object cần chỉnh sửa
-     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
-     */
     void update(T element) throws DataAccessException;
+    void update(T element, K key) throws DataAccessException;
     
-    /**
-     * Xóa một object element ra khỏi CSDL
-     * @param id id của object cần xóa
-     * @throws com.noteliteserver.dataaccess.DataAccessException nếu không thực thi được
-     */
-    void delete(int id) throws DataAccessException;
+    void delete(K key) throws DataAccessException;
+    void deleteAll(R referKey) throws DataAccessException;
+    
+    List<T> getAll() throws DataAccessException;
+    List<T> getAll(R referKey) throws DataAccessException;
 }

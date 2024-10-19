@@ -1,10 +1,8 @@
 package com.notelitemodel.datatransfer;
 
 import com.notelitemodel.Command;
-import static com.notelitemodel.datatransfer.Note.valueOf;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +15,6 @@ import java.util.Objects;
  */
 
 public class ShareNote extends Note {
-    private int shareId;
     private String receiver;
     private ShareType shareType;
     
@@ -33,27 +30,20 @@ public class ShareNote extends Note {
      */
     public ShareNote() {
         super();
-        this.shareId = -1;
         this.receiver = "";
         this.shareType = ShareType.READ_ONLY;
     }
 
-    public ShareNote(int shareId, String receiver, ShareType shareType) {
+    public ShareNote(String receiver, ShareType shareType) {
         super();
-        this.shareId = shareId;
         this.receiver = receiver;
         this.shareType = shareType;
     }
 
-    public ShareNote(int shareId, String receiver, ShareType shareType, int id, String author, String header, List<Block> blocks, int lastModified, Date lastModifiedDate, List<Filter> filters) {
+    public ShareNote(String receiver, ShareType shareType, int id, String author, String header, List<NoteBlock> blocks, int lastModified, Date lastModifiedDate, List<NoteFilter> filters) {
         super(id, author, header, blocks, lastModified, lastModifiedDate, filters);
-        this.shareId = shareId;
         this.receiver = receiver;
         this.shareType = shareType;
-    }
-    
-    public int getShareId() {
-        return shareId;
     }
 
     public String getReceiver() {
@@ -62,10 +52,6 @@ public class ShareNote extends Note {
     
     public ShareType getShareType() {
         return shareType;
-    }
-    
-    public void setShareId(int shareId) {
-        this.shareId = shareId;
     }
 
     public void setReceiver(String receiver) {
@@ -78,10 +64,9 @@ public class ShareNote extends Note {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 83 * hash + this.shareId;
-        hash = 83 * hash + Objects.hashCode(this.receiver);
-        hash = 83 * hash + Objects.hashCode(this.shareType);
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.receiver);
+        hash = 53 * hash + Objects.hashCode(this.shareType);
         return hash;
     }
 
@@ -99,9 +84,6 @@ public class ShareNote extends Note {
         final ShareNote other = (ShareNote) obj;
         final Note otherNote = (Note) other;
         if(!super.equals(otherNote)) {
-            return false;
-        }
-        if(this.shareId != other.shareId) {
             return false;
         }
         if(!Objects.equals(this.receiver, other.receiver)) {
@@ -127,7 +109,6 @@ public class ShareNote extends Note {
     @Override
     public Map<String, Object> getAttributeMap() {
         Map<String, Object> attributeMap = super.getAttributeMap();
-        attributeMap.put("shareId", this.shareId);
         attributeMap.put("receiver", this.receiver);
         attributeMap.put("shareType", this.shareType);
         return attributeMap;
@@ -159,7 +140,6 @@ public class ShareNote extends Note {
         Note note = Note.valueOf(attributeStrMap);
         ShareNote shareNote = new ShareNote();
         shareNote.setNote(note);
-        shareNote.setShareId(Integer.parseInt(attributeStrMap.get("shareId")));
         shareNote.setReceiver(attributeStrMap.get("receiver"));
         shareNote.setShareType(ShareType.valueOf(attributeStrMap.get("shareType")));
         return shareNote;
