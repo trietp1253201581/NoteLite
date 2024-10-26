@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/NoteLite/src/com/noteliteserver/dataaccess/NoteFilterDataAccess.java</file>
-            <file>file:/F:/NoteLite/src/com/noteliteserver/dataaccess/NoteDataAccess.java</file>
-            <file>file:/F:/NoteLite/src/com/noteliteserver/dataaccess/ShareNoteDataAccess.java</file>
+            <file>file:/F:/NoteLite/src/com/noteapp/controller/DashboardController.java</file>
+            <file>file:/F:/NoteLite/src/com/noteapp/controller/EditNoteViewController.java</file>
+            <file>file:/F:/NoteLite/src/com/noteapp/controller/LoginController.java</file>
+            <file>file:/F:/NoteLite/src/com/noteapp/NoteLite.java</file>
         </group>
     </open-files>
 </project-private>
