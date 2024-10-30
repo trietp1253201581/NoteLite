@@ -53,8 +53,7 @@ public class SendNoteService implements ServerService<ShareNote> {
         } catch (NotExistDataException ex2) {
             userDataAccess.get(new UserKey(shareNote.getReceiver()));
             noteDataAccess.get(new NoteKey(shareNote.getId()));
-            shareNoteDataAccess.add(shareNote);
-            return shareNote;
+            return shareNoteDataAccess.add(shareNote);
         }
     }
 }

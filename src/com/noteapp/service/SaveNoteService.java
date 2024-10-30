@@ -43,11 +43,6 @@ public class SaveNoteService implements ServerService<Note> {
         userDataAccess = UserDataAccess.getInstance();
         try {
             noteDataAccess.get(new NoteKey(note.getId()));
-            List<Note> myNotes = noteDataAccess.getAll(new UserKey(note.getAuthor()));
-            Note lastNote = myNotes.getLast();
-            lastNote.setLastModified(0);
-            note.setLastModified(1);
-            noteDataAccess.update(lastNote);
             noteDataAccess.update(note);
             return note;
         } catch (FailedExecuteException ex1) {
@@ -57,8 +52,7 @@ public class SaveNoteService implements ServerService<Note> {
             List<Note> existNotes = noteDataAccess.getAll();
             Note lastNote = existNotes.getLast();
             note.setId(lastNote.getId() + 1);
-            noteDataAccess.add(note);
-            return note;
+            return noteDataAccess.add(note);
         }     
     } 
 }

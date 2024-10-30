@@ -237,6 +237,10 @@ public class DashboardController extends Controller {
         chooseInputFileButton.setOnAction((ActionEvent event) -> {
             chooseFileToInput();
         });
+        //Share Note
+        sendNoteButton.setOnAction((ActionEvent event) -> {
+            sendNote();
+        });
         //Other
         backMainSceneButton.setOnAction((ActionEvent event) -> {
             openEditNoteView(myUser, currentNote);

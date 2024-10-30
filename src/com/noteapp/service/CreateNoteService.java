@@ -50,8 +50,7 @@ public class CreateNoteService implements ServerService<Note> {
             List<Note> existNotes = noteDataAccess.getAll();
             Note lastNote = existNotes.getLast();
             note.setId(lastNote.getId() + 1);
-            noteDataAccess.add(note);
-            return note;
+            return noteDataAccess.add(note);         
         }
     }    
 }

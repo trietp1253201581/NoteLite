@@ -41,8 +41,7 @@ public class CreateUserService implements ServerService<User> {
         } catch (FailedExecuteException ex1) {
             throw ex1;
         } catch (NotExistDataException ex2) {
-            userDataAccess.add(user);
-            return user;
+            return userDataAccess.add(user);
         }
     }    
 }

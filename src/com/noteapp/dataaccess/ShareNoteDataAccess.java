@@ -5,6 +5,7 @@ import com.noteapp.model.datatransfer.Note;
 import com.noteapp.model.datatransfer.ShareNote;
 import com.noteapp.dataaccess.connection.DatabaseConnection;
 import com.noteapp.dataaccess.connection.MySQLDatabaseConnection;
+import com.noteapp.model.datatransfer.NoteBlock;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ public class ShareNoteDataAccess implements BasicDataAccess<ShareNote, ShareNote
     protected DatabaseConnection databaseConnection;
     
     protected BasicDataAccess<Note, NoteKey, UserKey> noteDataAccess;
+    protected BasicDataAccess<NoteBlock, NoteBlockKey, NoteKey> blockDataAccess;
 
     private ShareNoteDataAccess() {
         String host = NetworkProperty.DATABASE_HOST;
@@ -34,6 +36,7 @@ public class ShareNoteDataAccess implements BasicDataAccess<ShareNote, ShareNote
             (host, port, dbName, username, password);
         this.connection = databaseConnection.getConnection();
         noteDataAccess = NoteDataAccess.getInstance();
+        blockDataAccess = NoteBlockDataAccess.getInstance();
     }
     
     private static class SingletonHelper {
@@ -170,7 +173,13 @@ public class ShareNoteDataAccess implements BasicDataAccess<ShareNote, ShareNote
             preparedStatement.setInt(1, shareNote.getId());
             preparedStatement.setString(2, shareNote.getReceiver());
             preparedStatement.setString(3, shareNote.getShareType().toString());
-            
+            if(shareNote.getShareType() == ShareNote.ShareType.CAN_EDIT) {
+                for(NoteBlock block: shareNote.getBlocks()) {
+                    block.setEditor(shareNote.getReceiver());
+                    blockDataAccess.add(block, 
+                            new NoteBlockKey(shareNote.getId(), block.getOrd(), block.getHeader(), block.getEditor()));
+                }
+            }
             if(preparedStatement.executeUpdate() <= 0) {
                 throw new FailedExecuteException();
             }

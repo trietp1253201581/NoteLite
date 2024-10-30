@@ -77,7 +77,9 @@ public class EditNoteViewController extends Controller {
     private User myUser;
     private Note myNote;
     private List<BlockController> myNoteBlockControllers;
-    Map<String, List<NoteBlock>> blockByHeaders;
+    private Map<String, List<NoteBlock>> blockByHeaders;
+    private Timer updateTimer;
+    private TimerTask updateTask;
 
     public void setMyUser(User myUser) {
         this.myUser = myUser;
@@ -143,15 +145,15 @@ public class EditNoteViewController extends Controller {
         }
         for(int i=0; i<blocks.size(); i++) {
             NoteBlock newBlock = blocks.get(i);
-            if(newBlock.getEditor().equals(myNote.getAuthor())) {
+            if(newBlock.getEditor().equals(myUser.getUsername())) {
                 addBlock(newBlock);
             }
         }
     }
     
     public void setOnAutoUpdate() {
-        Timer updateTimer = new Timer();
-        TimerTask updateTask = new TimerTask() {
+        updateTimer = new Timer();
+        updateTask = new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> {
@@ -169,8 +171,10 @@ public class EditNoteViewController extends Controller {
                             }
                             blockByHeaders.get(newBlock.getHeader()).add(newBlock);
                         }
+                        updateBlock();
                         System.out.println(System.currentTimeMillis());
                     } catch (DataAccessException ex) {
+                        System.err.println(ex.getMessage());
                     }
                 });
             }
@@ -221,6 +225,13 @@ public class EditNoteViewController extends Controller {
             block.setContent(myNoteBlockControllers.get(i).getTextFromView());
             block.setOrd(i+1);
             myNote.getBlocks().add(block);
+        }
+        for(String blockHeader: blockByHeaders.keySet()) {
+            for(NoteBlock block: blockByHeaders.get(blockHeader)) {
+                if(!block.getEditor().equals(myUser.getUsername())) {
+                    myNote.getBlocks().add(block);
+                }
+            }
         }
         try {
             noteService = new SaveNoteService(myNote);
@@ -278,6 +289,20 @@ public class EditNoteViewController extends Controller {
             myNoteBlockControllers.add(controller);
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
+        }
+    }
+    
+    protected void updateBlock() {
+        for(int i=0; i<myNoteBlockControllers.size(); i++) {
+            NoteBlock thisBlock = myNoteBlockControllers.get(i).getNoteBlock();
+            List<String> otherEditors = new ArrayList<>();
+            for(NoteBlock noteBlock: blockByHeaders.get(thisBlock.getHeader())) {
+                if(!noteBlock.getEditor().equals(thisBlock.getEditor())) {
+                    otherEditors.add(noteBlock.getEditor());
+                }
+            }
+            myNoteBlockControllers.get(i).setOtherEditors(otherEditors);
+            myNoteBlockControllers.get(i).initOtherEditComboBox();
         }
     }
     
@@ -344,6 +369,8 @@ public class EditNoteViewController extends Controller {
     }
     
     protected void openDashboard(User user) {
+        updateTask.cancel();
+        updateTimer.cancel();
         try {
             FXMLLoader fXMLLoader = new FXMLLoader();
             String dashboardViewPath = "../view/DashboardView.fxml";
